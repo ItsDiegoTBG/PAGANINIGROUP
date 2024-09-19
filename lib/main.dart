@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:paganini/presentation/pages/home_page.dart';
 import 'package:paganini/presentation/pages/initial_page.dart';
 import 'package:paganini/presentation/pages/login_page.dart';
 
-void main(){
+void main() {
   runApp(const MainApp());
 }
 
@@ -15,7 +16,11 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: "initial_page",
       theme: ThemeData(),
-      routes: {"initial_page":(BuildContext context)=> const InitialPage(),"login_page":(BuildContext context)=> const LoginRegisterScreen()},
-    ) ;
-}
+      routes: {
+        "initial_page": (BuildContext context) => const InitialPage(),
+        "login_page": (BuildContext context) => const LoginRegisterScreen(),
+        "home_page" : (BuildContext context) => const HomePage(),
+      },
+    );
+  }
 }
