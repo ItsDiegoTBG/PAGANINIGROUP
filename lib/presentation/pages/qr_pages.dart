@@ -1,14 +1,11 @@
-import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/button_without_icon.dart';
 import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
 import 'package:paganini/presentation/widgets/qr_code_scanner.dart';
 import 'package:paganini/utils/colors.dart';
-import 'package:path_provider/path_provider.dart';
+
 
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';

@@ -1,8 +1,4 @@
-
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:paganini/presentation/widgets/qr_code_scanner.dart';
 
 
