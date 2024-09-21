@@ -11,57 +11,71 @@ class InitialPage extends StatelessWidget {
         backgroundColor: Colors.white,
         body: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               SizedBox(
                   width: 300,
                   height: 130,
                   child: Image.asset(
                       "assets/image/paganini_logo_horizontal_morado_lila.png")),
-              SizedBox(
-                width: 150,
-                height: 150,
-                child: Image.asset("assets/image/paganini_icono_morado.png"),
+              Padding(
+                padding: const EdgeInsets.only(right: 25),
+                child: SizedBox(
+                  width: 150,
+                  height: 150,
+                  child: Image.asset("assets/image/paganini_icono_morado.png"),
+                ),
               ),
               const SizedBox(
                 height: 30,
               ),
-              const Text(
-                "Bienvenido",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    fontStyle: FontStyle.italic),
+              Column(
+                children: [
+                  const Text(
+                    "Bienvenido",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5, bottom: 20),
+                    child: Text(
+                      "Paga con Paganini",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 16,
+                          color: Colors.grey[900]),
+                    ),
+                  ),
+                ],
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 25),
-                child: Text(
-                  "Paga con Paganini",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontStyle: FontStyle.italic,
-                      fontSize: 16,
-                      color: Colors.grey[900]),
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Column(
+                  children: [
+                    ButtonWithIcon(
+                      function: () {},
+                      icon: Icons.pin_rounded,
+                      textButton: "6 Digitos",
+                    ),
+                    ButtonWithIcon(
+                      function: () {},
+                      icon: Icons.fingerprint_rounded,
+                      textButton: "Biométrico",
+                    ),
+                    ButtonWithIcon(
+                      function: () => {
+                        debugPrint("Hola desde login"),
+                        Navigator.pushNamed(context, "login_page")
+                      },
+                      icon: Icons.login_rounded,
+                      textButton: "Iniciar Sesión",
+                    )
+                  ],
                 ),
-              ),
-              ButtonWithIcon(
-                function: () {},
-                icon: Icons.pin_rounded,
-                textButton: "6 Digitos",
-              ),
-              ButtonWithIcon(
-                function: () {},
-                icon: Icons.fingerprint_rounded,
-                textButton: "Biométrico",
-              ),
-              ButtonWithIcon(
-                function: () => {
-                  debugPrint("Hola desde login"),
-                  Navigator.pushNamed(context, "login_page")
-                  },
-                icon: Icons.login_rounded,
-                textButton: "Iniciar Sesión",
               )
             ],
           ),

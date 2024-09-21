@@ -4,10 +4,12 @@ import 'package:paganini/utils/colors.dart';
 class ButtonWithoutIcon extends StatelessWidget {
   final String text;
   final Function onPressed;
+  final FontStyle? fontStyle;
   const ButtonWithoutIcon({
     super.key,
     required this.text,
     required this.onPressed,
+    this.fontStyle,
   });
 
   @override
@@ -19,15 +21,13 @@ class ButtonWithoutIcon extends StatelessWidget {
         ),
         backgroundColor: AppColors.primaryColor,
       ),
-      onPressed: () {
-        onPressed();
-      },
+      onPressed: () => {onPressed()},
       child:  Text(
         text,
-        style: const TextStyle(
+        style:  TextStyle(
             color: Colors.white,
             fontSize: 20,
-            fontStyle: FontStyle.italic),
+            fontStyle:fontStyle ?? FontStyle.italic),
       ),
     );
   }

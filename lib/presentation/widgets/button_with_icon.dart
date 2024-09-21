@@ -13,7 +13,7 @@ class ButtonWithIcon extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 5,bottom: 5),
       child: SizedBox(
-        width: 200, 
+        width: 230, 
         child: TextButton(
           style: TextButton.styleFrom(
             shape:  RoundedRectangleBorder(
