@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:paganini/presentation/widgets/qr_code_scanner.dart';
+import 'package:paganini/device/qr_code_scanner.dart';
 
 
 class ScannerPage extends StatefulWidget {
@@ -19,16 +19,31 @@ class _ScannerPageState extends State<ScannerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
+      backgroundColor: Colors.white,
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        //mainAxisAlignment: MainAxisAlignment.center,
         children: [
-            SizedBox(
-                  width: 300,
-                  height: 130,
-                  child: Image.asset(
-                      "assets/image/paganini_logo_horizontal_morado_lila.png")),
-          QrCodeScanner(setResult: setResult),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(width: 25,),
+                Expanded(
+                  child: Center(
+                    child: SizedBox(     
+                      width: 200,
+                      height: 50,
+                      child: Image.asset(
+                          "assets/image/paganini_logo_horizontal_morado_lila.png")),
+                  ),
+                ),
+                IconButton(onPressed: (){
+                  Navigator.pop(context);
+                }, icon: const Icon(Icons.arrow_back_rounded))      
+              ],
+            ),
+         Expanded(
+          child: QrCodeScanner(setResult: setResult), // Ocupa todo el espacio disponible
+        ),
         ],
       )
      // bottomNavigationBar: const BottomMainAppBar(),

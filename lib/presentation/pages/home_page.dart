@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
+import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
 import 'package:paganini/utils/colors.dart';
 
@@ -9,35 +11,17 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor:Colors.white,
+        automaticallyImplyLeading: false,
+        title: const ContentAppBar(),
+      ),
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 12),
-                  child: SizedBox(
-                      width: 220,
-                      height: 100,
-                      child: Image.asset(
-                          "assets/image/paganini_logo_horizontal_morado_lila.png")),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 12),
-                  child: IconButton(
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(context, "initial_page");
-                      },
-                      icon: const Icon(Icons.logout_rounded)),
-                )
-              ],
-            ),
-          ),
+          
           const SizedBox(
-            height: 5,
+            height: 20,
           ),
           Container(
             height: 150,
@@ -46,10 +30,10 @@ class HomePage extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               color: AppColors.primaryColor,
             ),
-            child: Row(
+            child: const  Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                const Column(
+                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
@@ -72,25 +56,7 @@ class HomePage extends StatelessWidget {
                 ),
 
                 //boton de agregar
-                TextButton(
-                  onPressed: () {},
-                  style: TextButton.styleFrom(
-                      backgroundColor: AppColors.secondaryColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      )),
-                  child: const Padding(
-                    padding:
-                        EdgeInsets.only(left: 30, right: 30, top: 5, bottom: 5),
-                    child: Text(
-                      "Agregar",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontSize: 22),
-                    ),
-                  ),
-                )
+                 ButtonSecondVersion(text:"Agregar")
               ],
             ),
           ),
@@ -114,5 +80,9 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
+
+
+
 
 

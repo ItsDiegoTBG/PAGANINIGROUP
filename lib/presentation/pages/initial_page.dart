@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:paganini/presentation/widgets/button_with_icon.dart';
+import 'package:paganini/presentation/widgets/buttons/button_with_icon.dart';
 
 class InitialPage extends StatelessWidget {
   const InitialPage({super.key});

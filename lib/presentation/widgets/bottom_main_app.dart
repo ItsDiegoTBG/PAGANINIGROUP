@@ -51,7 +51,7 @@ class BottomMainAppBar extends StatelessWidget {
               padding: const EdgeInsets.only(right: 40),
               child: MaterialButton(
                 onPressed: () {
-                  
+                  Navigator.popAndPushNamed(context, "wallet_page");
                 },
                 minWidth: 40,
                 // color:  Colors.black,

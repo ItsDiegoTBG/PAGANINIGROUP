@@ -45,6 +45,7 @@ dependencies:
   url_launcher: ^6.3.0
   screenshot: ^3.0.0
   path: ^1.9.0
+  smooth_page_indicator: ^1.2.0+3
 
 dev_dependencies:
   flutter_test:

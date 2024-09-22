@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
-import 'package:paganini/presentation/widgets/button_without_icon.dart';
+import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
 import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
-import 'package:paganini/presentation/widgets/qr_code_scanner.dart';
+import 'package:paganini/device/qr_code_scanner.dart';
 import 'package:paganini/utils/colors.dart';
 
 
@@ -88,7 +88,9 @@ class _QrPageState extends State<QrPage> {
                   ),
                   ButtonWithoutIcon(
                     text: "Guardar Qr",
-                    onPressed: (){},
+                    onPressed: (){
+                      Navigator.pushNamed(context,"scanner_page");
+                    },
                     fontStyle: FontStyle.normal,
                   ),
                  
