@@ -74,7 +74,7 @@ class _WalletPageState extends State<WalletPage> {
         child: Column(
           children: [
             Padding(
-                padding: const EdgeInsets.only(top: 10),
+                padding: const EdgeInsets.only(top: 50),
                 child: Container(
                   height: 130,
                   width: 360,
@@ -159,9 +159,9 @@ class _WalletPageState extends State<WalletPage> {
               padding: const EdgeInsets.only(top: 5),
               child: SmoothPageIndicatorWidget(pageController: _pageController,totalCounts: tarjetas.length),
             ),
-
+            const SizedBox(height: 40,),
             const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ButtonSecondVersionIcon(text: "Eliminar", icon: Icons.delete_rounded, iconAlignment: IconAlignment.end),
                ButtonSecondVersionIcon(text: "Nueva", icon: Icons.add_card_rounded, iconAlignment: IconAlignment.start),
