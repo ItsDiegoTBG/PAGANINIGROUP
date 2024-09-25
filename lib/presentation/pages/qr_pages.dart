@@ -15,6 +15,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 
 class QrPage extends StatefulWidget {
   const QrPage({super.key});
@@ -79,16 +80,25 @@ class _QrPageState extends State<QrPage> {
                         Icons.qr_code_scanner_rounded,
                         size: 40,
                       )),
-                  const SizedBox(
-                    width: 25,
+                  
+                  Padding(
+                    padding: const EdgeInsets.only(right: 25,left: 25),
+                    child: ButtonWithoutIcon(
+                      text: "Guardar Qr",
+                      onPressed: () async {                    
+                       final image = await screenshotController.captureFromWidget(const QrContainer());
+                       saveImage(image); 
+                      },
+                      fontStyle: FontStyle.normal,
+                    ),
                   ),
-                  ButtonWithoutIcon(
-                    text: "Guardar Qr",
-                    onPressed: () async {                    
-                     final image = await screenshotController.captureFromWidget(const QrContainer());
-                     saveImage(image); 
-                    },
-                    fontStyle: FontStyle.normal,
+
+                  IconButton(
+                    onPressed: ()async {
+                      final image = await screenshotController.captureFromWidget(const QrContainer());
+                      await shareImage(image);
+                    }, 
+                    icon: const Icon(Icons.share_rounded,size: 40,)
                   ),
                 ],
               ),
@@ -149,4 +159,17 @@ Future<String> saveImage(Uint8List bytes) async {
   final result = await ImageGallerySaver.saveImage(bytes,name: name);
 
   return result['filePath'];
+}
+
+Future shareImage(Uint8List bytes) async {
+  final directory = await getTemporaryDirectory(); 
+  final image = File('${directory.path}/temp_image.png'); 
+  
+  await image.writeAsBytes(bytes); // Guardar la imagen solo temporalmente
+
+  // Compartir la imagen directamente desde los bytes
+  await Share.shareXFiles([XFile(image.path)], text: 'Mi Qr de Paganini');
+
+  // Eliminar el archivo temporal después de compartirlo
+  await image.delete();
 }
