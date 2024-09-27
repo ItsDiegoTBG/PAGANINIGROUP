@@ -50,6 +50,7 @@ dependencies:
   permission_handler: ^11.3.1
   image_gallery_saver: ^2.0.3
   share_plus: ^10.0.2
+  flutter_native_splash: ^2.4.1
 
 dev_dependencies:
   flutter_test:
@@ -104,3 +105,12 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_native_splash:
+    android: true
+    ios: true
+    web: false
+    color: "#9266fb" 
+    image: "assets/image/paganini_icono.png"
+    android_12:
+      color: "#9266fb" 
+      image: "assets/image/paganini_icono.png"
