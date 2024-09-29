@@ -3,7 +3,6 @@ import 'package:paganini/presentation/pages/home_page.dart';
 import 'package:paganini/presentation/pages/initial_page.dart';
 import 'package:paganini/presentation/pages/login_page.dart';
 import 'package:paganini/presentation/pages/qr_pages.dart';
-import 'package:paganini/presentation/pages/scanner_page.dart';
 import 'package:paganini/presentation/pages/wallet_page.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 void main() {
@@ -32,7 +31,6 @@ class MainApp extends StatelessWidget {
         "login_page": (BuildContext context) => const LoginRegisterScreen(),
         "home_page" : (BuildContext context) => const HomePage(),
         "qr_page" : (BuildContext context) => const QrPage(),
-        "scanner_page" :(BuildContext context) => const ScannerPage(),
         "wallet_page" : (BuildContext context) => const WalletPage(),
       },
     );
