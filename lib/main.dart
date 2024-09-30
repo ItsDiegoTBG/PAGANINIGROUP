@@ -23,6 +23,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Paganini',
       debugShowCheckedModeBanner: false,
       initialRoute: "initial_page",
       theme: ThemeData(appBarTheme:  const AppBarTheme(color: Colors.white)),

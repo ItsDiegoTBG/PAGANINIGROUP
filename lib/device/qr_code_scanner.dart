@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:screenshot/screenshot.dart';
+
 
 
 class QrCodeScanner extends StatelessWidget {
