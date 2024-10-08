@@ -38,6 +38,7 @@ A new Flutter project.
 
 - [Repositorio del Proyecto](https://github.com/ItsDiegoTBG/PAGANINIGROU)
 - [Diseño en Figma](https://www.figma.com/design/HPmkTYI7NAjY4HPvg3uvL7/Paganini-Mobile?node-id=0-1&node-type=canvas&t=GlMAV0dP4uLtuYOk-0)
+- [Notion](https://www.notion.so/PAGANINI-MOBILE-SCRUM-e4c4c8c83c2144a7886ab36b70e31421)
 
 ## Backlog del Proyecto
 
