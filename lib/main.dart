@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:paganini/presentation/pages/home_page.dart';
-import 'package:paganini/presentation/pages/initial_page.dart';
-import 'package:paganini/presentation/pages/login_page.dart';
-import 'package:paganini/presentation/pages/qr_pages.dart';
-import 'package:paganini/presentation/pages/wallet_page.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import './routes/app_pages.dart';
 

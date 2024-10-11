@@ -70,11 +70,7 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
-flutter_launcher_icons:
-  android: true
-  ios: true
-  image_path: "assets/image/paganini_icono.png"
-  
+
 
 flutter:
 
@@ -89,6 +85,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
       - assets/image/
+      - assets/image/appstore.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
@@ -124,3 +121,12 @@ flutter_native_splash:
       color: "#9266fb" 
       image: "assets/image/paganini_icono.png"
 
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/image/appstore.png"
+  min_sdk_android: 24
+  adaptive_icon_background: "#ffffff" # You can use a color or image for the background
+  adaptive_icon_foreground: "assets/image/appstore.png" # For adaptive icons on Android
+  
