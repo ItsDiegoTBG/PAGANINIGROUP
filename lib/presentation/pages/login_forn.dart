@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
 import 'package:paganini/presentation/widgets/textfile_form.dart';
+import 'package:paganini/routes/app_pages.dart';
 import 'package:paganini/utils/colors.dart';
 
 class LoginForm extends StatelessWidget {
@@ -28,7 +30,8 @@ class LoginForm extends StatelessWidget {
           children: [
              Expanded(
               child: ButtonWithoutIcon(text: "Iniciar Sesion",onPressed: (){
-                Navigator.pushReplacementNamed(context, "home_page");
+                debugPrint("INICIANDO SESION");
+                Get.offAllNamed(Routes.HOME);
               },),
             ),
             const SizedBox(width: 10),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:paganini/routes/app_pages.dart';
 import 'package:paganini/utils/colors.dart';
 
 class FloatingButtonNavBarQr extends StatelessWidget {
@@ -16,7 +18,7 @@ class FloatingButtonNavBarQr extends StatelessWidget {
         foregroundColor: Colors.white,
         shape: const CircleBorder(),
         onPressed: () {
-          Navigator.pushNamed(context, "qr_page");
+          Get.toNamed(Routes.QRPAGE);
         },
         child: const Icon(
           Icons.qr_code,

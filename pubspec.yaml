@@ -52,6 +52,8 @@ dependencies:
   share_plus: ^10.0.2
   flutter_native_splash: ^2.4.1
   flutter_launcher_icons: ^0.14.1
+  get: ^4.6.6
+  animated_snack_bar: ^0.4.0
 
 dev_dependencies:
   flutter_test:

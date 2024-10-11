@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
@@ -26,7 +26,6 @@ class QrPage extends StatefulWidget {
 class _QrPageState extends State<QrPage> {
   String? _result;
 
-
   final screenshotController = ScreenshotController();
 
   Future<String> get directoryPath async {
@@ -34,12 +33,9 @@ class _QrPageState extends State<QrPage> {
     return directory;
   }
 
-
-
   void setResult(String result) {
     setState(() => _result = result);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -47,60 +43,69 @@ class _QrPageState extends State<QrPage> {
       backgroundColor: Colors.white,
       body: Center(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 30, right: 10),
               child: SizedBox(
-                width: 200,
+                width: MediaQuery.of(context).size.width * 0.6,
                 child: Image.asset(
                     "assets/image/paganini_logo_horizontal_morado.png"),
               ),
             ),
-            Text(_result ?? 'No result'),
-            Screenshot(
-              controller: screenshotController,
-              child: const  QrContainer(),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-             
-                children: [
-                  IconButton(
-                      onPressed: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  QrCodeScanner(setResult: setResult),
-                            ),
-                          ),
-                      icon: const Icon(
-                        Icons.qr_code_scanner_rounded,
-                        size: 40,
-                      )),
-                  
-                  Padding(
-                    padding: const EdgeInsets.only(right: 25,left: 25),
-                    child: ButtonWithoutIcon(
-                      text: "Guardar Qr",
-                      onPressed: () async {                    
-                       final image = await screenshotController.captureFromWidget(const QrContainer());
-                       saveImage(image); 
-                      },
-                      fontStyle: FontStyle.normal,
-                    ),
-                  ),
+            //Text(_result ?? 'No result'),
 
-                  IconButton(
-                    onPressed: ()async {
-                      final image = await screenshotController.captureFromWidget(const QrContainer());
-                      await shareImage(image);
-                    }, 
-                    icon: const Icon(Icons.share_rounded,size: 40,)
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Screenshot(
+                    controller: screenshotController,
+                    child: const QrContainer(),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    IconButton(
+                      icon: const Icon(
+                        Icons.save_rounded,
+                        size: 40,
+                      ),
+                      onPressed: () async {
+                        final image = await screenshotController
+                            .captureFromWidget(const QrContainer());
+                        // ignore: use_build_context_synchronously
+                        await saveImage(image, context);
+                      },
+                    ),
+                    IconButton(
+                        onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    QrCodeScanner(setResult: setResult),
+                              ),
+                            ),
+                        icon: const Icon(
+                          Icons.qr_code_scanner_rounded,
+                          size: 60,
+                          color: AppColors.primaryColor,
+                        )),
+                    IconButton(
+                        onPressed: () async {
+                          final image = await screenshotController
+                              .captureFromWidget(const QrContainer());
+                          await shareImage(image);
+                        },
+                        icon: const Icon(
+                          Icons.share_rounded,
+                          size: 40,
+                        )),
+                  ],
+                )
+              ],
             )
           ],
         ),
@@ -127,8 +132,8 @@ class QrContainer extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
-        padding: const EdgeInsets.only(
-            top: 40, bottom: 40, left: 20, right: 20),
+        padding:
+            const EdgeInsets.only(top: 40, bottom: 40, left: 20, right: 20),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -139,8 +144,7 @@ class QrContainer extends StatelessWidget {
             version: QrVersions.auto,
             size: 200.0,
             eyeStyle: const QrEyeStyle(
-                eyeShape: QrEyeShape.square,
-                color: AppColors.primaryColor),
+                eyeShape: QrEyeShape.square, color: AppColors.primaryColor),
           ),
         ),
       ),
@@ -148,22 +152,42 @@ class QrContainer extends StatelessWidget {
   }
 }
 
-Future<String> saveImage(Uint8List bytes) async {
+Future<String> saveImage(Uint8List bytes, context) async {
   await [Permission.storage].request();
   final time = DateTime.now()
-    .toIso8601String()
-    .replaceAll('.', '-')
-    .replaceAll(':', '-');
+      .toIso8601String()
+      .replaceAll('.', '-')
+      .replaceAll(':', '-');
   final name = "PaganiniQr_$time";
-  final result = await ImageGallerySaver.saveImage(bytes,name: name);
+  final result = await ImageGallerySaver.saveImage(bytes, name: name);
+
+  if (result['filePath'] != null) {
+    AnimatedSnackBar(
+      duration:  const Duration(seconds: 3),
+      builder: ((context) {
+        return const MaterialAnimatedSnackBar(
+          iconData: Icons.check,
+          messageText: 'El QR se guardo correctamente',
+          type: AnimatedSnackBarType.success,
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+          backgroundColor: Color.fromARGB(255, 59, 141, 55),
+          titleTextStyle: TextStyle(
+            
+            color: Color.fromARGB(255, 255, 255, 255),
+            fontSize: 10,
+          ),
+        );
+      }),
+    ).show(context);
+  } else {}
 
   return result['filePath'];
 }
 
 Future shareImage(Uint8List bytes) async {
-  final directory = await getTemporaryDirectory(); 
-  final image = File('${directory.path}/temp_image.png'); 
-  
+  final directory = await getTemporaryDirectory();
+  final image = File('${directory.path}/temp_image.png');
+
   await image.writeAsBytes(bytes); // Guardar la imagen solo temporalmente
 
   // Compartir la imagen directamente desde los bytes

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:paganini/presentation/pages/home_page.dart';
 import 'package:paganini/presentation/pages/initial_page.dart';
 import 'package:paganini/presentation/pages/login_page.dart';
 import 'package:paganini/presentation/pages/qr_pages.dart';
 import 'package:paganini/presentation/pages/wallet_page.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import './routes/app_pages.dart';
+
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
@@ -13,7 +16,7 @@ void main() {
 }
 
 void setup() async {
-  await Future.delayed(const Duration(seconds: 3));
+  await Future.delayed(const Duration(seconds: 2));
   FlutterNativeSplash.remove();
 }
 
@@ -22,18 +25,13 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Paganini',
       debugShowCheckedModeBanner: false,
-      initialRoute: "initial_page",
+      initialRoute: Routes.INITIAL,
+      getPages: AppPages.pages,
       theme: ThemeData(appBarTheme:  const AppBarTheme(color: Colors.white)),
-      routes: {
-        "initial_page": (BuildContext context) => const InitialPage(),
-        "login_page": (BuildContext context) => const LoginRegisterScreen(),
-        "home_page" : (BuildContext context) => const HomePage(),
-        "qr_page" : (BuildContext context) => const QrPage(),
-        "wallet_page" : (BuildContext context) => const WalletPage(),
-      },
+      
     );
   }
 }

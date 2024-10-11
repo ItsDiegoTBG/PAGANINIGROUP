@@ -58,9 +58,25 @@ final List<Map<String, String>> tarjetas = [
     },
   ];
 
-  final PageController _pageController = PageController(viewportFraction: 0.8,initialPage: 0);
+  
 
 class _WalletPageState extends State<WalletPage> {
+
+  late  PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(viewportFraction: 0.8, initialPage: 0); 
+  }
+
+   @override
+  void dispose() {
+    _pageController.dispose(); 
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
