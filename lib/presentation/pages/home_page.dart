@@ -3,7 +3,7 @@ import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
-import 'package:paganini/utils/colors.dart';
+import 'package:paganini/core/utils/colors.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

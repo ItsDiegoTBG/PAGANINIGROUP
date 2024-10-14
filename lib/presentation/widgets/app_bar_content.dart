@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:paganini/routes/app_pages.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 
 class ContentAppBar extends StatelessWidget {
   const ContentAppBar({
@@ -24,7 +23,8 @@ class ContentAppBar extends StatelessWidget {
           padding: const EdgeInsets.only(right: 1),
           child: IconButton(
               onPressed: () {
-                Get.offAllNamed(Routes.INITIAL);
+                Navigator.pushNamedAndRemoveUntil(
+                    context, Routes.INITIAL, (Route<dynamic> route) => false);
               },
               icon: const Icon(Icons.logout_rounded)),
         )

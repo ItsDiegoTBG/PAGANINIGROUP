@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
 import 'package:paganini/presentation/widgets/textfile_form.dart';
-import 'package:paganini/utils/colors.dart';
+import 'package:paganini/core/utils/colors.dart';
 
 class RegisterForm extends StatelessWidget {
   const RegisterForm({super.key});

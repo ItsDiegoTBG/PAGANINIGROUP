@@ -5,10 +5,9 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
-import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
 import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
-import 'package:paganini/device/qr_code_scanner.dart';
-import 'package:paganini/utils/colors.dart';
+import 'package:paganini/core/device/qr_code_scanner.dart';
+import 'package:paganini/core/utils/colors.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -54,7 +53,7 @@ class _QrPageState extends State<QrPage> {
                     "assets/image/paganini_logo_horizontal_morado.png"),
               ),
             ),
-            //Text(_result ?? 'No result'),
+            Text(_result ?? 'No result'),
 
             Column(
               mainAxisAlignment: MainAxisAlignment.center,

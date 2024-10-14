@@ -6,7 +6,7 @@ class CreditCardWidget extends StatelessWidget {
   final String cardNumber;
   final String cardType;
   final String validThru;
-  final Color? color;
+  final Color color;
   final bool? isFavorite;
   final String cvv;
   const CreditCardWidget({
@@ -14,7 +14,7 @@ class CreditCardWidget extends StatelessWidget {
     required this.cardHolderFullName,
     required this.cardNumber,
     required this.validThru,
-    this.color,
+    required this.color,
     this.isFavorite,
     required this.cardType,
     required this.cvv,
@@ -42,7 +42,7 @@ class CreditCardWidget extends StatelessWidget {
       validThru: validThru,
       cardType: whatCardTypeIs(cardType),
       topLeftColor: Colors.black,
-      bottomRightColor: color ?? Colors.blue,
+      bottomRightColor: color ,
       cvvNumber: cvv,
       cardProviderLogo: isFavorite == true
           ? const Icon(

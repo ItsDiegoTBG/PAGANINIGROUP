@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:paganini/utils/colors.dart';
+import 'package:paganini/core/utils/colors.dart';
 
 class ButtonWithIcon extends StatelessWidget {
   final Function function;

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
 import 'package:paganini/presentation/widgets/textfile_form.dart';
-import 'package:paganini/routes/app_pages.dart';
-import 'package:paganini/utils/colors.dart';
+import 'package:paganini/core/utils/colors.dart';
 
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
@@ -14,7 +13,9 @@ class LoginForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text("Usuario", style: TextStyle(fontSize: 16)),
-        const TextFieldForm( hintText: "Ingresa tu usuario",),
+        const TextFieldForm(
+          hintText: "Ingresa tu usuario",
+        ),
         const SizedBox(height: 20),
         const Text("Contraseña", style: TextStyle(fontSize: 16)),
         const TextField(
@@ -28,11 +29,15 @@ class LoginForm extends StatelessWidget {
         const SizedBox(height: 20),
         Row(
           children: [
-             Expanded(
-              child: ButtonWithoutIcon(text: "Iniciar Sesion",onPressed: (){
-                debugPrint("INICIANDO SESION");
-                Get.offAllNamed(Routes.HOME);
-              },),
+            Expanded(
+              child: ButtonWithoutIcon(
+                text: "Iniciar Sesion",
+                onPressed: () {
+                  debugPrint("INICIANDO SESION");
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, Routes.HOME, (Route<dynamic> route) => false);
+                },
+              ),
             ),
             const SizedBox(width: 10),
             ElevatedButton(
@@ -68,7 +73,3 @@ class LoginForm extends StatelessWidget {
     );
   }
 }
-
-
-
-

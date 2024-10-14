@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paganini/presentation/pages/login_forn.dart';
 import 'package:paganini/presentation/pages/register_form.dart';
-import 'package:paganini/utils/colors.dart';
+import 'package:paganini/core/utils/colors.dart';
 
 class LoginRegisterScreen extends StatefulWidget {
   const LoginRegisterScreen({super.key});

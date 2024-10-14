@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:paganini/routes/app_pages.dart';
-import 'package:paganini/utils/colors.dart';
+import 'package:paganini/core/routes/app_routes.dart';
+import 'package:paganini/core/utils/colors.dart';
 
 
 class BottomMainAppBar extends StatelessWidget {
@@ -34,7 +33,7 @@ class BottomMainAppBar extends StatelessWidget {
                 // color: Colors.black,
                 minWidth: 40,
                 onPressed: () {
-                  Get.toNamed(Routes.HOME);
+                  Navigator.pushReplacementNamed(context, Routes.HOME);
                 },
                 child: const Column(
                   mainAxisSize: MainAxisSize.min,
@@ -53,7 +52,7 @@ class BottomMainAppBar extends StatelessWidget {
               padding: const EdgeInsets.only(right: 40),
               child: MaterialButton(
                 onPressed: () {
-                  Get.toNamed(Routes.WALLETPAGE);
+                  Navigator.pushReplacementNamed(context, Routes.WALLETPAGE);
                 },
                 minWidth: 40,
                 // color:  Colors.black,

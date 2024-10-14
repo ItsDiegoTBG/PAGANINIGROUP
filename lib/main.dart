@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import './routes/app_pages.dart';
+import 'package:paganini/core/routes/app_routes.dart';
+import 'package:paganini/presentation/pages/home_page.dart';
+import 'package:paganini/presentation/pages/initial_page.dart';
+import 'package:paganini/presentation/pages/login_page.dart';
+import 'package:paganini/presentation/pages/qr_pages.dart';
+import 'package:paganini/presentation/pages/wallet_page.dart';
+
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -20,11 +26,17 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return MaterialApp(
       title: 'Paganini',
       debugShowCheckedModeBanner: false,
       initialRoute: Routes.INITIAL,
-      getPages: AppPages.pages,
+      routes: {
+        Routes.INITIAL: (context) => const InitialPage(),
+        Routes.HOME: (context) => const HomePage(),
+        Routes.LOGIN : (context) => const LoginRegisterScreen(),
+        Routes.QRPAGE : (context) => const QrPage(),
+        Routes.WALLETPAGE : (context) => const WalletPage(),
+      },
       theme: ThemeData(appBarTheme:  const AppBarTheme(color: Colors.white)),
       
     );

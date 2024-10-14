@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/presentation/widgets/buttons/button_with_icon.dart';
-import 'package:paganini/routes/app_pages.dart';
 class InitialPage extends StatelessWidget {
   const InitialPage({super.key});
 
@@ -69,7 +68,7 @@ class InitialPage extends StatelessWidget {
                     ButtonWithIcon(
                       function: () => {
                         debugPrint("Hola desde login"),        
-                        Get.toNamed(Routes.LOGIN)
+                        Navigator.pushReplacementNamed(context, Routes.LOGIN)
                       },
                       icon: Icons.login_rounded,
                       textButton: "Iniciar Sesión",
