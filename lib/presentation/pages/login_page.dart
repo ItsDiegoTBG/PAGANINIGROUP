@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/presentation/pages/login_forn.dart';
 import 'package:paganini/presentation/pages/register_form.dart';
 import 'package:paganini/core/utils/colors.dart';
@@ -16,6 +17,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.only(right: 16, left: 16, bottom: 16, top: 0),
@@ -129,17 +131,20 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
               ),
             )
           ],
-        ),
+        ), 
       ),
       floatingActionButton: FloatingActionButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50)
-        ),
+        //shape: RoundedRectangleBorder(
+        //  borderRadius: BorderRadius.circular(50)
+        //),
         onPressed: () {
-          Navigator.pop(context);
+          debugPrint("Pop to Initial Page Paganini");
+          Navigator.popAndPushNamed(context, Routes.INITIAL);
         },
-        backgroundColor: AppColors.secondaryColor,
+        backgroundColor: AppColors.primaryColor,
         hoverColor: AppColors.primaryColor,
+        foregroundColor: Colors.white,
+        focusColor: AppColors.secondaryColor,
         child: const Icon(Icons.arrow_back_rounded),
       ),
     );

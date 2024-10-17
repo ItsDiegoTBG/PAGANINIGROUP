@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/domain/models/card_model.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
@@ -19,7 +20,7 @@ class WalletPage extends StatefulWidget {
 
 List<CreditCardModel> creditCardList = [
   CreditCardModel(
-    cardHolderFullName: 'John Doe',
+    cardHolderFullName: 'Principal',
     cardNumber: '1234 5678 9012 3456',
     cardType: 'credit',
     validThru: '12/26',
@@ -28,29 +29,29 @@ List<CreditCardModel> creditCardList = [
     cvv: '123',
   ),
   CreditCardModel(
-    cardHolderFullName: 'Jane Smith',
+    cardHolderFullName: 'Banco Pichncha',
     cardNumber: '9876 5432 1098 7654',
     cardType: 'debit',
     validThru: '11/25',
-    color: Colors.green,
+    color: const Color.fromARGB(255, 230, 196, 60),
     isFavorite: false,
     cvv: '456',
   ),
   CreditCardModel(
-    cardHolderFullName: 'Alice Johnson',
+    cardHolderFullName: 'Banco Pacifico',
     cardNumber: '1111 2222 3333 4444',
     cardType: 'giftCard',
     validThru: '10/24',
-    color: Colors.purple,
+    color: Colors.blue,
     isFavorite: false,
     cvv: '789',
   ),
   CreditCardModel(
-    cardHolderFullName: 'Bob Brown',
+    cardHolderFullName: 'Internacional',
     cardNumber: '5555 6666 7777 8888',
     cardType: 'credit',
     validThru: '09/23',
-    color: Colors.orange,
+    color: const Color.fromARGB(255, 0, 0, 0),
     isFavorite: true,
     cvv: '321',
   ),
@@ -121,16 +122,16 @@ class _WalletPageState extends State<WalletPage> {
                     ],
                   ),
                 )),
-            const Padding(
+             Padding(
               padding: EdgeInsets.only(top: 5, bottom: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ButtonSecondVersion(text: "Agregar"),
+                  ButtonSecondVersion(text: "Agregar",function: (){},),
                   SizedBox(
                     width: 10,
                   ),
-                  ButtonSecondVersion(text: "Transferir")
+                  ButtonSecondVersion(text: "Transferir",function: (){},)
                 ],
               ),
             ),
@@ -188,14 +189,18 @@ class _WalletPageState extends State<WalletPage> {
             const SizedBox(
               height: 40,
             ),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ButtonSecondVersionIcon(
+                  function: (){},
                     text: "Eliminar",
                     icon: Icons.delete_rounded,
                     iconAlignment: IconAlignment.end),
                 ButtonSecondVersionIcon(
+                    function: (){
+                      Navigator.pushNamed(context, Routes.CARDPAGE);
+                    },
                     text: "Nueva",
                     icon: Icons.add_card_rounded,
                     iconAlignment: IconAlignment.start),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 
 
 
@@ -34,7 +35,7 @@ class QrCodeScanner extends StatelessWidget {
             padding: const EdgeInsets.only(right: 1),
             child: IconButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, "qr_page");
+                  Navigator.popAndPushNamed(context, Routes.QRPAGE);
                 },
                 icon: const Icon(Icons.arrow_back_rounded)),
           )

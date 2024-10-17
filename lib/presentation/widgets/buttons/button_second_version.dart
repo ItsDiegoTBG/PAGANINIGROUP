@@ -3,15 +3,24 @@ import 'package:paganini/core/utils/colors.dart';
 
 class ButtonSecondVersion extends StatelessWidget {
   final String text;
+  final Function function;
+  final double verticalPadding;
+  final double horizontalPadding;
   const ButtonSecondVersion({
     super.key,
-    required this.text
+    required this.text,
+    required this.function,
+    this.verticalPadding = 5,
+    this.horizontalPadding = 30,
   });
 
   @override
   Widget build(BuildContext context) {
+
     return TextButton(
-      onPressed: () {},
+      onPressed: () {
+        function();
+      },
       style: TextButton.styleFrom(
           backgroundColor: AppColors.secondaryColor,
           shape: RoundedRectangleBorder(
@@ -19,7 +28,7 @@ class ButtonSecondVersion extends StatelessWidget {
           )),
       child:  Padding(
         padding:
-            const EdgeInsets.only(left: 30, right: 30, top: 5, bottom: 5),
+            EdgeInsets.symmetric(vertical: verticalPadding,horizontal:horizontalPadding),
         child: Text(
           text,
           style: const TextStyle(

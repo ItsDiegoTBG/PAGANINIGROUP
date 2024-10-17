@@ -9,6 +9,7 @@ class CreditCardWidget extends StatelessWidget {
   final Color color;
   final bool? isFavorite;
   final String cvv;
+  final double width;
   const CreditCardWidget({
     super.key,
     required this.cardHolderFullName,
@@ -18,6 +19,7 @@ class CreditCardWidget extends StatelessWidget {
     this.isFavorite,
     required this.cardType,
     required this.cvv,
+    this.width = 300
   });
 
   @override
@@ -36,13 +38,14 @@ class CreditCardWidget extends StatelessWidget {
     }
 
     return CreditCardUi(
+      width: 300,
       cardHolderFullName: cardHolderFullName,
       doesSupportNfc: true,
       cardNumber: cardNumber,
       validThru: validThru,
       cardType: whatCardTypeIs(cardType),
-      topLeftColor: Colors.black,
-      bottomRightColor: color ,
+      topLeftColor: const Color.fromARGB(255, 26, 24, 24),
+      bottomRightColor: color,
       cvvNumber: cvv,
       cardProviderLogo: isFavorite == true
           ? const Icon(

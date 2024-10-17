@@ -30,10 +30,10 @@ class HomePage extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               color: AppColors.primaryColor,
             ),
-            child: const  Row(
+            child:   Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                 Column(
+                 const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
@@ -56,7 +56,7 @@ class HomePage extends StatelessWidget {
                 ),
 
                 //boton de agregar
-                 ButtonSecondVersion(text:"Agregar")
+                 ButtonSecondVersion(text:"Agregar",function: (){},)
               ],
             ),
           ),
