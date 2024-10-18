@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
-import 'package:paganini/domain/models/card_model.dart';
+import 'package:paganini/domain/entity/card_credit.dart';
+import 'package:paganini/domain/usecases/add_credit_card.dart';
+import 'package:paganini/domain/usecases/get_credit_cards.dart';
+import 'package:paganini/presentation/providers/credit_card_provider.dart';
+import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
@@ -9,6 +13,7 @@ import 'package:paganini/presentation/widgets/credit_card_ui.dart';
 import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
 import 'package:paganini/presentation/widgets/smooth_page_indicator.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class WalletPage extends StatefulWidget {
@@ -18,44 +23,8 @@ class WalletPage extends StatefulWidget {
   State<WalletPage> createState() => _WalletPageState();
 }
 
-List<CreditCardModel> creditCardList = [
-  CreditCardModel(
-    cardHolderFullName: 'Principal',
-    cardNumber: '1234 5678 9012 3456',
-    cardType: 'credit',
-    validThru: '12/26',
-    color: Colors.blueAccent,
-    isFavorite: true,
-    cvv: '123',
-  ),
-  CreditCardModel(
-    cardHolderFullName: 'Banco Pichncha',
-    cardNumber: '9876 5432 1098 7654',
-    cardType: 'debit',
-    validThru: '11/25',
-    color: const Color.fromARGB(255, 230, 196, 60),
-    isFavorite: false,
-    cvv: '456',
-  ),
-  CreditCardModel(
-    cardHolderFullName: 'Banco Pacifico',
-    cardNumber: '1111 2222 3333 4444',
-    cardType: 'giftCard',
-    validThru: '10/24',
-    color: Colors.blue,
-    isFavorite: false,
-    cvv: '789',
-  ),
-  CreditCardModel(
-    cardHolderFullName: 'Internacional',
-    cardNumber: '5555 6666 7777 8888',
-    cardType: 'credit',
-    validThru: '09/23',
-    color: const Color.fromARGB(255, 0, 0, 0),
-    isFavorite: true,
-    cvv: '321',
-  ),
-];
+late GetCreditCardsUseCase getCreditCardsUseCase;
+late Future<List<CreditCardEntity>> creditCardsFuture;
 
 class _WalletPageState extends State<WalletPage> {
   late PageController _pageController;
@@ -64,6 +33,9 @@ class _WalletPageState extends State<WalletPage> {
   void initState() {
     super.initState();
     _pageController = PageController(viewportFraction: 0.8, initialPage: 0);
+    final creditCardProvider =
+        Provider.of<CreditCardProvider>(context, listen: false);
+    creditCardProvider.fetchCreditCards();
   }
 
   @override
@@ -74,6 +46,12 @@ class _WalletPageState extends State<WalletPage> {
 
   @override
   Widget build(BuildContext context) {
+    final saldoProviderWatch = context.watch<SaldoProvider>();
+    final saldoProviderRead = context.read<SaldoProvider>();
+    final creditCardProviderWatch = context.watch<CreditCardProvider>();
+
+    // Obtenemos la lista de tarjetas actualizada directamente del provider
+    final creditCards = creditCardProviderWatch.creditCards;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -92,10 +70,10 @@ class _WalletPageState extends State<WalletPage> {
                   decoration: BoxDecoration(
                       color: AppColors.primaryColor,
                       borderRadius: BorderRadius.circular(20)),
-                  child: const Column(
+                  child: Column(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 40, top: 8),
+                      const Padding(
+                        padding: const EdgeInsets.only(left: 40, top: 8),
                         child: Align(
                           alignment: Alignment.topLeft,
                           child: Text(
@@ -108,12 +86,12 @@ class _WalletPageState extends State<WalletPage> {
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                           height:
                               10), // Espacio entre el texto de saldo y el valor
                       Text(
-                        '\$688', // Aquí pones el valor que quieres mostrar
-                        style: TextStyle(
+                        "\$${saldoProviderWatch.saldo}", // Aquí pones el valor que quieres mostrar
+                        style: const TextStyle(
                             color: Colors.white, // Color del texto
                             fontSize: 25,
                             fontWeight: FontWeight.bold,
@@ -122,69 +100,80 @@ class _WalletPageState extends State<WalletPage> {
                     ],
                   ),
                 )),
-             Padding(
-              padding: EdgeInsets.only(top: 5, bottom: 20),
+            Padding(
+              padding: const EdgeInsets.only(top: 5, bottom: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ButtonSecondVersion(text: "Agregar",function: (){},),
-                  SizedBox(
+                  ButtonSecondVersion(
+                      text: "Agregar",
+                      function: () {
+                        saldoProviderRead.agregar();
+                      }),
+                  const SizedBox(
                     width: 10,
                   ),
-                  ButtonSecondVersion(text: "Transferir",function: (){},)
+                  ButtonSecondVersion(
+                    text: "Transferir",
+                    function: () {},
+                  )
                 ],
               ),
             ),
-
+            Text(creditCards.length.toString()),
             //tarjatas
-            SizedBox(
-              height: 190,
-              child: PageView.builder(
-                  controller: _pageController,
-                  itemCount: creditCardList.length,
-                  itemBuilder: (context, index) {
-                    final card = creditCardList[index];
-                    return AnimatedBuilder(
-                        animation: _pageController,
-                        builder: (context, child) {
-                          double value = 1.0;
-                          if (_pageController.position.haveDimensions) {
-                            value = _pageController.page! - index;
-                            value = (1 - (value.abs() * 0.3))
-                                .clamp(0.7, 1.0); // Reduce la escala
-                          } else {
-                            value = index == 0 ? 1.0 : 0.7;
-                          }
-                          return Transform.scale(
-                            scale: value,
-                            child: Opacity(
-                                opacity: 1,
-                                child: CreditCardWidget(
-                                  cardHolderFullName: card.cardHolderFullName,
-                                  cardNumber: card.cardNumber,
-                                  validThru: card.validThru,
-                                  cardType: card.cardType,
-                                  cvv: card.cvv,
-                                  color: card.color,
-                                  isFavorite: card.isFavorite,
-                                )),
-                          );
-                        });
-                  }),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.only(top: 5),
-              child: SmoothPageIndicatorWidget(
-                pageController: _pageController,
-                totalCounts: creditCardList.length,
-                smoothPageEffect: const WormEffect(
-                  activeDotColor: AppColors.primaryColor,
-                  dotColor: AppColors.secondaryColor,
-                  dotHeight: 10,
-                  dotWidth: 10,
+            Column(
+              children: [
+                SizedBox(
+                  height: 190,
+                  child: PageView.builder(
+                      controller: _pageController,
+                      itemCount: creditCards.length,
+                      itemBuilder: (context, index) {
+                        final card = creditCards[index];
+                        return AnimatedBuilder(
+                            animation: _pageController,
+                            builder: (context, child) {
+                              double value = 1.0;
+                              if (_pageController.position.haveDimensions) {
+                                value = _pageController.page! - index;
+                                value = (1 - (value.abs() * 0.3))
+                                    .clamp(0.7, 1.0); // Reduce la escala
+                              } else {
+                                value = index == 0 ? 1.0 : 0.7;
+                              }
+                              return Transform.scale(
+                                scale: value,
+                                child: Opacity(
+                                    opacity: 1,
+                                    child: CreditCardWidget(
+                                      cardHolderFullName:
+                                          card.cardHolderFullName,
+                                      cardNumber: card.cardNumber,
+                                      validThru: card.validThru,
+                                      cardType: card.cardType,
+                                      cvv: card.cvv,
+                                      color: card.color,
+                                      isFavorite: card.isFavorite,
+                                    )),
+                              );
+                            });
+                      }),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 5),
+                  child: SmoothPageIndicatorWidget(
+                    pageController: _pageController,
+                    totalCounts: creditCards.length,
+                    smoothPageEffect: const WormEffect(
+                      activeDotColor: AppColors.primaryColor,
+                      dotColor: AppColors.secondaryColor,
+                      dotHeight: 10,
+                      dotWidth: 10,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(
               height: 40,
@@ -193,12 +182,14 @@ class _WalletPageState extends State<WalletPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ButtonSecondVersionIcon(
-                  function: (){},
+                    function: () {
+                      debugPrint("La longitud");
+                    },
                     text: "Eliminar",
                     icon: Icons.delete_rounded,
                     iconAlignment: IconAlignment.end),
                 ButtonSecondVersionIcon(
-                    function: (){
+                    function: () {
                       Navigator.pushNamed(context, Routes.CARDPAGE);
                     },
                     text: "Nueva",

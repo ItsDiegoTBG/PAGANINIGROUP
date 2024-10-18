@@ -1,16 +1,18 @@
 
 import 'package:flutter/material.dart';
 
-class CreditCardModel {
+class CreditCardEntity  {
+  final int id;
   final String cardHolderFullName;
   final String cardNumber;
-  final String cardType; // Puede ser 'debit', 'credit', 'giftCard', etc.
+  final String cardType; 
   final String validThru;
   final Color color;
   final bool isFavorite;
   final String cvv;
 
-  CreditCardModel({
+  CreditCardEntity({
+    required this.id,
     required this.cardHolderFullName,
     required this.cardNumber,
     required this.cardType,

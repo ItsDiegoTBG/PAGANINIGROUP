@@ -1,8 +1,18 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/data/datasources/credit_card_datasource.dart';
+import 'package:paganini/data/repositories/credit_card_repository_impl.dart';
+import 'package:paganini/domain/entity/card_credit.dart';
+import 'package:paganini/domain/usecases/add_credit_card.dart';
+import 'package:paganini/main.dart';
+import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/credit_card_ui.dart';
+import 'package:provider/provider.dart';
 
 class CardPage extends StatefulWidget {
   const CardPage({super.key});
@@ -14,18 +24,23 @@ class CardPage extends StatefulWidget {
 class _CardPageState extends State<CardPage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController numberCreditCardController = TextEditingController();
-  TextEditingController dateExpirationController = TextEditingController();
+  TextEditingController monthExpirationController = TextEditingController();
+  TextEditingController yearExpirationController = TextEditingController();
   TextEditingController cvvCardController = TextEditingController();
   Color? selectedColor;
   String selectedCardType = "credit";
 
   String nameNewCard = "Nombre";
   String numberNewCard = "********************************";
-  String dateExpirationNewCard = "00/00";
+  String monthExpirationNewCard = "00";
+  String yearExpirationNewCard = "00";
   String cvvNewCard = "***";
+
+  late AddCreditCardUseCase addCreditCardUseCase = AddCreditCardUseCase(
+      repository: CreditCardRepositoryImpl(
+          remoteDataSource: CreditCardRemoteDataSourceImpl()));
   @override
   void initState() {
-    
     super.initState();
     nameController.addListener(() {
       setState(() {
@@ -33,19 +48,24 @@ class _CardPageState extends State<CardPage> {
       });
     });
 
-    numberCreditCardController.addListener((){
+    numberCreditCardController.addListener(() {
       setState(() {
         numberNewCard = numberCreditCardController.text;
       });
     });
-    dateExpirationController.addListener((){
-      setState((){
-        dateExpirationNewCard = dateExpirationController.text;
+    monthExpirationController.addListener(() {
+      setState(() {
+        monthExpirationNewCard = monthExpirationController.text;
+      });
+    });
+    yearExpirationController.addListener(() {
+      setState(() {
+        yearExpirationNewCard = yearExpirationController.text;
       });
     });
 
-    cvvCardController.addListener((){
-      setState((){
+    cvvCardController.addListener(() {
+      setState(() {
         cvvNewCard = cvvCardController.text;
       });
     });
@@ -61,7 +81,11 @@ class _CardPageState extends State<CardPage> {
   Widget build(BuildContext context) {
     double myHeight = MediaQuery.of(context).size.height;
     double myWidth = MediaQuery.of(context).size.width;
+    final cardProviderRead = context.read<CreditCardProvider>();
     final List<Color> colors = [
+      Colors.orange,
+      Colors.red,
+      Colors.pink,
       Colors.green,
       Colors.black,
       Colors.blue,
@@ -135,22 +159,16 @@ class _CardPageState extends State<CardPage> {
                                       horizontal: myWidth * 0.03),
                                   decoration: BoxDecoration(
                                       color: Colors.grey[100],
-                                      borderRadius: BorderRadius.circular(20)),
-                                  child: TextFormField(
-                                    textCapitalization: TextCapitalization.characters,
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: TextFormFieldSecondVersion(
                                     onChanged: (value) {},
+                                    textAlign: TextAlign.start,
                                     controller: nameController,
-                                    decoration: InputDecoration(
-                                        prefixIconColor: AppColors.primaryColor,
-                                        prefixIcon: const Padding(
-                                          padding: EdgeInsets.only(right: 10),
-                                          child: Icon(Icons.emoji_people),
-                                        ),
-                                        border: InputBorder.none,
-                                        hintText: 'Porfavor ingresa el nombre',
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey.shade400,
-                                            fontSize: 14)),
+                                    hintext: "Por favor ingresa el nombre",
+                                    textCapitalization:
+                                        TextCapitalization.characters,
+                                    icon: Icons.emoji_people_rounded,
+                                    keyboardType: TextInputType.text,
                                   ),
                                 ),
                               ),
@@ -174,25 +192,22 @@ class _CardPageState extends State<CardPage> {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: myWidth * 0.03),
                                   decoration: BoxDecoration(
-                                      color: Colors.grey[100],
-                                      borderRadius: BorderRadius.circular(20)),
-                                  child: TextFormField(
-                                    keyboardType: TextInputType.number,
-                                    onChanged: (value) {},
-                                    controller: numberCreditCardController,
-                                    decoration: InputDecoration(
-                                        prefixIconColor: AppColors.primaryColor,
-                                        prefixIcon: const Padding(
-                                          padding: EdgeInsets.only(right: 10),
-                                          child:
-                                              Icon(Icons.credit_score_rounded),
-                                        ),
-                                        border: InputBorder.none,
-                                        hintText: 'xxxxxxxxxxxxxxxx',
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey.shade400,
-                                            fontSize: 14)),
+                                    color: Colors.grey[100],
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
+                                  child: TextFormFieldSecondVersion(
+                                      textAlign: TextAlign.start,
+                                      onChanged: (value) {},
+                                      textCapitalization:
+                                          TextCapitalization.none,
+                                      hintext: "****************",
+                                      icon: Icons.credit_score_rounded,
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [
+                                        LengthLimitingTextInputFormatter(16)
+                                      ],
+                                      controller: numberCreditCardController,
+                                      inputBorder: InputBorder.none),
                                 ),
                               ),
                               SizedBox(
@@ -236,23 +251,72 @@ class _CardPageState extends State<CardPage> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Container(
-                                      width: myWidth * 0.15,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: TextFormField(
-                                        onChanged: (value){},
-                                        keyboardType: TextInputType.datetime,
-                                        controller: dateExpirationController,
-                                        textAlign: TextAlign.center,
-                                        decoration: InputDecoration(
-                                            hintStyle: TextStyle(
-                                                color: Colors.grey.shade400),
-                                            border: InputBorder.none,
-                                            hintText: "xx/xx"),
-                                      ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          width: myWidth * 0.15,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: TextFormField(
+                                            onChanged: (value) {},
+                                            keyboardType:
+                                                TextInputType.datetime,
+                                            controller:
+                                                monthExpirationController,
+                                            inputFormatters: [
+                                              LengthLimitingTextInputFormatter(
+                                                  2),
+                                              FilteringTextInputFormatter.allow(
+                                                  RegExp(
+                                                      r'[0-9/]')), // Permite solo números y "/"
+                                            ],
+                                            textAlign: TextAlign.center,
+                                            decoration: InputDecoration(
+                                                hintStyle: TextStyle(
+                                                    color:
+                                                        Colors.grey.shade400),
+                                                border: InputBorder.none,
+                                                hintText: "xx"),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: myWidth * 0.01),
+                                          child: const Text("/"),
+                                        ),
+                                        Container(
+                                          width: myWidth * 0.15,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: TextFormField(
+                                            onChanged: (value) {},
+                                            keyboardType:
+                                                TextInputType.datetime,
+                                            controller:
+                                                yearExpirationController,
+                                            inputFormatters: [
+                                              LengthLimitingTextInputFormatter(
+                                                  2),
+                                              FilteringTextInputFormatter.allow(
+                                                  RegExp(
+                                                      r'[0-9/]')), // Permite solo números y "/"
+                                            ],
+                                            textAlign: TextAlign.center,
+                                            decoration: InputDecoration(
+                                                hintStyle: TextStyle(
+                                                    color:
+                                                        Colors.grey.shade400),
+                                                border: InputBorder.none,
+                                                hintText: "xx"),
+                                          ),
+                                        )
+                                      ],
                                     ),
                                     Container(
                                       width: myWidth * 0.15,
@@ -262,14 +326,19 @@ class _CardPageState extends State<CardPage> {
                                       ),
                                       child: TextFormField(
                                         onChanged: (value) {},
+                                        inputFormatters: [
+                                          LengthLimitingTextInputFormatter(3),
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
+                                        ],
                                         controller: cvvCardController,
                                         textAlign: TextAlign.center,
-                                        keyboardType: TextInputType.number,
+                                        keyboardType: TextInputType.datetime,
                                         decoration: InputDecoration(
                                             hintStyle: TextStyle(
                                                 color: Colors.grey.shade400),
                                             border: InputBorder.none,
-                                            hintText: "xxxx"),
+                                            hintText: "xxx"),
                                       ),
                                     ),
                                   ],
@@ -292,7 +361,8 @@ class _CardPageState extends State<CardPage> {
                                             borderRadius:
                                                 BorderRadius.circular(10)),
                                         child: RadioListTile<String>(
-                                          activeColor: AppColors.secondaryColor,
+                                          activeColor: const Color.fromARGB(
+                                              255, 244, 244, 244),
                                           value: "credit",
                                           groupValue: selectedCardType,
                                           onChanged: (val) {
@@ -320,7 +390,8 @@ class _CardPageState extends State<CardPage> {
                                                 10)), // Color de fondo para todo el tile
                                         child: RadioListTile<String>(
                                           value: "debit",
-                                          activeColor: AppColors.secondaryColor,
+                                          activeColor: const Color.fromARGB(
+                                              255, 255, 255, 255),
                                           groupValue: selectedCardType,
                                           onChanged: (val) {
                                             setState(() {
@@ -354,7 +425,7 @@ class _CardPageState extends State<CardPage> {
                                     },
                                     child: Container(
                                       margin: const EdgeInsets.symmetric(
-                                          horizontal: 10),
+                                          horizontal: 12),
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         border: isSelected
@@ -365,7 +436,7 @@ class _CardPageState extends State<CardPage> {
                                             : null,
                                       ),
                                       child: CircleAvatar(
-                                        radius: 20,
+                                        radius: 10,
                                         backgroundColor: color,
                                       ),
                                     ),
@@ -383,7 +454,8 @@ class _CardPageState extends State<CardPage> {
                             width: 300,
                             cardHolderFullName: nameNewCard,
                             cardNumber: numberNewCard,
-                            validThru: dateExpirationNewCard,
+                            validThru:
+                                "$monthExpirationNewCard/$yearExpirationNewCard",
                             color: selectedColor ?? AppColors.primaryColor,
                             cardType: selectedCardType,
                             cvv: cvvNewCard),
@@ -397,8 +469,21 @@ class _CardPageState extends State<CardPage> {
           Padding(
             padding: EdgeInsets.only(bottom: myWidth * 0.1),
             child: ButtonSecondVersion(
-              function: () {
-                setState(() {});
+              function: () async {
+                debugPrint("Hola");
+                CreditCardEntity newCard = CreditCardEntity(
+                  id: Random().nextInt(2000),
+                  cvv: cvvNewCard,
+                  color: selectedColor ?? AppColors.primaryColor,
+                  cardHolderFullName: nameNewCard,
+                  cardNumber: numberNewCard,
+                  cardType: selectedCardType,
+                  validThru: "$monthExpirationNewCard/$yearExpirationNewCard",
+                  isFavorite: false,
+                );
+                //debugPrint(newCard);
+                debugPrint(newCard.cardNumber);
+                await cardProviderRead.addCreditCard(newCard);
               },
               text: "Aceptar",
               verticalPadding: 2,
@@ -408,15 +493,61 @@ class _CardPageState extends State<CardPage> {
         ]),
       ),
       floatingActionButton: FloatingActionButton(
-        
         onPressed: () {
           Navigator.pop(context);
         },
         backgroundColor: AppColors.primaryColor,
         focusColor: AppColors.secondaryColor,
-        foregroundColor:Colors.white,
+        foregroundColor: Colors.white,
         child: const Icon(Icons.arrow_back_sharp),
       ),
     );
+  }
+}
+
+class TextFormFieldSecondVersion extends StatelessWidget {
+  final TextEditingController controller;
+  final TextCapitalization textCapitalization;
+  final IconData? icon;
+  final String hintext;
+  final InputBorder? inputBorder;
+  final List<TextInputFormatter> inputFormatters;
+  final TextInputType keyboardType;
+  final TextAlign? textAlign;
+
+  final ValueChanged<String>? onChanged;
+  const TextFormFieldSecondVersion(
+      {super.key,
+      required this.controller,
+      required this.textCapitalization,
+      required this.icon,
+      required this.hintext,
+      this.inputBorder = InputBorder.none,
+      this.textAlign = TextAlign.center,
+      this.inputFormatters = const <TextInputFormatter>[],
+      required this.onChanged,
+      required this.keyboardType});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+        keyboardType: keyboardType,
+        textCapitalization: textCapitalization,
+        onChanged: onChanged,
+        textAlign: textAlign ?? TextAlign.center,
+        inputFormatters: inputFormatters,
+        controller: controller,
+        decoration: InputDecoration(
+          prefixIconColor: AppColors.primaryColor,
+          prefixIcon: icon != null // Verifica si el icono es nulo
+              ? Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Icon(icon),
+                )
+              : null, //
+          border: inputBorder,
+          hintText: hintext,
+          hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+        ));
   }
 }

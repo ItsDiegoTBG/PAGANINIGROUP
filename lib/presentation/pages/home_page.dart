@@ -1,25 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:paganini/main.dart';
+import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
   Widget build(BuildContext context) {
+    final saldoProviderWatch = context.watch<SaldoProvider>();
+    final saldoProviderRead = context.read<SaldoProvider>();
     return Scaffold(
       appBar: AppBar(
-        backgroundColor:Colors.white,
+        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         title: const ContentAppBar(),
       ),
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          
           const SizedBox(
             height: 20,
           ),
@@ -30,13 +39,13 @@ class HomePage extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               color: AppColors.primaryColor,
             ),
-            child:   Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                 const Column(
+                Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       "Saldo",
                       style: TextStyle(
                           color: Colors.white,
@@ -44,8 +53,8 @@ class HomePage extends StatelessWidget {
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "\$600",
-                      style: TextStyle(
+                      "\$${saldoProviderWatch.saldo}",
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 27,
                         fontWeight: FontWeight.bold,
@@ -56,7 +65,12 @@ class HomePage extends StatelessWidget {
                 ),
 
                 //boton de agregar
-                 ButtonSecondVersion(text:"Agregar",function: (){},)
+                ButtonSecondVersion(
+                  text: "Agregar",
+                  function: () {
+                    saldoProviderRead.agregar();
+                  },
+                )
               ],
             ),
           ),
@@ -80,9 +94,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
