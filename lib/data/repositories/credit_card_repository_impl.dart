@@ -47,4 +47,15 @@ class CreditCardRepositoryImpl implements CreditCardRepository {
       throw Exception('Error al agregar la tarjeta: $e');
     }
   }
+  
+  
+  @override
+  Future<bool> deleteCreditCard(int idCreditCard) async {
+    try {
+      await remoteDataSource.deleteCreditCardById(idCreditCard); 
+      return true; 
+    } catch (e) {     
+      return false; 
+    }
+  }
 }

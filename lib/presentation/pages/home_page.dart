@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:paganini/main.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
@@ -49,14 +48,14 @@ class _HomePageState extends State<HomePage> {
                       "Saldo",
                       style: TextStyle(
                           color: Colors.white,
-                          fontSize: 27,
+                          fontSize: 33,
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
                       "\$${saldoProviderWatch.saldo}",
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 27,
+                        fontSize: 37,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.italic,
                       ),
@@ -66,6 +65,8 @@ class _HomePageState extends State<HomePage> {
 
                 //boton de agregar
                 ButtonSecondVersion(
+                  verticalPadding: 2.0,
+                  horizontalPadding: 3.5,
                   text: "Agregar",
                   function: () {
                     saldoProviderRead.agregar();
@@ -86,6 +87,7 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.bold),
                 )),
           ),
+          
         ],
       ),
       floatingActionButton: const FloatingButtonNavBarQr(),

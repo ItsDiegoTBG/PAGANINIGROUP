@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/domain/entity/card_credit.dart';
-import 'package:paganini/domain/usecases/add_credit_card.dart';
-import 'package:paganini/domain/usecases/get_credit_cards.dart';
+import 'package:paganini/domain/usecases/credit_cards_use_case.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
@@ -23,7 +22,7 @@ class WalletPage extends StatefulWidget {
   State<WalletPage> createState() => _WalletPageState();
 }
 
-late GetCreditCardsUseCase getCreditCardsUseCase;
+late CreditCardsUseCase creditCardsUseCase;
 late Future<List<CreditCardEntity>> creditCardsFuture;
 
 class _WalletPageState extends State<WalletPage> {
@@ -88,12 +87,12 @@ class _WalletPageState extends State<WalletPage> {
                       ),
                       const SizedBox(
                           height:
-                              10), // Espacio entre el texto de saldo y el valor
+                              5), // Espacio entre el texto de saldo y el valor
                       Text(
                         "\$${saldoProviderWatch.saldo}", // Aquí pones el valor que quieres mostrar
                         style: const TextStyle(
                             color: Colors.white, // Color del texto
-                            fontSize: 25,
+                            fontSize: 37,
                             fontWeight: FontWeight.bold,
                             fontStyle: FontStyle.italic),
                       ),
@@ -183,7 +182,7 @@ class _WalletPageState extends State<WalletPage> {
               children: [
                 ButtonSecondVersionIcon(
                     function: () {
-                      debugPrint("La longitud");
+                      Navigator.pushNamed(context, Routes.CARDDELETEPAGE);
                     },
                     text: "Eliminar",
                     icon: Icons.delete_rounded,

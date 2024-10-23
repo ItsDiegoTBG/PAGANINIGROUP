@@ -4,15 +4,14 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/data/datasources/credit_card_datasource.dart';
 import 'package:paganini/data/repositories/credit_card_repository_impl.dart';
-import 'package:paganini/domain/repositories/credit_card_repository.dart';
-import 'package:paganini/domain/usecases/add_credit_card.dart';
-import 'package:paganini/domain/usecases/get_credit_cards.dart';
-import 'package:paganini/presentation/pages/card_page.dart';
+import 'package:paganini/domain/usecases/credit_cards_use_case.dart';
+import 'package:paganini/presentation/pages/cards/card_delete_page.dart';
+import 'package:paganini/presentation/pages/cards/card_page.dart';
 import 'package:paganini/presentation/pages/home_page.dart';
 import 'package:paganini/presentation/pages/initial_page.dart';
 import 'package:paganini/presentation/pages/login_page.dart';
 import 'package:paganini/presentation/pages/qr_pages.dart';
-import 'package:paganini/presentation/pages/wallet_page.dart';
+import 'package:paganini/presentation/pages/cards/wallet_page.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:provider/provider.dart';
@@ -22,17 +21,17 @@ void main() {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   setup();
   final remoteDataSource = CreditCardRemoteDataSourceImpl();
-  final creditCardRepository = CreditCardRepositoryImpl(remoteDataSource: remoteDataSource);
-  final getCreditCardsUseCase = GetCreditCardsUseCase(repository: creditCardRepository);
+  final creditCardRepository =
+      CreditCardRepositoryImpl(remoteDataSource: remoteDataSource);
+  final creditCardsUseCase =
+      CreditCardsUseCase(repository: creditCardRepository);
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => CreditCardProvider(
-              getCreditCardsUseCase: getCreditCardsUseCase,
-              addCreditCardUseCase:
-                  AddCreditCardUseCase(repository: creditCardRepository)),
-        ),
+            create: (_) => CreditCardProvider(
+                  creditCardsUseCase: creditCardsUseCase,
+                )),
         ChangeNotifierProvider(create: (_) => SaldoProvider()),
       ],
       child: const MainApp(),
@@ -61,6 +60,7 @@ class MainApp extends StatelessWidget {
         Routes.QRPAGE: (context) => const QrPage(),
         Routes.WALLETPAGE: (context) => const WalletPage(),
         Routes.CARDPAGE: (context) => const CardPage(),
+        Routes.CARDDELETEPAGE: (context) => const CardDeletePage()
       },
       theme: ThemeData(
           appBarTheme: const AppBarTheme(color: Colors.white),

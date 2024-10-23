@@ -6,10 +6,12 @@ class ButtonSecondVersion extends StatelessWidget {
   final Function function;
   final double verticalPadding;
   final double horizontalPadding;
+  final Color backgroundColor;
   const ButtonSecondVersion({
     super.key,
     required this.text,
     required this.function,
+    this.backgroundColor = AppColors.secondaryColor,
     this.verticalPadding = 5,
     this.horizontalPadding = 30,
   });
@@ -22,7 +24,7 @@ class ButtonSecondVersion extends StatelessWidget {
         function();
       },
       style: TextButton.styleFrom(
-          backgroundColor: AppColors.secondaryColor,
+          backgroundColor: backgroundColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           )),
