@@ -48,7 +48,8 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                       selectedIndex = index;
                     });
                   },
-                  fillColor: Colors.grey[200],
+                  fillColor: Colors.transparent,
+                  
                   borderRadius: BorderRadius.circular(10),
                   selectedColor: Colors.black,
                   // color: Colors.grey[200],
@@ -57,6 +58,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Material(
+                        
                         elevation: selectedIndex == 0 ? 10 : 0,
                         child: Container(
                           padding: const EdgeInsets.only(

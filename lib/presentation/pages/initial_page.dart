@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
+import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/widgets/buttons/button_with_icon.dart';
 class InitialPage extends StatelessWidget {
   const InitialPage({super.key});
@@ -17,17 +18,29 @@ class InitialPage extends StatelessWidget {
                   height: 130,
                   child: Image.asset(
                       "assets/image/paganini_logo_horizontal_morado_lila.png")),
-              Padding(
-                padding: const EdgeInsets.only(right: 25),
-                child: SizedBox(
-                  width: 150,
-                  height: 150,
-                  child: Image.asset("assets/image/paganini_icono_morado.png"),
+              Container(
+                 
+                 decoration : BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: AppColors.primaryColor),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    )
+                  ],
+                ),
+                width: 270,
+                height: 290,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 30),
+                  child: Center(child: Image.asset("assets/image/paganini_icono_morado.png",width: 150,height: 150,fit: BoxFit.contain,)),
                 ),
               ),
-              const SizedBox(
-                height: 30,
-              ),
+              
+              
               Column(
                 children: [
                   const Text(

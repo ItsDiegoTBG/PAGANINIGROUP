@@ -165,7 +165,7 @@ class _CardPageState extends State<CardPage> {
                   await cardProviderRead.addCreditCard(newCard);
 
                   // ignore: use_build_context_synchronously
-                  Navigator.pushReplacementNamed(context, Routes.WALLETPAGE);
+                  await Navigator.pushReplacementNamed(context, Routes.WALLETPAGE);
                 }
               },
               text: "Aceptar",
