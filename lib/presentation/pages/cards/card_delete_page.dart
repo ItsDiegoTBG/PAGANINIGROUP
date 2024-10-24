@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
+
+import 'package:paganini/domain/entity/card_credit.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
+import 'package:paganini/presentation/widgets/buttons/button_second_version_icon.dart';
 import 'package:paganini/presentation/widgets/credit_card_ui.dart';
 import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +31,30 @@ class _CardDeletePageState extends State<CardDeletePage> {
         title: const ContentAppBar(),
       ),
       backgroundColor: Colors.white,
-      body: CustomScrollView(
+      body: creditCards.isEmpty
+          ?  Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("No tiene tarjetas registradas",style: TextStyle(color: Colors.black,fontSize: 25,fontWeight: FontWeight.bold),overflow: TextOverflow.visible,),
+                ButtonSecondVersionIcon(text: "Regresar", function: (){
+                  Navigator.pop(context);
+                },icon:Icons.arrow_back_ios_rounded, iconAlignment: IconAlignment.start,),
+              ],
+            )
+          )
+          : creditCardListView(creditCards, creditCardProviderRead),
+      floatingActionButton: const FloatingButtonNavBarQr(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: const BottomMainAppBar(),
+    );
+  }
+
+  Padding creditCardListView(List<CreditCardEntity> creditCards,
+      CreditCardProvider creditCardProviderRead) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8, right: 8, top: 0, bottom: 30),
+      child: CustomScrollView(
         slivers: [
           SliverList(
             delegate: SliverChildBuilderDelegate(childCount: creditCards.length,
@@ -76,14 +102,14 @@ class _CardDeletePageState extends State<CardDeletePage> {
                                 ),
                                 actions: [
                                   ButtonSecondVersion(
-                                      backgroundColor: Colors.green,
+                                      backgroundColor: AppColors.secondaryColor,
                                       verticalPadding: 2,
                                       horizontalPadding: 3,
                                       text: "Cancelar",
                                       function: () =>
                                           Navigator.of(context).pop(false)),
                                   ButtonSecondVersion(
-                                      backgroundColor: Colors.red,
+                                      backgroundColor: AppColors.primaryColor,
                                       verticalPadding: 2,
                                       horizontalPadding: 3,
                                       text: "Eliminar",
@@ -115,9 +141,6 @@ class _CardDeletePageState extends State<CardDeletePage> {
           )
         ],
       ),
-      floatingActionButton: const FloatingButtonNavBarQr(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: const BottomMainAppBar(),
     );
   }
 }

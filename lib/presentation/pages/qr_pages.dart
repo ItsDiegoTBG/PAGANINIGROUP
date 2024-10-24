@@ -143,6 +143,10 @@ class QrContainer extends StatelessWidget {
             child: QrImageView(
               data: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
               version: QrVersions.auto,
+              // embeddedImage: const AssetImage('assets/image/paganini_icono_negro.png'),
+              // embeddedImageStyle: const QrEmbeddedImageStyle(
+              //   size: Size(80, 80),
+              // ),
               dataModuleStyle: const QrDataModuleStyle(
                   color: Color.fromARGB(255, 0, 0, 0),
                   dataModuleShape: QrDataModuleShape.square),
@@ -154,19 +158,23 @@ class QrContainer extends StatelessWidget {
           ),
         ),
         Container(
-          width: 80,
-          height: 80,
+          width: 60, 
+          height: 60, 
           decoration: const BoxDecoration(
             color: Colors.white,
-            shape: BoxShape.circle,
+            shape: BoxShape.circle, 
           ),
           child: ClipOval(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 10,right: 20),
-              child: Image.asset(
-                "assets/image/paganini_icono_negro.png",
-                fit: BoxFit
-                    .contain, // Ajusta cómo se muestra la imagen dentro del espacio disponible
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Image.asset(
+                  "assets/image/paganini_icono_negro.png",
+                  width: 40, 
+                  height: 40, 
+                  fit: BoxFit
+                      .contain, 
+                ),
               ),
             ),
           ),

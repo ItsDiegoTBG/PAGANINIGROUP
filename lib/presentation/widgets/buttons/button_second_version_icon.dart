@@ -6,13 +6,14 @@ class ButtonSecondVersionIcon extends StatelessWidget {
   final String text;
   final IconData icon;
   final IconAlignment iconAlignment;
-
+  final Color color;
   const ButtonSecondVersionIcon({
     super.key,
     required this.function,
     required this.text,
     required this.icon,
     required this.iconAlignment,
+    this.color = AppColors.secondaryColor,
   });
 
   @override
@@ -29,7 +30,7 @@ class ButtonSecondVersionIcon extends StatelessWidget {
         onPressed: () => {function()},
         iconAlignment: iconAlignment,
         style: TextButton.styleFrom(
-            backgroundColor: AppColors.secondaryColor,
+            backgroundColor: color,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             )),
