@@ -12,6 +12,7 @@ import 'package:paganini/presentation/pages/initial_page.dart';
 import 'package:paganini/presentation/pages/login_page.dart';
 import 'package:paganini/presentation/pages/qr_pages.dart';
 import 'package:paganini/presentation/pages/cards/wallet_page.dart';
+import 'package:paganini/presentation/pages/transfer_page.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:provider/provider.dart';
@@ -60,7 +61,8 @@ class MainApp extends StatelessWidget {
         Routes.QRPAGE: (context) => const QrPage(),
         Routes.WALLETPAGE: (context) => const WalletPage(),
         Routes.CARDPAGE: (context) => const CardPage(),
-        Routes.CARDDELETEPAGE: (context) => const CardDeletePage()
+        Routes.CARDDELETEPAGE: (context) => const CardDeletePage(),
+        Routes.TRANSFERPAGE : (context) => const TransferPage(),
       },
       theme: ThemeData(
           appBarTheme: const AppBarTheme(color: Colors.white),

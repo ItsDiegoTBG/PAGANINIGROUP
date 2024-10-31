@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
@@ -87,7 +88,14 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.bold),
                 )),
           ),
-          
+          ButtonSecondVersion(
+                  verticalPadding: 2.0,
+                  horizontalPadding: 3.5,
+                  text: "Transferir",
+                  function: () {
+                    Navigator.pushReplacementNamed(context, Routes.TRANSFERPAGE);
+                  },
+                )          
         ],
       ),
       floatingActionButton: const FloatingButtonNavBarQr(),

@@ -8,5 +8,6 @@ abstract class Routes {
   static const WALLETPAGE = "/wallet_page";
   static const CARDPAGE = "/card_page";
   static const CARDDELETEPAGE = "/card_delete_page";
+  static const TRANSFERPAGE = "/transfer_page";
 
 }
