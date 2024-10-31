@@ -7,6 +7,7 @@ import 'package:paganini/data/repositories/credit_card_repository_impl.dart';
 import 'package:paganini/domain/usecases/credit_cards_use_case.dart';
 import 'package:paganini/presentation/pages/cards/card_delete_page.dart';
 import 'package:paganini/presentation/pages/cards/card_page.dart';
+import 'package:paganini/presentation/pages/contacts_page.dart';
 import 'package:paganini/presentation/pages/home_page.dart';
 import 'package:paganini/presentation/pages/initial_page.dart';
 import 'package:paganini/presentation/pages/login_page.dart';
@@ -63,6 +64,7 @@ class MainApp extends StatelessWidget {
         Routes.CARDPAGE: (context) => const CardPage(),
         Routes.CARDDELETEPAGE: (context) => const CardDeletePage(),
         Routes.TRANSFERPAGE : (context) => const TransferPage(),
+        Routes.CONTACTSPAGE : (context) => const ContactsPage()
       },
       theme: ThemeData(
           appBarTheme: const AppBarTheme(color: Colors.white),

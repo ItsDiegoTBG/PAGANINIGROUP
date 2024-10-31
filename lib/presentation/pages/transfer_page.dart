@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
@@ -168,10 +169,12 @@ class _TransferPageState extends State<TransferPage> {
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, Routes.CONTACTSPAGE);
+                      },
                       icon: const Icon(Icons.arrow_forward_ios_rounded),
                       iconSize: 20, // Tamaño del icono
-                      color: Colors.black, // Color del icono
+                      color: const Color.fromARGB(255, 91, 85, 85), // Color del icono
                     ),
                   ),
                 ],
