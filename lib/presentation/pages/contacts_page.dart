@@ -17,10 +17,35 @@ class _ContactsPageState extends State<ContactsPage> {
   Widget build(BuildContext context) {
     double myHeight = MediaQuery.of(context).size.height;
     double myWidth = MediaQuery.of(context).size.width;
+
+    final List<Map<String, String>> contactsUserList = [
+      {"name": "Juan Perez", "account": "123456789", "phone": "+123456789"},
+      {"name": "Ana Gomez", "account": "987654321", "phone": "+987654321"},
+      {"name": "Luis Martinez", "account": "456123789", "phone": "+456123789"},
+        {"name": "Juan Perez", "account": "123456789", "phone": "+123456789"},
+      {"name": "Ana Gomez", "account": "987654321", "phone": "+987654321"},
+      {"name": "Luis Martinez", "account": "456123789", "phone": "+456123789"},
+        {"name": "Juan Perez", "account": "123456789", "phone": "+123456789"},
+      {"name": "Ana Gomez", "account": "987654321", "phone": "+987654321"},
+      {"name": "Luis Martinez", "account": "456123789", "phone": "+456123789"},
+        {"name": "Juan Perez", "account": "123456789", "phone": "+123456789"},
+      {"name": "Ana Gomez", "account": "987654321", "phone": "+987654321"},
+      {"name": "Luis Martinez", "account": "456123789", "phone": "+456123789"},
+        {"name": "Juan Perez", "account": "123456789", "phone": "+123456789"},
+      {"name": "Ana Gomez", "account": "987654321", "phone": "+987654321"},
+      {"name": "Luis Martinez", "account": "456123789", "phone": "+456123789"},
+        {"name": "Juan Perez", "account": "123456789", "phone": "+123456789"},
+      {"name": "Ana Gomez", "account": "987654321", "phone": "+987654321"},
+      {"name": "Luis Martinez", "account": "456123789", "phone": "+456123789"},
+        {"name": "Juan Perez", "account": "123456789", "phone": "+123456789"},
+      {"name": "Ana Gomez", "account": "987654321", "phone": "+987654321"},
+      {"name": "Luis Martinez", "account": "456123789", "phone": "+456123789"},
+    ];
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: const ContentAppBar(),
+          backgroundColor: Colors.white,
         ),
         body: Column(
           children: [
@@ -95,15 +120,20 @@ class _ContactsPageState extends State<ContactsPage> {
               ),
             ),
             Padding(
-              padding:  EdgeInsets.only(top:myWidth * 0.08),
+              padding: EdgeInsets.only(top: myWidth * 0.08),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   const Text(
                     "Tus contactos",
-                    style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,fontStyle: FontStyle.italic),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        fontStyle: FontStyle.italic),
                   ),
-                  const SizedBox(width: 20,),
+                  const SizedBox(
+                    width: 20,
+                  ),
                   IconButton.filled(
                       onPressed: () {},
                       style: IconButton.styleFrom(
@@ -116,8 +146,30 @@ class _ContactsPageState extends State<ContactsPage> {
                 ],
               ),
             ),
-            ContactUserWidget(width: myWidth*0.85,height: myHeight*0.10,nameUser: "Diego Contreras", phoneUser: "9999999999", numberAccount: "22032344040"),
             
+            Expanded(
+              child: CustomScrollView(
+                slivers: [
+                  SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                          childCount: contactsUserList.length,
+                          (context, index) {
+                    final contact = contactsUserList[index];
+                    contact;
+                    return Padding(
+                      padding: EdgeInsets.only(top: 5,left: myWidth*0.08,right: myWidth*0.08),
+                      child: ContactUserWidget(
+                        nameUser: contact["name"]!,
+                        phoneUser: contact["phone"]!,
+                        numberAccount: contact["account"]!,
+                        width: myWidth * 0.85,
+                        height: myHeight * 0.10,
+                      ),
+                    );
+                  }))
+                ],
+              ),
+            )
           ],
         ));
   }
