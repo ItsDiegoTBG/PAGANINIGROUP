@@ -54,7 +54,6 @@ class _QrPageState extends State<QrPage> {
               ),
             ),
             Text(_result ?? 'No result'),
-
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -64,7 +63,7 @@ class _QrPageState extends State<QrPage> {
                     child: const QrContainer(),
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 50),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -130,23 +129,57 @@ class QrContainer extends StatelessWidget {
         color: AppColors.secondaryColor,
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Padding(
-        padding:
-            const EdgeInsets.only(top: 40, bottom: 40, left: 20, right: 20),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: QrImageView(
-            data: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-            version: QrVersions.auto,
-            size: 200.0,
-            eyeStyle: const QrEyeStyle(
-                eyeShape: QrEyeShape.square, color: AppColors.primaryColor),
+      child: Stack(alignment: AlignmentDirectional.center, children: [
+        Padding(
+          padding:
+              const EdgeInsets.only(top: 40, bottom: 40, left: 20, right: 20),
+          child: Container(
+            height: 340,
+            width: 280,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: QrImageView(
+              data: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+              version: QrVersions.auto,
+              // embeddedImage: const AssetImage('assets/image/paganini_icono_negro.png'),
+              // embeddedImageStyle: const QrEmbeddedImageStyle(
+              //   size: Size(80, 80),
+              // ),
+              dataModuleStyle: const QrDataModuleStyle(
+                  color: Color.fromARGB(255, 0, 0, 0),
+                  dataModuleShape: QrDataModuleShape.square),
+              size: 200.0,
+              eyeStyle: const QrEyeStyle(
+                  eyeShape: QrEyeShape.circle,
+                  color: Color.fromARGB(255, 0, 0, 0)),
+            ),
           ),
         ),
-      ),
+        Container(
+          width: 60, 
+          height: 60, 
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle, 
+          ),
+          child: ClipOval(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Image.asset(
+                  "assets/image/paganini_icono_negro.png",
+                  width: 40, 
+                  height: 40, 
+                  fit: BoxFit
+                      .contain, 
+                ),
+              ),
+            ),
+          ),
+        )
+      ]),
     );
   }
 }
@@ -162,7 +195,7 @@ Future<String> saveImage(Uint8List bytes, context) async {
 
   if (result['filePath'] != null) {
     AnimatedSnackBar(
-      duration:  const Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       builder: ((context) {
         return const MaterialAnimatedSnackBar(
           iconData: Icons.check,
@@ -171,7 +204,6 @@ Future<String> saveImage(Uint8List bytes, context) async {
           borderRadius: BorderRadius.all(Radius.circular(20)),
           backgroundColor: Color.fromARGB(255, 59, 141, 55),
           titleTextStyle: TextStyle(
-            
             color: Color.fromARGB(255, 255, 255, 255),
             fontSize: 10,
           ),

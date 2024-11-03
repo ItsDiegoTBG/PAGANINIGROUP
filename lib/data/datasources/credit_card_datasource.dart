@@ -3,7 +3,8 @@ import 'package:paganini/data/models/credit_card_model.dart';
 
 abstract class CreditCardRemoteDataSource {
   Future<List<CreditCardModel>> fetchCreditCards();
-   Future<void> addCreditCard(CreditCardModel creditCard);
+  Future<void> addCreditCard(CreditCardModel creditCard);
+  Future<void> deleteCreditCardById(int id);
 }
 
 class CreditCardRemoteDataSourceImpl implements 
@@ -61,5 +62,12 @@ CreditCardRemoteDataSource {
   Future<void> addCreditCard(CreditCardModel creditCard) async {
     _creditCards.add(creditCard);
   }
+
+  @override
+  Future<void> deleteCreditCardById(int id) async {
+    _creditCards.removeWhere((card) => card.id == id);
+  }
+
+  
 
 }

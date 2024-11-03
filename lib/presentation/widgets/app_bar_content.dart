@@ -1,13 +1,22 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
+import 'package:paganini/presentation/providers/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class ContentAppBar extends StatelessWidget {
   const ContentAppBar({
     super.key,
   });
 
+  void signUserOut() {
+    FirebaseAuth.instance.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -22,9 +31,10 @@ class ContentAppBar extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(right: 1),
           child: IconButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.pushNamedAndRemoveUntil(
-                    context, Routes.INITIAL, (Route<dynamic> route) => false);
+                    context, Routes.LOGIN, (Route<dynamic> route) => false);
+                await userProvider.signOut();
               },
               icon: const Icon(Icons.logout_rounded)),
         )

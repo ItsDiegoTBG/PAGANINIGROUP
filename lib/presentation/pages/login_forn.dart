@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
-import 'package:paganini/presentation/widgets/textfile_form.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -11,36 +9,80 @@ class LoginForm extends StatefulWidget {
   LoginFromState createState() => LoginFromState();
 }
 
- class LoginFromState extends State<LoginForm> { 
-  final _formKey = GlobalKey<FormState>();
+class LoginFromState extends State<LoginForm> {
+  // final _formKey = GlobalKey<FormState>();
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<void> loginUser() async {
-   
-    if (_formKey.currentState!.validate()) {
-      try {
-       
-        await _auth.signInWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text.trim(),
-        );
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Inicio de sesión exitoso')),
-        );
-
-    
-        Navigator.pushReplacementNamed(context, '/home'); 
-        Navigator.pushNamedAndRemoveUntil(
-                      context, Routes.HOME, (Route<dynamic> route) => false);
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al iniciar sesión: $e')),
-        );
+  void signUserIn() async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(
+              backgroundColor: AppColors.primaryColor,
+            ),
+          );
+        });
+    try {
+      await _auth.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+     Navigator.pop(context);
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        duration: Duration(seconds: 1),
+        content: Text(
+          'Inicio de sesión exitoso',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: AppColors.primaryColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+      ));
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        wrongEmailMessage();
+      } else if (e.code == 'wrong-password') {
+        wrongPasswordMessage();
       }
+    } catch (e) {
+      debugPrint("Error aqui ");
+      Navigator.pop(context);
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        duration: Duration(seconds: 1),
+        content: Text('Error en el inicio de Sesion'),
+        backgroundColor: Color.fromARGB(255, 236, 45, 55),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+      ));
     }
+  }
+
+  void wrongEmailMessage() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            title: Text("Email Incorrecto"),
+          );
+        });
+  }
+
+  void wrongPasswordMessage() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            title: Text("Password Incorrecto"),
+          );
+        });
   }
 
   @override
@@ -53,14 +95,14 @@ class LoginForm extends StatefulWidget {
           controller: emailController,
           decoration: const InputDecoration(labelText: 'Email'),
           keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa un email';
-                  } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                    return 'Ingresa un email válido';
-                  }
-                  return null;
-                },
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Por favor ingresa un email';
+            } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+              return 'Ingresa un email válido';
+            }
+            return null;
+          },
         ),
         const SizedBox(height: 20),
         const Text("Contraseña", style: TextStyle(fontSize: 16)),
@@ -81,8 +123,7 @@ class LoginForm extends StatefulWidget {
                 text: "Iniciar Sesion",
                 onPressed: () {
                   debugPrint("INICIANDO SESION");
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, Routes.HOME, (Route<dynamic> route) => false);
+                  signUserIn();
                 },
               ),
             ),
@@ -119,7 +160,8 @@ class LoginForm extends StatefulWidget {
       ],
     );
   }
-    @override
+
+  @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();

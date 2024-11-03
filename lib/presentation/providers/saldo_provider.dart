@@ -6,7 +6,7 @@ class SaldoProvider with ChangeNotifier {
   double get saldo => _saldo;
 
   void agregar() {
-    _saldo = _saldo + 10;
+    _saldo = _saldo + 1000;
     notifyListeners();
   }
 }

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/domain/entity/card_credit.dart';
-import 'package:paganini/domain/usecases/add_credit_card.dart';
-import 'package:paganini/domain/usecases/get_credit_cards.dart';
+import 'package:paganini/domain/usecases/credit_cards_use_case.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
@@ -23,7 +22,7 @@ class WalletPage extends StatefulWidget {
   State<WalletPage> createState() => _WalletPageState();
 }
 
-late GetCreditCardsUseCase getCreditCardsUseCase;
+late CreditCardsUseCase creditCardsUseCase;
 late Future<List<CreditCardEntity>> creditCardsFuture;
 
 class _WalletPageState extends State<WalletPage> {
@@ -73,7 +72,7 @@ class _WalletPageState extends State<WalletPage> {
                   child: Column(
                     children: [
                       const Padding(
-                        padding: const EdgeInsets.only(left: 40, top: 8),
+                        padding:  EdgeInsets.only(left: 40, top: 8),
                         child: Align(
                           alignment: Alignment.topLeft,
                           child: Text(
@@ -88,12 +87,12 @@ class _WalletPageState extends State<WalletPage> {
                       ),
                       const SizedBox(
                           height:
-                              10), // Espacio entre el texto de saldo y el valor
+                              5), // Espacio entre el texto de saldo y el valor
                       Text(
                         "\$${saldoProviderWatch.saldo}", // Aquí pones el valor que quieres mostrar
                         style: const TextStyle(
                             color: Colors.white, // Color del texto
-                            fontSize: 25,
+                            fontSize: 37,
                             fontWeight: FontWeight.bold,
                             fontStyle: FontStyle.italic),
                       ),
@@ -120,7 +119,12 @@ class _WalletPageState extends State<WalletPage> {
                 ],
               ),
             ),
-            Text(creditCards.length.toString()),
+            //Text(creditCards.length.toString()),
+            creditCards.isEmpty ? const Padding(
+              padding:  EdgeInsets.symmetric(vertical: 25),
+              child: Text("No tiene tarjetas registradas",style: TextStyle(color: Colors.black,fontSize: 25,fontWeight: FontWeight.bold),overflow: TextOverflow.visible,),
+            ) : const Text(""),
+
             //tarjatas
             Column(
               children: [
@@ -128,9 +132,23 @@ class _WalletPageState extends State<WalletPage> {
                   height: 190,
                   child: PageView.builder(
                       controller: _pageController,
-                      itemCount: creditCards.length,
+                      itemCount: creditCards.isEmpty
+                          ? 1
+                          : creditCards
+                              .length, // Si está vacía, mostrar solo 1 tarjeta
                       itemBuilder: (context, index) {
-                        final card = creditCards[index];
+                        final card = creditCards.isEmpty
+                            ? CreditCardEntity(
+                                id: 4,
+                                cardHolderFullName: 'Paganini',
+                                cardNumber: '999999999999999999',
+                                cardType: 'credit',
+                                validThru: '99/99',
+                                color: AppColors.primaryColor,
+                                isFavorite: false,
+                                cvv: '999',
+                              ) // Si no hay tarjetas, mostrar la ficticia
+                            : creditCards[index];
                         return AnimatedBuilder(
                             animation: _pageController,
                             builder: (context, child) {
@@ -145,17 +163,17 @@ class _WalletPageState extends State<WalletPage> {
                               return Transform.scale(
                                 scale: value,
                                 child: Opacity(
-                                    opacity: 1,
-                                    child: CreditCardWidget(
-                                      cardHolderFullName:
-                                          card.cardHolderFullName,
-                                      cardNumber: card.cardNumber,
-                                      validThru: card.validThru,
-                                      cardType: card.cardType,
-                                      cvv: card.cvv,
-                                      color: card.color,
-                                      isFavorite: card.isFavorite,
-                                    )),
+                                  opacity: 1,
+                                  child: CreditCardWidget(
+                                    cardHolderFullName: card.cardHolderFullName,
+                                    cardNumber: card.cardNumber,
+                                    validThru: card.validThru,
+                                    cardType: card.cardType,
+                                    cvv: card.cvv,
+                                    color: card.color,
+                                    isFavorite: card.isFavorite,
+                                  ),
+                                ),
                               );
                             });
                       }),
@@ -164,7 +182,7 @@ class _WalletPageState extends State<WalletPage> {
                   padding: const EdgeInsets.only(top: 5),
                   child: SmoothPageIndicatorWidget(
                     pageController: _pageController,
-                    totalCounts: creditCards.length,
+                    totalCounts: creditCards.isEmpty ? 1 : creditCards.length,
                     smoothPageEffect: const WormEffect(
                       activeDotColor: AppColors.primaryColor,
                       dotColor: AppColors.secondaryColor,
@@ -176,14 +194,14 @@ class _WalletPageState extends State<WalletPage> {
               ],
             ),
             const SizedBox(
-              height: 40,
+              height: 10,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ButtonSecondVersionIcon(
                     function: () {
-                      debugPrint("La longitud");
+                      Navigator.pushNamed(context, Routes.CARDDELETEPAGE);
                     },
                     text: "Eliminar",
                     icon: Icons.delete_rounded,
