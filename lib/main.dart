@@ -5,7 +5,6 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/data/datasources/credit_card_datasource.dart';
 import 'package:paganini/data/repositories/credit_card_repository_impl.dart';
-import 'package:paganini/domain/repositories/credit_card_repository.dart';
 import 'package:paganini/domain/usecases/add_credit_card.dart';
 import 'package:paganini/domain/usecases/get_credit_cards.dart';
 import 'package:paganini/presentation/pages/card_page.dart';
