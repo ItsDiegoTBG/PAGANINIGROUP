@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -17,8 +18,10 @@ import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+
+void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   setup();
   final remoteDataSource = CreditCardRemoteDataSourceImpl();
@@ -43,6 +46,8 @@ void main() {
 void setup() async {
   await Future.delayed(const Duration(seconds: 2));
   FlutterNativeSplash.remove();
+  WidgetsFlutterBinding.ensureInitialized();
+  
 }
 
 class MainApp extends StatelessWidget {

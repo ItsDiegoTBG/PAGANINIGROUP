@@ -3,24 +3,71 @@ import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
 import 'package:paganini/presentation/widgets/textfile_form.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class LoginForm extends StatelessWidget {
+class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
+  @override
+  LoginFromState createState() => LoginFromState();
+}
+
+ class LoginFromState extends State<LoginForm> { 
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> loginUser() async {
+   
+    if (_formKey.currentState!.validate()) {
+      try {
+       
+        await _auth.signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Inicio de sesión exitoso')),
+        );
+
+    
+        Navigator.pushReplacementNamed(context, '/home'); 
+        Navigator.pushNamedAndRemoveUntil(
+                      context, Routes.HOME, (Route<dynamic> route) => false);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al iniciar sesión: $e')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Usuario", style: TextStyle(fontSize: 16)),
-        const TextFieldForm(
-          hintText: "Ingresa tu usuario",
+        const Text("Email", style: TextStyle(fontSize: 16)),
+        TextFormField(
+          controller: emailController,
+          decoration: const InputDecoration(labelText: 'Email'),
+          keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingresa un email';
+                  } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                    return 'Ingresa un email válido';
+                  }
+                  return null;
+                },
         ),
         const SizedBox(height: 20),
         const Text("Contraseña", style: TextStyle(fontSize: 16)),
-        const TextField(
+        TextFormField(
+          controller: passwordController,
           obscureText: true,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             border: UnderlineInputBorder(),
             hintText: 'Ingresa tu contraseña',
             suffixIcon: Icon(Icons.visibility),
@@ -71,5 +118,11 @@ class LoginForm extends StatelessWidget {
         ),
       ],
     );
+  }
+    @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 }
