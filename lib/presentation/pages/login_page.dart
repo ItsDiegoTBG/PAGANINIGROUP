@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
-import 'package:paganini/presentation/pages/login_forn.dart';
-import 'package:paganini/presentation/pages/register_form.dart';
+
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
 
@@ -63,9 +62,9 @@ class _LoginRegisterScreenState extends State<LoginPage> {
           duration: Duration(seconds: 1),
           content: Text('Error en el inicio de Sesion'),
           backgroundColor: Color.fromARGB(255, 236, 45, 55),
-          shape: RoundedRectangleBorder(
+          /*shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
+          ),*/
         ));
       }
     } catch (e) {
@@ -76,9 +75,9 @@ class _LoginRegisterScreenState extends State<LoginPage> {
         duration: Duration(seconds: 1),
         content: Text('Error en el inicio de Sesion'),
         backgroundColor: Color.fromARGB(255, 236, 45, 55),
-        shape: RoundedRectangleBorder(
+        /*shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
+        ),*/
       ));
     }
   }
@@ -106,7 +105,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.only(right: 16, left: 16, bottom: 16, top: 0),
