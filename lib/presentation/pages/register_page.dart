@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
+import 'package:paganini/presentation/widgets/text_form_field_widget.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -22,7 +23,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool _isPasswordVisible = false;
-
 
   Future<void> registerUser() async {
     debugPrint("Vamos a registerUser");
@@ -50,6 +50,7 @@ class _RegisterPageState extends State<RegisterPage> {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
+          duration: Duration(seconds: 1),
           content: Text('Registro exitoso'),
           backgroundColor: Colors.green,
         ),
@@ -122,52 +123,69 @@ class _RegisterPageState extends State<RegisterPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text("Usuario", style: TextStyle(fontSize: 16)),
-                    TextFormField(
-                      controller: nameController,
-                      decoration: const InputDecoration(labelText: 'Nombre'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor ingresa tu nombre';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
+                    TextFormFieldWidget(
+                        textInputType: TextInputType.text,
+                        controller: nameController,
+                        hintText: 'Crea tu usuario',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor ingresa tu nombre';
+                          }
+                          return null;
+                        }),
+                    const SizedBox(height: 10),
                     const Text("Email", style: TextStyle(fontSize: 16)),
-                    TextFormField(
-                      controller: emailController,
-                      decoration: const InputDecoration(labelText: 'Email'),
-                      keyboardType: TextInputType.emailAddress,
+                    TextFormFieldWidget(
+                        textInputType: TextInputType.emailAddress,
+                        controller: emailController,
+                        hintText: 'Ingresa un correo electronico',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor ingresa un email';
+                          } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                              .hasMatch(value)) {
+                            return 'Ingresa un email válido';
+                          }
+                          return null;
+                        }),
+                    const SizedBox(height: 10),
+                    const Text("Telefono", style: TextStyle(fontSize: 16)),
+                    TextFormFieldWidget(
+                      textInputType: TextInputType.number,
+                      controller: phoneController,
+                      hintText: 'Ingrese un numero de telefono',
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Por favor ingresa un email';
-                        } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
-                            .hasMatch(value)) {
-                          return 'Ingresa un email válido';
+                          return 'Por favor ingresa un numero de telefono valido';
+                        } else if (value.length > 10) {
+                          return 'El número de teléfono no puede exceder los 10 dígitos';
+                        } else if (value.length < 10 ){
+                           return 'El número de teléfono no puede ser menor a los 10 digitos';
                         }
                         return null;
                       },
                     ),
-                    const SizedBox(height: 20),
-                    const Text("Telefono", style: TextStyle(fontSize: 16)),
-                    TextFormField(
-                      controller: phoneController,
-                      decoration: const InputDecoration(labelText: 'Telefono'),
-                      keyboardType: TextInputType.emailAddress,
-                    ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     const Text("Contraseña", style: TextStyle(fontSize: 16)),
                     TextFormField(
                         obscureText: !_isPasswordVisible,
                         controller: passwordController,
-                        decoration:  InputDecoration(
+                        decoration: InputDecoration(
+                            focusedBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: AppColors.primaryColor, width: 2)),
                             border: const UnderlineInputBorder(),
                             hintText: 'Crea una contraseña',
-                            suffixIcon: IconButton(icon: const  Icon(Icons.visibility),onPressed: (){
-                              setState(() {
-                                 _isPasswordVisible = !_isPasswordVisible;
-                              });
-                            },)),
+                            hintStyle:
+                                const TextStyle(fontWeight: FontWeight.w300),
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.visibility),
+                              onPressed: () {
+                                setState(() {
+                                  _isPasswordVisible = !_isPasswordVisible;
+                                });
+                              },
+                            )),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Por favor ingresa una contraseña';
@@ -181,6 +199,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             child: ButtonWithoutIcon(
                                 text: "Crear Usuario",
                                 onPressed: () {
+                                  FocusScope.of(context).unfocus();
                                   if (_formKey.currentState!.validate()) {
                                     registerUser();
                                   }

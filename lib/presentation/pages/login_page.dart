@@ -4,6 +4,7 @@ import 'package:paganini/core/routes/app_routes.dart';
 
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
+import 'package:paganini/presentation/widgets/text_form_field_widget.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -104,6 +105,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    double myHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -124,26 +126,29 @@ class _LoginRegisterScreenState extends State<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text("Email", style: TextStyle(fontSize: 16)),
-                TextFormField(
-                  controller: emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor ingresa un email';
-                    } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
-                        .hasMatch(value)) {
-                      return 'Ingresa un email válido';
-                    }
-                    return null;
-                  },
-                ),
+                TextFormFieldWidget(
+                  textInputType: TextInputType.emailAddress,
+                    controller: emailController,
+                    hintText: "Ingresa tu correo",
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingresa un email';
+                      } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                          .hasMatch(value)) {
+                        return 'Ingresa un email válido';
+                      }
+                      return null;
+                    }),
                 const SizedBox(height: 20),
                 const Text("Contraseña", style: TextStyle(fontSize: 16)),
                 TextFormField(
                   controller: passwordController,
                   obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
+                    focusedBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.primaryColor, width: 2)),
+                    hintStyle: const TextStyle(fontWeight: FontWeight.w300),
                     border: const UnderlineInputBorder(),
                     hintText: 'Ingresa tu contraseña',
                     suffixIcon: IconButton(
@@ -187,7 +192,8 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                Center(
+                Align(
+                  alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {},
                     child: const Text("Olvidaste la Clave?",
@@ -199,38 +205,53 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                             fontStyle: FontStyle.italic)),
                   ),
                 ),
-                Center(
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, Routes.REGISTER);
-                    },
-                    child: const Text("Registrate Aqui",
-                        style: TextStyle(
-                            color: AppColors.primaryColor,
-                            decoration: TextDecoration.underline,
-                            decorationColor: AppColors.secondaryColor,
-                            fontSize: 16,
-                            fontStyle: FontStyle.italic)),
-                  ),
-                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Nuevo en paganini?",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(
+                            context, Routes.REGISTER);
+                      },
+                      child: const Text("Registrate Aqui",
+                          style: TextStyle(
+                              color: AppColors.primaryColor,
+                              decoration: TextDecoration.underline,
+                              decorationColor: AppColors.secondaryColor,
+                              fontSize: 16,
+                              fontStyle: FontStyle.italic)),
+                    )
+                  ],
+                )
               ],
             ),
             const SizedBox(height: 20),
             // Forms Container
-            Padding(
-              padding: const EdgeInsets.only(top: 15),
-              child: TextButton(
-                onPressed: () {
-                  debugPrint("hello world!");
-                },
-                child: const Text("Necesitas ayuda?",
-                    style: TextStyle(
-                        color: AppColors.primaryColor,
-                        fontStyle: FontStyle.italic,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w900)),
+
+            Center(
+              child: Padding(
+                padding: EdgeInsets.only(top: myHeight * 0.30),
+                child: TextButton(
+                  onPressed: () {
+                    debugPrint("hello world!");
+                  },
+                  child: const Text("Necesitas ayuda?",
+                      style: TextStyle(
+                          color: AppColors.primaryColor,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900)),
+                ),
               ),
-            )
+            ),
           ],
         ),
       ),
