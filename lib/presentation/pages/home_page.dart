@@ -7,6 +7,7 @@ import 'package:paganini/presentation/widgets/buttons/button_second_version.dart
 import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:provider/provider.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -73,7 +74,7 @@ class _HomePageState extends State<HomePage> {
                   horizontalPadding: 3.5,
                   text: "Agregar",
                   function: () {
-                    saldoProviderRead.agregar();
+                    Navigator.pushReplacementNamed(context, Routes.RECHARGE);
                   },
                 )
               ],
