@@ -151,6 +151,7 @@ class _CardPageState extends State<CardPage> {
 
                 if (confirmAddCreditCard == true) {
                   CreditCardEntity newCard = CreditCardEntity(
+                    balance: 0,
                     id: Random().nextInt(2000),
                     cvv: cvvNewCard,
                     color: selectedColor ?? AppColors.primaryColor,
@@ -165,7 +166,8 @@ class _CardPageState extends State<CardPage> {
                   await cardProviderRead.addCreditCard(newCard);
 
                   // ignore: use_build_context_synchronously
-                  await Navigator.pushReplacementNamed(context, Routes.WALLETPAGE);
+                  await Navigator.pushReplacementNamed(
+                      context, Routes.WALLETPAGE);
                 }
               },
               text: "Aceptar",
@@ -489,6 +491,7 @@ class _CardPageState extends State<CardPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 60),
             child: CreditCardWidget(
+               balance: 0.0,
                 width: 300,
                 cardHolderFullName: nameNewCard,
                 cardNumber: numberNewCard,

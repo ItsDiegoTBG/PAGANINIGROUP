@@ -15,4 +15,8 @@ class CreditCardsUseCase {
   Future<bool> delete(int idCreditCard) async {
     return  await repository.deleteCreditCard(idCreditCard);
   }
+
+  Future<void> updateBalance(int idCreditCard, double newBalance) async {
+    await repository.updateBalance(idCreditCard, newBalance);
+  }
 }

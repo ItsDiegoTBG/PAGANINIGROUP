@@ -79,6 +79,7 @@ class _CardDeletePageState extends State<CardDeletePage> {
                       SizedBox(
                         height: 200,
                         child: CreditCardWidget(
+                          balance: card.balance,
                           cardHolderFullName: card.cardHolderFullName,
                           cardNumber: card.cardNumber,
                           validThru: card.validThru,

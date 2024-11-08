@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/presentation/pages/confirm_recharge_page.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
@@ -14,23 +15,27 @@ class RechargePage extends StatefulWidget {
 }
 
 class RechargePageState extends State<RechargePage> {
+  TextEditingController controllerAmount = TextEditingController();
   String _selectedAmount = '';
 
   void _selectAmount(String amount) {
     setState(() {
-      _selectedAmount = amount;
+      // _selectedAmount = amount;
+      controllerAmount.text = amount;
     });
   }
 
   void _clearSelection() {
     setState(() {
       _selectedAmount = '';
+      controllerAmount.text = '';
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
@@ -40,50 +45,78 @@ class RechargePageState extends State<RechargePage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Text(
-                'Recarga',
-                style: TextStyle(color: Colors.white, fontSize: 24),
+            Align(
+              alignment: Alignment.topLeft,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 255, 255, 255),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppColors.primaryColor)),
+                child: const Text(
+                  'Recarga',
+                  style: TextStyle(color: AppColors.primaryColor, fontSize: 24),
+                ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 60),
             const Text(
               'Ingrese un monto a recargar',
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            TextField(
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                hintText:
-                    _selectedAmount.isNotEmpty ? _selectedAmount : 'Monto',
-                border: const OutlineInputBorder(),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: TextField(
+                controller: controllerAmount,
+                style: const TextStyle(fontSize: 20),
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(
+                    Icons.attach_money_rounded,
+                    color: AppColors.primaryColor,
+                    size: 40,
+                  ),
+                  hintText:
+                      _selectedAmount.isNotEmpty ? _selectedAmount : 'Monto',
+                  border: const OutlineInputBorder(),
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 20.0,
+                      horizontal: 10.0), // Ajusta el valor vertical
+                ),
+                onChanged: (value) {
+                  _selectedAmount = value;
+                },
               ),
-              onChanged: (value) {
-                _selectedAmount = value;
-              },
             ),
             const SizedBox(height: 20),
-            const Text(
-              'O seleccione un valor',
-              style: TextStyle(fontSize: 16),
+            const Padding(
+              padding: EdgeInsets.only(left: 18),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'o seleccione un valor',
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildAmountButton('\$20'),
-                _buildAmountButton('\$50'),
-                _buildAmountButton('\$100'),
+                _buildAmountButton('20'),
+                _buildAmountButton('50'),
+                _buildAmountButton('100'),
               ],
             ),
             const SizedBox(height: 20),
@@ -93,29 +126,43 @@ class RechargePageState extends State<RechargePage> {
                 ElevatedButton(
                   onPressed: _clearSelection,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red[200],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          10), // Ajusta el valor para más o menos curvatura
+                    ),
+                    backgroundColor: Colors.red[300],
                     minimumSize: const Size(120, 50),
                   ),
                   child: const Text(
                     'Cancelar',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    style: TextStyle(color: Colors.black, fontSize: 20),
                   ),
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    print('Monto seleccionado: $_selectedAmount');
+                    debugPrint('Monto seleccionado: $_selectedAmount');
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ConfirmRechargePage(
+                                valueRecharge:
+                                  controllerAmount.text)));
                   },
                   style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          10), // Ajusta el valor para más o menos curvatura
+                    ),
                     backgroundColor: Colors.green[300],
                     minimumSize: const Size(120, 50),
                   ),
                   child: const Text(
                     'Agregar',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    style: TextStyle(color: Colors.black, fontSize: 20),
                   ),
                 ),
               ],
-            ),
+            )
           ],
         ),
       ),
@@ -129,10 +176,18 @@ class RechargePageState extends State<RechargePage> {
     return ElevatedButton(
       onPressed: () => _selectAmount(amount),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.purple[200],
-        minimumSize: const Size(80, 50),
+        backgroundColor: AppColors.secondaryColor,
+        minimumSize: const Size(100, 50),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(
+              10), // Ajusta el valor para más o menos curvatura
+        ),
       ),
-      child: Text(amount),
+      child: Text(
+        amount,
+        style: const TextStyle(
+            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
+      ),
     );
   }
 }

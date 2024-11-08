@@ -10,6 +10,7 @@ class CreditCardWidget extends StatelessWidget {
   final bool? isFavorite;
   final String cvv;
   final double width;
+  final double balance;
   const CreditCardWidget({
     super.key,
     required this.cardHolderFullName,
@@ -19,7 +20,8 @@ class CreditCardWidget extends StatelessWidget {
     this.isFavorite,
     required this.cardType,
     required this.cvv,
-    this.width = 300
+    this.width = 300,
+    required this.balance,
   });
 
   @override
@@ -38,6 +40,8 @@ class CreditCardWidget extends StatelessWidget {
     }
 
     return CreditCardUi(
+      showBalance: true,
+      balance: balance,
       width: 300,
       cardHolderFullName: cardHolderFullName,
       doesSupportNfc: true,

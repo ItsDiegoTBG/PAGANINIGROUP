@@ -5,7 +5,6 @@ import 'package:paganini/domain/usecases/credit_cards_use_case.dart';
 
 class CreditCardProvider extends ChangeNotifier {
   final CreditCardsUseCase creditCardsUseCase;
- 
 
   CreditCardProvider({
     required this.creditCardsUseCase,
@@ -29,9 +28,17 @@ class CreditCardProvider extends ChangeNotifier {
   Future<bool> deleteCreditCard(int idCreditCard) async {
     final deleted = await creditCardsUseCase.delete(idCreditCard);
     if (deleted) {
-      _creditCards.removeWhere((card) => card.id == idCreditCard); 
+      _creditCards.removeWhere((card) => card.id == idCreditCard);
     }
     notifyListeners();
     return deleted;
+  }
+
+  Future<void> updateBalance(int idCreditCard, double newBalance) async {
+    try {
+      await creditCardsUseCase.updateBalance(idCreditCard, newBalance);
+    } catch (e) {
+      throw Exception('Error al actualizar el saldo: $e');
+    }
   }
 }
