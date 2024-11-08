@@ -2,12 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
-import 'package:paganini/presentation/providers/saldo_provider.dart';
-import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
-import 'package:provider/provider.dart';
 
 class RechargePage extends StatefulWidget {
   const RechargePage({super.key});
