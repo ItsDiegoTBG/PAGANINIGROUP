@@ -218,7 +218,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.pushReplacementNamed(
+                        Navigator.pushNamed(
                             context, Routes.REGISTER);
                       },
                       child: const Text("Registrate Aqui",
@@ -236,39 +236,24 @@ class _LoginRegisterScreenState extends State<LoginPage> {
             const SizedBox(height: 20),
             // Forms Container
 
-            Center(
-              child: Padding(
-                padding: EdgeInsets.only(top: myHeight * 0.30),
-                child: TextButton(
-                  onPressed: () {
-                    debugPrint("hello world!");
-                  },
-                  child: const Text("Necesitas ayuda?",
-                      style: TextStyle(
-                          color: AppColors.primaryColor,
-                          fontStyle: FontStyle.italic,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w900)),
-                ),
+            Padding(
+              padding: EdgeInsets.only(top: myHeight * 0.30),
+              child: TextButton(
+                onPressed: () {
+                  debugPrint("hello world!");
+                },
+                child: const Text("Necesitas ayuda?",
+                    style: TextStyle(
+                        color: AppColors.primaryColor,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900)),
               ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        //shape: RoundedRectangleBorder(
-        //  borderRadius: BorderRadius.circular(50)
-        //),
-        onPressed: () {
-          debugPrint("Pop to Initial Page Paganini");
-          Navigator.popAndPushNamed(context, Routes.INITIAL);
-        },
-        backgroundColor: AppColors.primaryColor,
-        hoverColor: AppColors.primaryColor,
-        foregroundColor: Colors.white,
-        focusColor: AppColors.secondaryColor,
-        child: const Icon(Icons.arrow_back_rounded),
-      ),
+      
     );
   }
 }

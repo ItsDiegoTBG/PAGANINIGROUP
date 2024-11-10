@@ -82,7 +82,7 @@ class InitialPage extends StatelessWidget {
                     ButtonWithIcon(
                       function: () => {
                         debugPrint("Hola desde auth page "),        
-                        Navigator.pushReplacementNamed(context, Routes.AUTHPAGE)
+                        Navigator.pushNamed(context, Routes.AUTHPAGE)
                       },
                       icon: Icons.login_rounded,
                       textButton: "Iniciar Sesión",
