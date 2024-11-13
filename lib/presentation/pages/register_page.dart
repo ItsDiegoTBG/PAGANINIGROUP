@@ -14,10 +14,12 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final TextEditingController nameController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  final TextEditingController cedController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -36,7 +38,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
       // Guardar el nombre y otros datos en Firestore
       await _firestore.collection('users').doc(uid).set({
-        'name': nameController.text.trim(),
+        'firstname': firstNameController.text.trim(),
+        'lastname': lastNameController.text.trim(),
+        'ced': cedController.text.trim(),
         'email': emailController.text.trim(),
         'phone': phoneController.text.trim(),
         'password': passwordController.text.trim(),
@@ -93,10 +97,12 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void clearFields() {
-    nameController.clear();
+    firstNameController.clear();
+    lastNameController.clear();
     emailController.clear();
     passwordController.clear();
     phoneController.clear();
+    cedController.clear();
   }
 
   @override
@@ -122,14 +128,38 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Usuario", style: TextStyle(fontSize: 16)),
+                    const Text("Nombre", style: TextStyle(fontSize: 16)),
                     TextFormFieldWidget(
                         textInputType: TextInputType.text,
-                        controller: nameController,
-                        hintText: 'Crea tu usuario',
+                        controller: firstNameController,
+                        hintText: 'Ingresa tu nombre',
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Por favor ingresa tu nombre';
+                          }
+                          return null;
+                        }),
+                    const SizedBox(height: 10),
+                    const Text("Apellido", style: TextStyle(fontSize: 16)),
+                    TextFormFieldWidget(
+                        textInputType: TextInputType.text,
+                        controller: lastNameController,
+                        hintText: 'Ingresa tu apellido',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor ingresa tu apellido';
+                          }
+                          return null;
+                        }),
+                    const SizedBox(height: 10),
+                    const Text("Cedula", style: TextStyle(fontSize: 16)),
+                    TextFormFieldWidget(
+                        textInputType: TextInputType.text,
+                        controller: cedController,
+                        hintText: 'Ingresa tu cedula',
+                        validator: (value) {
+                          if (value == null || value.isEmpty || value.length != 10 || !RegExp(r'^\d+$').hasMatch(value)) {
+                            return 'Por favor ingresa tu cedula';
                           }
                           return null;
                         }),
@@ -190,6 +220,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           if (value == null || value.isEmpty) {
                             return 'Por favor ingresa una contraseña';
                           }
+                          if (!RegExp(r'^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$').hasMatch(value)){
+                            return 'La contraseña debe tener al menos 8 caracteres, una mayúscula, un dígito y un carácter especial';
+                          }
                           return null;
                         }),
                     const SizedBox(height: 20),
@@ -243,7 +276,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
-    nameController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    cedController.dispose();
     emailController.dispose();
     passwordController.dispose();
     phoneController.dispose();
