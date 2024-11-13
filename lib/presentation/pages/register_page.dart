@@ -108,9 +108,10 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.white,
-        body: Padding(
+      resizeToAvoidBottomInset: true,
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Padding(
           padding:
               const EdgeInsets.only(right: 16, left: 16, bottom: 16, top: 0),
           child: Column(
@@ -123,142 +124,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
-              Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text("Nombre", style: TextStyle(fontSize: 16)),
-                    TextFormFieldWidget(
-                        textInputType: TextInputType.text,
-                        controller: firstNameController,
-                        hintText: 'Ingresa tu nombre',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Por favor ingresa tu nombre';
-                          }
-                          return null;
-                        }),
-                    const SizedBox(height: 10),
-                    const Text("Apellido", style: TextStyle(fontSize: 16)),
-                    TextFormFieldWidget(
-                        textInputType: TextInputType.text,
-                        controller: lastNameController,
-                        hintText: 'Ingresa tu apellido',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Por favor ingresa tu apellido';
-                          }
-                          return null;
-                        }),
-                    const SizedBox(height: 10),
-                    const Text("Cedula", style: TextStyle(fontSize: 16)),
-                    TextFormFieldWidget(
-                        textInputType: TextInputType.text,
-                        controller: cedController,
-                        hintText: 'Ingresa tu cedula',
-                        validator: (value) {
-                          if (value == null || value.isEmpty || value.length != 10 || !RegExp(r'^\d+$').hasMatch(value)) {
-                            return 'Por favor ingresa tu cedula';
-                          }
-                          return null;
-                        }),
-                    const SizedBox(height: 10),
-                    const Text("Email", style: TextStyle(fontSize: 16)),
-                    TextFormFieldWidget(
-                        textInputType: TextInputType.emailAddress,
-                        controller: emailController,
-                        hintText: 'Ingresa un correo electronico',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Por favor ingresa un email';
-                          } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
-                              .hasMatch(value)) {
-                            return 'Ingresa un email válido';
-                          }
-                          return null;
-                        }),
-                    const SizedBox(height: 10),
-                    const Text("Telefono", style: TextStyle(fontSize: 16)),
-                    TextFormFieldWidget(
-                      textInputType: TextInputType.number,
-                      controller: phoneController,
-                      hintText: 'Ingrese un numero de telefono',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor ingresa un numero de telefono valido';
-                        } else if (value.length > 10) {
-                          return 'El número de teléfono no puede exceder los 10 dígitos';
-                        } else if (value.length < 10 ){
-                           return 'El número de teléfono no puede ser menor a los 10 digitos';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    const Text("Contraseña", style: TextStyle(fontSize: 16)),
-                    TextFormField(
-                        obscureText: !_isPasswordVisible,
-                        controller: passwordController,
-                        decoration: InputDecoration(
-                            focusedBorder: const UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: AppColors.primaryColor, width: 2)),
-                            border: const UnderlineInputBorder(),
-                            hintText: 'Crea una contraseña',
-                            hintStyle:
-                                const TextStyle(fontWeight: FontWeight.w300),
-                            suffixIcon: IconButton(
-                              icon: const Icon(Icons.visibility),
-                              onPressed: () {
-                                setState(() {
-                                  _isPasswordVisible = !_isPasswordVisible;
-                                });
-                              },
-                            )),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Por favor ingresa una contraseña';
-                          }
-                          if (!RegExp(r'^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$').hasMatch(value)){
-                            return 'La contraseña debe tener al menos 8 caracteres, una mayúscula, un dígito y un carácter especial';
-                          }
-                          return null;
-                        }),
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Expanded(
-                            child: ButtonWithoutIcon(
-                                text: "Crear Usuario",
-                                onPressed: () {
-                                  FocusScope.of(context).unfocus();
-                                  if (_formKey.currentState!.validate()) {
-                                    registerUser();
-                                  }
-                                })),
-                        const SizedBox(width: 10),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5)),
-                              padding: const EdgeInsets.all(0),
-                              backgroundColor: AppColors.primaryColor),
-                          onPressed: () {},
-                          child: const Icon(
-                            Icons.settings,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              )
+              form(context)
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
+      ),
+      /*floatingActionButton: FloatingActionButton(
           //shape: RoundedRectangleBorder(
           //  borderRadius: BorderRadius.circular(50)
           //),
@@ -271,7 +142,154 @@ class _RegisterPageState extends State<RegisterPage> {
           foregroundColor: Colors.white,
           focusColor: AppColors.secondaryColor,
           child: const Icon(Icons.arrow_back_rounded),
-        ));
+        )*/
+    );
+  }
+
+  Form form(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("Nombres", style: TextStyle(fontSize: 16)),
+          TextFormFieldWidget(
+              textInputType: TextInputType.text,
+              controller: firstNameController,
+              hintText: 'Ingresa su nombre',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingresa tu nombre';
+                }
+                return null;
+              }),
+          const SizedBox(height: 10),
+          const Text("Apellidos", style: TextStyle(fontSize: 16)),
+          TextFormFieldWidget(
+              textInputType: TextInputType.text,
+              controller: lastNameController,
+              hintText: 'Ingresa su apellido',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingresa tu apellido';
+                }
+                return null;
+              }),
+          const SizedBox(height: 10),
+          const Text("Cedula", style: TextStyle(fontSize: 16)),
+          TextFormFieldWidget(
+              textInputType: TextInputType.text,
+              controller: cedController,
+              hintText: 'Ingresa su cedula',
+              validator: (value) {
+                if (value == null ||
+                    value.isEmpty ||
+                    value.length != 10 ||
+                    !RegExp(r'^\d+$').hasMatch(value)) {
+                  return 'Por favor ingresa tu cedula';
+                }
+                return null;
+              }),
+          const SizedBox(height: 10),
+          const Text("Email", style: TextStyle(fontSize: 16)),
+          TextFormFieldWidget(
+              textInputType: TextInputType.emailAddress,
+              controller: emailController,
+              hintText: 'Ingresa un correo electronico',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingresa un email';
+                } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                  return 'Ingresa un email válido';
+                }
+                return null;
+              }),
+          const SizedBox(height: 10),
+          const Text("Telefono", style: TextStyle(fontSize: 16)),
+          TextFormFieldWidget(
+            textInputType: TextInputType.number,
+            controller: phoneController,
+            hintText: 'Ingrese un numero de telefono',
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingresa un numero de telefono valido';
+              } else if (value.length > 10) {
+                return 'El número de teléfono no puede exceder los 10 dígitos';
+              } else if (value.length < 10) {
+                return 'El número de teléfono no puede ser menor a los 10 digitos';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 10),
+          const Text("Contraseña", style: TextStyle(fontSize: 16)),
+          TextFormField(
+            obscureText: !_isPasswordVisible,
+            controller: passwordController,
+            decoration: InputDecoration(
+                focusedBorder: const UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: AppColors.primaryColor, width: 2)),
+                border: const UnderlineInputBorder(),
+                hintText: 'Crea una contraseña',
+                hintStyle: const TextStyle(fontWeight: FontWeight.w300),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.visibility),
+                  onPressed: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  },
+                )),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingresa una contraseña';
+              }
+              if (value.length < 12) {
+                return 'La contraseña debe tener al menos 12 caracteres';
+              }
+              if (!RegExp(r'(?=.*[A-Z])').hasMatch(value)) {
+                return 'La contraseña debe incluir al menos una letra mayúscula';
+              }
+              if (!RegExp(r'(?=.*\d)').hasMatch(value)) {
+                return 'La contraseña debe incluir al menos un dígito';
+              }
+              if (!RegExp(r'(?=.*[@$!%*?&])').hasMatch(value)) {
+                return 'La contraseña debe incluir al menos un carácter especial (@, \$, !, %, *, ?, &)';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                  child: ButtonWithoutIcon(
+                      text: "Crear Usuario",
+                      onPressed: () {
+                        FocusScope.of(context).unfocus();
+                        if (_formKey.currentState!.validate()) {
+                          registerUser();
+                        }
+                      })),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5)),
+                    padding: const EdgeInsets.all(0),
+                    backgroundColor: AppColors.primaryColor),
+                onPressed: () {},
+                child: const Icon(
+                  Icons.settings,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
   }
 
   @override

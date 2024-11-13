@@ -218,7 +218,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.pushReplacementNamed(
+                        Navigator.pushNamed(
                             context, Routes.REGISTER);
                       },
                       child: const Text("Registrate Aqui",
