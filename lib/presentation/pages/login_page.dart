@@ -86,7 +86,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
 // Método para mostrar un SnackBar en la parte superior
 void _showSnackBar(String message, Color color, {bool topPosition = false}) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    duration: const Duration(seconds: 1),
+    duration: const Duration(seconds: 3),
     content: Text(
       message,
       style: const TextStyle(color: Colors.white),
