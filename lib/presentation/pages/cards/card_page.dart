@@ -230,6 +230,12 @@ class _CardPageState extends State<CardPage> {
                             color: Colors.grey[100],
                             borderRadius: BorderRadius.circular(8)),
                         child: TextFormFieldSecondVersion(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Por favor ingrese un nombre";
+                            }
+                            return null;
+                          },
                           inputFormatters: [],
                           onChanged: (value) {},
                           textAlign: TextAlign.start,
@@ -264,17 +270,26 @@ class _CardPageState extends State<CardPage> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: TextFormFieldSecondVersion(
-                            textAlign: TextAlign.start,
-                            onChanged: (value) {},
-                            textCapitalization: TextCapitalization.none,
-                            hintext: "****************",
-                            icon: Icons.credit_score_rounded,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              LengthLimitingTextInputFormatter(16)
-                            ],
-                            controller: numberCreditCardController,
-                            inputBorder: InputBorder.none),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Ingresa un numero de tarjeta porfa";
+                            } else if (value.length < 16) {
+                              return "El numero de tarjeta no puede ser menor a 16";
+                            }
+                            return null;
+                          },
+                          textAlign: TextAlign.start,
+                          onChanged: (value) {},
+                          textCapitalization: TextCapitalization.none,
+                          hintext: "****************",
+                          icon: Icons.credit_score_rounded,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(16)
+                          ],
+                          controller: numberCreditCardController,
+                          inputBorder: InputBorder.none,
+                        ),
                       ),
                     ),
                     SizedBox(
@@ -491,10 +506,10 @@ class _CardPageState extends State<CardPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 60),
             child: CreditCardWidget(
-               balance: 0.0,
+                balance: 0.0,
                 width: 300,
                 cardHolderFullName: nameNewCard,
-                cardNumber: numberNewCard,
+                cardNumber:numberCreditCardController.text,
                 validThru: "$monthExpirationNewCard/$yearExpirationNewCard",
                 color: selectedColor ?? AppColors.primaryColor,
                 cardType: selectedCardType,
@@ -515,6 +530,7 @@ class TextFormFieldSecondVersion extends StatelessWidget {
   final List<TextInputFormatter> inputFormatters;
   final TextInputType keyboardType;
   final TextAlign? textAlign;
+  final FormFieldValidator<String>? validator;
 
   final ValueChanged<String>? onChanged;
   const TextFormFieldSecondVersion(
@@ -527,6 +543,7 @@ class TextFormFieldSecondVersion extends StatelessWidget {
       this.textAlign = TextAlign.center,
       this.inputFormatters = const <TextInputFormatter>[],
       required this.onChanged,
+      required this.validator,
       required this.keyboardType});
 
   @override
@@ -538,6 +555,7 @@ class TextFormFieldSecondVersion extends StatelessWidget {
         textAlign: textAlign ?? TextAlign.center,
         inputFormatters: inputFormatters,
         controller: controller,
+        validator: validator,
         decoration: InputDecoration(
           prefixIconColor: AppColors.primaryColor,
           prefixIcon: icon != null // Verifica si el icono es nulo

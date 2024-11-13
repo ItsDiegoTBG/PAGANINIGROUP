@@ -21,67 +21,85 @@ class _LoginRegisterScreenState extends State<LoginPage> {
   bool _isPasswordVisible = false;
 
   void signUserIn() async {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return const Center(
-            child: CircularProgressIndicator(
-              backgroundColor: AppColors.primaryColor,
-            ),
-          );
-        });
-    try {
-      await _auth.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
+  // Muestra el diálogo de carga
+  showDialog(
+    context: context,
+    builder: (context) {
+      return const Center(
+        child: CircularProgressIndicator(
+          backgroundColor: AppColors.primaryColor,
+        ),
       );
+    },
+  );
 
-      Navigator.pop(context);
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        duration: Duration(milliseconds: 500),
-        content: Text(
-          'Inicio de sesión exitoso',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: AppColors.primaryColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-      ));
+  try {
+    // Intenta iniciar sesión
+    await _auth.signInWithEmailAndPassword(
+      email: emailController.text.trim(),
+      password: passwordController.text.trim(),
+    );
 
-      Navigator.pushNamedAndRemoveUntil(
-          context, Routes.HOME, (Route<dynamic> route) => false);
-    } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
-      if (e.code == 'user-not-found') {
-        wrongEmailMessage();
-      } else if (e.code == 'wrong-password') {
-        wrongPasswordMessage();
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          duration: Duration(seconds: 1),
-          content: Text('Error en el inicio de Sesion'),
-          backgroundColor: Color.fromARGB(255, 236, 45, 55),
-          /*shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),*/
-        ));
-      }
-    } catch (e) {
-      debugPrint("Error aqui ");
-      Navigator.pop(context);
+    // ignore: use_build_context_synchronously
+    Navigator.pop(context); // Cierra el diálogo de carga
+
+    // Muestra un mensaje de éxito
+    _showSnackBar(
+      'Inicio de sesión exitoso',
+      AppColors.primaryColor,
+      topPosition: true,
+    );
+
+    // Navega a la pantalla principal
+    Navigator.pushNamedAndRemoveUntil(
       // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        duration: Duration(seconds: 1),
-        content: Text('Error en el inicio de Sesion'),
-        backgroundColor: Color.fromARGB(255, 236, 45, 55),
-        /*shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),*/
-      ));
+      context,
+      Routes.HOME,
+      (Route<dynamic> route) => false,
+    );
+  } on FirebaseAuthException catch (e) {
+    // ignore: use_build_context_synchronously
+    Navigator.pop(context); // Cierra el diálogo de carga
+    // Maneja errores específicos
+    if (e.code == 'user-not-found') {
+      wrongEmailMessage();
+    } else if (e.code == 'wrong-password') {
+      wrongPasswordMessage();
+    } else {
+      _showSnackBar(
+        'Error en el inicio de sesión',
+      const  Color.fromARGB(255, 236, 45, 55),
+        topPosition: true,
+      );
     }
+  } catch (e) {
+    Navigator.pop(context); // Cierra el diálogo de carga
+    debugPrint("Error aquí");
+    _showSnackBar(
+      'Error en el inicio de sesión',
+      const Color.fromARGB(255, 236, 45, 55),
+      topPosition: true,
+    );
   }
+}
+
+// Método para mostrar un SnackBar en la parte superior
+void _showSnackBar(String message, Color color, {bool topPosition = false}) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    duration: const Duration(seconds: 1),
+    content: Text(
+      message,
+      style: const TextStyle(color: Colors.white),
+    ),
+    backgroundColor: color,
+    behavior: topPosition ? SnackBarBehavior.floating : SnackBarBehavior.fixed,
+    margin: topPosition ? const EdgeInsets.only(top: 10, left: 10, right: 10) : null,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(10)),
+    ),
+  ));
+}
+
 
   void wrongEmailMessage() {
     showDialog(
