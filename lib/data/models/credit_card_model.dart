@@ -9,6 +9,7 @@ class CreditCardModel {
   final Color color;
   final bool isFavorite;
   final String cvv;
+   double balance;
 
   CreditCardModel({
     required this.id,
@@ -19,6 +20,7 @@ class CreditCardModel {
     required this.color,
     required this.isFavorite,
     required this.cvv,
+    required this.balance,
   });
 
   factory CreditCardModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,7 @@ class CreditCardModel {
       color: Color(json['color']),
       isFavorite: json['isFavorite'],
       cvv: json['cvv'],
+      balance: json['balance']
     );
   }
 
@@ -44,6 +47,7 @@ class CreditCardModel {
       'color': color.value,
       'isFavorite': isFavorite,
       'cvv': cvv,
+      'balance':balance
     };
   }
 }

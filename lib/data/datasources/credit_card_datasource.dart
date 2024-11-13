@@ -5,6 +5,7 @@ abstract class CreditCardRemoteDataSource {
   Future<List<CreditCardModel>> fetchCreditCards();
   Future<void> addCreditCard(CreditCardModel creditCard);
   Future<void> deleteCreditCardById(int id);
+  Future<void> updateBalance(int idCreditCard, double newBalance);
 }
 
 class CreditCardRemoteDataSourceImpl implements 
@@ -20,6 +21,7 @@ CreditCardRemoteDataSource {
         color: Colors.blueAccent,
         isFavorite: true,
         cvv: '123',
+        balance: 200
       ),
       CreditCardModel(
         id: 2,
@@ -30,6 +32,7 @@ CreditCardRemoteDataSource {
         color: Colors.green,
         isFavorite: false,
         cvv: '456',
+        balance: 123
       ),
       CreditCardModel(
         id:3,
@@ -39,17 +42,8 @@ CreditCardRemoteDataSource {
         validThru: '10/24',
         color: Colors.purple,
         isFavorite: false,
-        cvv: '789',
-      ),
-      CreditCardModel(
-        id: 4,
-        cardHolderFullName: 'Bob Brown',
-        cardNumber: '5555 6666 7777 8888',
-        cardType: 'credit',
-        validThru: '09/23',
-        color: Colors.orange,
-        isFavorite: true,
-        cvv: '321',
+        cvv: '748',
+        balance: 748
       ),
       // Más tarjetas...
     ];
@@ -66,6 +60,12 @@ CreditCardRemoteDataSource {
   @override
   Future<void> deleteCreditCardById(int id) async {
     _creditCards.removeWhere((card) => card.id == id);
+  }
+  
+  @override
+  Future<void> updateBalance(int idCreditCard, double newBalance) async {
+    final cardIndex = _creditCards.indexWhere((card)=>card.id==idCreditCard);
+      _creditCards[cardIndex].balance = newBalance;
   }
 
   

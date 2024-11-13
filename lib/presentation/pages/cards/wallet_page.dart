@@ -107,7 +107,7 @@ class _WalletPageState extends State<WalletPage> {
                   ButtonSecondVersion(
                       text: "Agregar",
                       function: () {
-                        saldoProviderRead.agregar();
+                        Navigator.pushNamed(context, Routes.RECHARGE);
                       }),
                   const SizedBox(
                     width: 10,
@@ -139,6 +139,7 @@ class _WalletPageState extends State<WalletPage> {
                       itemBuilder: (context, index) {
                         final card = creditCards.isEmpty
                             ? CreditCardEntity(
+                              balance: 0,
                                 id: 4,
                                 cardHolderFullName: 'Paganini',
                                 cardNumber: '999999999999999999',
@@ -165,6 +166,7 @@ class _WalletPageState extends State<WalletPage> {
                                 child: Opacity(
                                   opacity: 1,
                                   child: CreditCardWidget(
+                                    balance: card.balance,
                                     cardHolderFullName: card.cardHolderFullName,
                                     cardNumber: card.cardNumber,
                                     validThru: card.validThru,

@@ -15,15 +15,15 @@ class CreditCardRepositoryImpl implements CreditCardRepository {
     // Convertimos los modelos a entidades de dominio
     return creditCardModels
         .map((model) => CreditCardEntity(
-              id: model.id,
-              cvv: model.cvv,
-              color: model.color,
-              cardHolderFullName: model.cardHolderFullName,
-              cardNumber: model.cardNumber,
-              cardType: model.cardType,
-              validThru: model.validThru,
-              isFavorite: model.isFavorite,
-            ))
+            id: model.id,
+            cvv: model.cvv,
+            color: model.color,
+            cardHolderFullName: model.cardHolderFullName,
+            cardNumber: model.cardNumber,
+            cardType: model.cardType,
+            validThru: model.validThru,
+            isFavorite: model.isFavorite,
+            balance: model.balance))
         .toList();
   }
 
@@ -39,6 +39,7 @@ class CreditCardRepositoryImpl implements CreditCardRepository {
       cardType: creditCard.cardType,
       validThru: creditCard.validThru,
       isFavorite: creditCard.isFavorite,
+      balance: creditCard.balance,
     );
 
     try {
@@ -47,15 +48,24 @@ class CreditCardRepositoryImpl implements CreditCardRepository {
       throw Exception('Error al agregar la tarjeta: $e');
     }
   }
-  
-  
+
   @override
   Future<bool> deleteCreditCard(int idCreditCard) async {
     try {
-      await remoteDataSource.deleteCreditCardById(idCreditCard); 
-      return true; 
-    } catch (e) {     
-      return false; 
+      await remoteDataSource.deleteCreditCardById(idCreditCard);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @override
+  Future<void> updateBalance(int idCreditCard, double newBalance) async {
+    // TODO: implement updateBalance
+    try {
+      await remoteDataSource.updateBalance(idCreditCard, newBalance);
+    } catch (e) {
+      throw Exception('Error al agregar la tarjeta: $e');
     }
   }
 }

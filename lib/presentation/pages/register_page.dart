@@ -135,7 +135,7 @@ class _RegisterPageState extends State<RegisterPage> {
           //),
           onPressed: () {
             debugPrint("Pop to Initial Page Paganini");
-            Navigator.popAndPushNamed(context, Routes.LOGIN);
+            Navigator.pop(context);
           },
           backgroundColor: AppColors.primaryColor,
           hoverColor: AppColors.primaryColor,
