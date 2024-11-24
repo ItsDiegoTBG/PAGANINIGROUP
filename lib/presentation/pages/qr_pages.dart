@@ -4,14 +4,15 @@ import 'dart:typed_data';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
 import 'package:paganini/core/device/qr_code_scanner.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/presentation/widgets/qr_container.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -36,8 +37,12 @@ class _QrPageState extends State<QrPage> {
     setState(() => _result = result);
   }
 
+
   @override
   Widget build(BuildContext context) {
+    final userProviderWatch = context.watch<UserProvider>(); 
+
+    final qrContainer =  QrContainer(data: userProviderWatch.user?.uid);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -53,14 +58,14 @@ class _QrPageState extends State<QrPage> {
                     "assets/image/paganini_logo_horizontal_morado.png"),
               ),
             ),
-            Text(_result ?? 'No result'),
+            //Text(_result ?? 'No result'),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Center(
                   child: Screenshot(
                     controller: screenshotController,
-                    child: const QrContainer(),
+                    child: qrContainer
                   ),
                 ),
                 const SizedBox(height: 50),
@@ -74,7 +79,7 @@ class _QrPageState extends State<QrPage> {
                       ),
                       onPressed: () async {
                         final image = await screenshotController
-                            .captureFromWidget(const QrContainer());
+                            .captureFromWidget(qrContainer);
                         // ignore: use_build_context_synchronously
                         await saveImage(image, context);
                       },
@@ -94,7 +99,7 @@ class _QrPageState extends State<QrPage> {
                     IconButton(
                         onPressed: () async {
                           final image = await screenshotController
-                              .captureFromWidget(const QrContainer());
+                              .captureFromWidget(qrContainer);
                           await shareImage(image);
                         },
                         icon: const Icon(
@@ -115,74 +120,7 @@ class _QrPageState extends State<QrPage> {
   }
 }
 
-class QrContainer extends StatelessWidget {
-  const QrContainer({
-    super.key,
-  });
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 350,
-      width: 300,
-      decoration: BoxDecoration(
-        color: AppColors.secondaryColor,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Stack(alignment: AlignmentDirectional.center, children: [
-        Padding(
-          padding:
-              const EdgeInsets.only(top: 40, bottom: 40, left: 20, right: 20),
-          child: Container(
-            height: 340,
-            width: 280,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: QrImageView(
-              data: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-              version: QrVersions.auto,
-              // embeddedImage: const AssetImage('assets/image/paganini_icono_negro.png'),
-              // embeddedImageStyle: const QrEmbeddedImageStyle(
-              //   size: Size(80, 80),
-              // ),
-              dataModuleStyle: const QrDataModuleStyle(
-                  color: Color.fromARGB(255, 0, 0, 0),
-                  dataModuleShape: QrDataModuleShape.square),
-              size: 200.0,
-              eyeStyle: const QrEyeStyle(
-                  eyeShape: QrEyeShape.circle,
-                  color: Color.fromARGB(255, 0, 0, 0)),
-            ),
-          ),
-        ),
-        Container(
-          width: 60, 
-          height: 60, 
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle, 
-          ),
-          child: ClipOval(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Image.asset(
-                  "assets/image/paganini_icono_negro.png",
-                  width: 40, 
-                  height: 40, 
-                  fit: BoxFit
-                      .contain, 
-                ),
-              ),
-            ),
-          ),
-        )
-      ]),
-    );
-  }
-}
 
 Future<String> saveImage(Uint8List bytes, context) async {
   await [Permission.storage].request();

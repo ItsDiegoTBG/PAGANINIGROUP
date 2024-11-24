@@ -14,8 +14,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginRegisterScreenState extends State<LoginPage> {
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   bool _isPasswordVisible = false;
@@ -123,7 +125,7 @@ void _showSnackBar(String message, Color color, {bool topPosition = false}) {
 
   @override
   Widget build(BuildContext context) {
-    double myHeight = MediaQuery.of(context).size.height;
+    //double myHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -254,7 +256,7 @@ void _showSnackBar(String message, Color color, {bool topPosition = false}) {
             const SizedBox(height: 20),
             // Forms Container
 
-            Padding(
+            /*Padding(
               padding: EdgeInsets.only(top: myHeight * 0.30),
               child: TextButton(
                 onPressed: () {
@@ -267,7 +269,7 @@ void _showSnackBar(String message, Color color, {bool topPosition = false}) {
                         fontSize: 16,
                         fontWeight: FontWeight.w900)),
               ),
-            ),
+            ),*/
           ],
         ),
       ),

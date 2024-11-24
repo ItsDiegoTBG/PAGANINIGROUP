@@ -11,4 +11,5 @@ abstract class Routes {
   static const AUTHPAGE = "/auth_page";
   static const RECHARGE = "/recharge_page";
   static const CONFRECHARGE = "/conf_recharge_page";
+  static const PAYMENTPAGE =  "/payment_page";
 }

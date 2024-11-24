@@ -376,7 +376,6 @@ class _CardPageState extends State<CardPage> {
                                     },
                                     onChanged: (value) {
                                       setState(() {
-                                      
                                         isDateValid = value.length == 2;
                                       });
                                     },

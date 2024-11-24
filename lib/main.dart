@@ -10,7 +10,6 @@ import 'package:paganini/firebase_options.dart';
 import 'package:paganini/presentation/pages/auth_page.dart';
 import 'package:paganini/presentation/pages/cards/card_delete_page.dart';
 import 'package:paganini/presentation/pages/cards/card_page.dart';
-import 'package:paganini/presentation/pages/confirm_recharge_page.dart';
 import 'package:paganini/presentation/pages/home_page.dart';
 import 'package:paganini/presentation/pages/initial_page.dart';
 import 'package:paganini/presentation/pages/login_page.dart';
@@ -82,6 +81,7 @@ class MainApp extends StatelessWidget {
         Routes.REGISTER: (context) => const RegisterPage(),
         Routes.RECHARGE: (context) => const RechargePage(),
        // Routes.CONFRECHARGE: (context) => const ConfirmRechargePage()
+       // Routes.PAYMENTPAGE : (context) => const PaymentPage(data: ""),
         
       },
       theme: ThemeData(
