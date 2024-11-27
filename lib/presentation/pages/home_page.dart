@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
+import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:provider/provider.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,6 +22,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final saldoProviderWatch = context.watch<SaldoProvider>();
     final saldoProviderRead = context.read<SaldoProvider>();
+
+    final userProviderWatch = context.watch<UserProvider>();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -70,7 +75,7 @@ class _HomePageState extends State<HomePage> {
                   horizontalPadding: 3.5,
                   text: "Agregar",
                   function: () {
-                    saldoProviderRead.agregar();
+                    Navigator.pushReplacementNamed(context, Routes.RECHARGE);
                   },
                 )
               ],
@@ -88,14 +93,10 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.bold),
                 )),
           ),
-          ButtonSecondVersion(
-                  verticalPadding: 2.0,
-                  horizontalPadding: 3.5,
-                  text: "Transferir",
-                  function: () {
-                    Navigator.pushReplacementNamed(context, Routes.TRANSFERPAGE);
-                  },
-                )          
+          //solo de prueba
+          const Text("Para ejemplo didactico"),
+          Text(
+              "Inicio de cuenta con ${userProviderWatch.user?.email ?? 'usuario no disponible'}")
         ],
       ),
       floatingActionButton: const FloatingButtonNavBarQr(),

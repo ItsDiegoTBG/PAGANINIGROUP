@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/contact_user.dart';
+import 'package:provider/provider.dart';
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({super.key});
@@ -13,34 +18,34 @@ class ContactsPage extends StatefulWidget {
 class _ContactsPageState extends State<ContactsPage> {
   TextEditingController textEditingController = TextEditingController();
 
+  List contactsList = [];
+
+  contactsFetch() async {
+    if (await FlutterContacts.requestPermission()) {
+      var contacts = await FlutterContacts.getContacts(
+          withProperties: true, withPhoto: true);
+      var encodeData = await jsonEncode(contacts);
+      var decodeData = await jsonDecode(encodeData);
+      contactsList = await decodeData;
+      debugPrint("Cantidad de contactos");
+      debugPrint(contactsList.length.toString());
+      setState(() {});
+    }
+    // isLoading = false;
+  }
+
+  @override
+  void initState() {
+    contactsFetch();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     double myHeight = MediaQuery.of(context).size.height;
     double myWidth = MediaQuery.of(context).size.width;
+    final contactProviderRead = context.read<ContactProvider>();
 
-    final List<Map<String, String>> contactsUserList = [
-      {"name": "Juan Perez", "account": "123456789", "phone": "+123456789"},
-      {"name": "Ana Gomez", "account": "987654321", "phone": "+987654321"},
-      {"name": "Luis Martinez", "account": "456123789", "phone": "+456123789"},
-        {"name": "Juan Perez", "account": "123456789", "phone": "+123456789"},
-      {"name": "Ana Gomez", "account": "987654321", "phone": "+987654321"},
-      {"name": "Luis Martinez", "account": "456123789", "phone": "+456123789"},
-        {"name": "Juan Perez", "account": "123456789", "phone": "+123456789"},
-      {"name": "Ana Gomez", "account": "987654321", "phone": "+987654321"},
-      {"name": "Luis Martinez", "account": "456123789", "phone": "+456123789"},
-        {"name": "Juan Perez", "account": "123456789", "phone": "+123456789"},
-      {"name": "Ana Gomez", "account": "987654321", "phone": "+987654321"},
-      {"name": "Luis Martinez", "account": "456123789", "phone": "+456123789"},
-        {"name": "Juan Perez", "account": "123456789", "phone": "+123456789"},
-      {"name": "Ana Gomez", "account": "987654321", "phone": "+987654321"},
-      {"name": "Luis Martinez", "account": "456123789", "phone": "+456123789"},
-        {"name": "Juan Perez", "account": "123456789", "phone": "+123456789"},
-      {"name": "Ana Gomez", "account": "987654321", "phone": "+987654321"},
-      {"name": "Luis Martinez", "account": "456123789", "phone": "+456123789"},
-        {"name": "Juan Perez", "account": "123456789", "phone": "+123456789"},
-      {"name": "Ana Gomez", "account": "987654321", "phone": "+987654321"},
-      {"name": "Luis Martinez", "account": "456123789", "phone": "+456123789"},
-    ];
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -73,14 +78,15 @@ class _ContactsPageState extends State<ContactsPage> {
                           child: Text(
                             "Busque y selecione un contacto",
                             style: TextStyle(
-                                fontSize: 18, color: Colors.grey[700]),
+                                fontSize: 16, color: Colors.grey[700]),
                           ),
                         ),
                       ],
                     )),
                 Padding(
-                  padding: const EdgeInsets.only(right: 15),
+                  padding: const EdgeInsets.only(left: 12),
                   child: IconButton.filled(
+                    iconSize: 15,
                     style: IconButton.styleFrom(
                       backgroundColor: AppColors.primaryColor,
                     ),
@@ -90,11 +96,12 @@ class _ContactsPageState extends State<ContactsPage> {
                     icon: const Icon(
                       Icons.arrow_back_ios_new_rounded,
                       color: Colors.white,
+                      //size : 10;
                     ),
                   ),
                 ),
                 SizedBox(
-                  height: myHeight * 0.05,
+                  height: myHeight * 0.04,
                 ),
               ],
             ),
@@ -146,29 +153,41 @@ class _ContactsPageState extends State<ContactsPage> {
                 ],
               ),
             ),
-            
             Expanded(
-              child: CustomScrollView(
-                slivers: [
-                  SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                          childCount: contactsUserList.length,
-                          (context, index) {
-                    final contact = contactsUserList[index];
-                    contact;
-                    return Padding(
-                      padding: EdgeInsets.only(top: 5,left: myWidth*0.08,right: myWidth*0.08),
-                      child: ContactUserWidget(
-                        nameUser: contact["name"]!,
-                        phoneUser: contact["phone"]!,
-                        numberAccount: contact["account"]!,
-                        width: myWidth * 0.85,
-                        height: myHeight * 0.10,
-                      ),
-                    );
-                  }))
-                ],
-              ),
+              child: contactsList.isEmpty
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : CustomScrollView(
+                      slivers: [
+                        SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                                childCount: contactsList.length,
+                                (context, index) {
+                          //final contact = contactsUserList[index];
+                          final contact = ContactUserWidget(
+                            nameUser: contactsList[index]['displayName'],
+                            phoneUser: contactsList[index]['phones'][0]['number'],
+                            numberAccount: "account",
+                            width: myWidth * 0.85,
+                            height: myHeight * 0.10,
+                          );
+
+                          return Padding(
+                            padding: EdgeInsets.only(
+                                top: 5,
+                                left: myWidth * 0.08,
+                                right: myWidth * 0.08),
+                            child: GestureDetector(
+                                onTap: () async {
+                                 await contactProviderRead.setContactTransfered(contact);
+                                 Navigator.pop(context);                                       
+                                },
+                                child: contact),
+                          );
+                        }))
+                      ],
+                    ),
             )
           ],
         ));

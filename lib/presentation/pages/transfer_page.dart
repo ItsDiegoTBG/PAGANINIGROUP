@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
+import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
+import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
 import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
 import 'package:provider/provider.dart';
 
@@ -18,11 +21,29 @@ class TransferPage extends StatefulWidget {
 class _TransferPageState extends State<TransferPage> {
   TextEditingController trasferedController = TextEditingController();
 
+  late ContactProvider contactProvider;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Inicializa el contactProvider aquí
+    contactProvider = context.read<ContactProvider>();
+  }
+
+  @override
+  void dispose() {
+    contactProvider.resetContact(); // Reinicia el estado aquí
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     double myHeight = MediaQuery.of(context).size.height;
     double myWidth = MediaQuery.of(context).size.width;
     final saldoProviderWatch = context.watch<SaldoProvider>();
+    final contactTransfered =
+        context.watch<ContactProvider>().contactTransfered;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -83,7 +104,7 @@ class _TransferPageState extends State<TransferPage> {
             ),
           ),
           SizedBox(
-            height: myHeight * 0.10,
+            height: myHeight * 0.07,
           ),
           Container(
               height: myHeight * 0.10,
@@ -141,49 +162,85 @@ class _TransferPageState extends State<TransferPage> {
                   ],
                 ),
               )),
-          SizedBox(height: myHeight * 0.05),
-          Container(
-              // padding: EdgeInsets.only(top: 10,bottom: 10),
-              height: myHeight * 0.07,
-              width: myWidth * 0.85,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: AppColors.secondaryColor,
+          SizedBox(height: myHeight * 0.03),
+          Column(
+            children: [
+              if (contactTransfered != null) ...[
+                Padding(
+                  padding: EdgeInsets.only(left: myWidth * 0.08),
+                  child: const Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Text(
+                      "Para",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                ),
+                const Divider(
+                  thickness: 5,
+                  indent: 30,
+                  endIndent: 30,
+                ),
+              ],
+              contactTransfered ??
+                  selectBeneficiary(myHeight, myWidth, context),
+              const SizedBox(
+                height: 40,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Escoge al beneficiario",
-                    style: TextStyle(color: Colors.black,fontSize: 16),
-                  ),
-                  SizedBox(
-                    width: myWidth * 0.10,
-                  ),
-                  Container(
-                    width: 40.0, // Ajusta el tamaño del círculo
-                    height: 40.0,
-                    decoration: const BoxDecoration(
-                      color: Colors.white, // Color de fondo del círculo
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, Routes.CONTACTSPAGE);
-                      },
-                      icon: const Icon(Icons.arrow_forward_ios_rounded),
-                      iconSize: 20, // Tamaño del icono
-                      color: const Color.fromARGB(255, 91, 85, 85), // Color del icono
-                    ),
-                  ),
-                ],
-              ))
+              if (contactTransfered != null) ...[
+                ButtonSecondVersion(
+                  text: "Continuar",
+                  function: () {},
+                )
+              ]
+            ],
+          )
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: const FloatingButtonNavBarQr(),
       bottomNavigationBar: const BottomMainAppBar(),
     );
+  }
+
+  Container selectBeneficiary(
+      double myHeight, double myWidth, BuildContext context) {
+    return Container(
+        // padding: EdgeInsets.only(top: 10,bottom: 10),
+        height: myHeight * 0.07,
+        width: myWidth * 0.85,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: AppColors.secondaryColor,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              "Escoge al beneficiario",
+              style: TextStyle(color: Colors.black, fontSize: 16),
+            ),
+            SizedBox(
+              width: myWidth * 0.10,
+            ),
+            Container(
+              width: 40.0, // Ajusta el tamaño del círculo
+              height: 40.0,
+              decoration: const BoxDecoration(
+                color: Colors.white, // Color de fondo del círculo
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, Routes.CONTACTSPAGE);
+                },
+                icon: const Icon(Icons.arrow_forward_ios_rounded),
+                iconSize: 20, // Tamaño del icono
+                color: const Color.fromARGB(255, 91, 85, 85), // Color del icono
+              ),
+            ),
+          ],
+        ));
   }
 }

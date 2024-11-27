@@ -20,44 +20,40 @@ class ContactUserWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: (){
-        debugPrint("Se clickea $nameUser");
-      },
-      child: Container(
-        width: width,
-        height: height,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: color,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(nameUser,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w400)),
-                  const Text("Paganini Mobile"),
-                  Text("Nro +$numberAccount")
-                ],
-              ),
+    
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: color,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(nameUser,
+                    style: const TextStyle(
+                        fontSize: 17, fontWeight: FontWeight.w400,overflow: TextOverflow.visible)),
+                 Text("📱$phoneUser",style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400,overflow: TextOverflow.visible),),
+                Text("Nro +$numberAccount")
+              ],
             ),
-            Padding(
-              padding:const EdgeInsets.only(top: 7, right: 10),
-              child: Align(
-                  alignment: Alignment.topRight,
-                  child: Text("📱 $phoneUser",
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w400))),
-            )
-          ],
-        ),
+          ),
+          const Padding(
+            padding:EdgeInsets.only(top: 7, right: 10),
+            child: Align(
+                alignment: Alignment.topRight,
+                child: Text("Paganini Mobile",
+                    style:  TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w400,overflow: TextOverflow.visible))),
+          )
+        ],
       ),
     );
   }

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:paganini/core/routes/app_routes.dart';
-
-
+import 'package:paganini/presentation/pages/payment_page.dart';
 
 class QrCodeScanner extends StatelessWidget {
   QrCodeScanner({
@@ -12,8 +11,6 @@ class QrCodeScanner extends StatelessWidget {
 
   final Function setResult;
   final MobileScannerController controller = MobileScannerController();
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -48,14 +45,23 @@ class QrCodeScanner extends StatelessWidget {
           onDetect: (BarcodeCapture capture) async {
             final List<Barcode> barcodes = capture.barcodes;
             final barcode = barcodes.first;
-
-            if (barcode.rawValue != null) {
+            final data = barcode.rawValue;
+            if (data != null) {
               setResult(barcode.rawValue);
               //print(barcode.rawValue);
               await controller
                   .stop()
                   .then((value) => controller.dispose())
-                  .then((value) => Navigator.of(context).pop());
+                  // ignore: use_build_context_synchronously
+                  .then((value) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PaymentPage(dataId: data)),
+                );
+              });
+            } else {
+              Navigator.of(context).pop();
             }
           },
         ),

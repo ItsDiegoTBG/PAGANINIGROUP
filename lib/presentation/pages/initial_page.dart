@@ -8,6 +8,7 @@ class InitialPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         body: Center(
           child: Column(
@@ -23,6 +24,7 @@ class InitialPage extends StatelessWidget {
                  decoration : BoxDecoration(
                   color: Colors.white,
                   border: Border.all(color: AppColors.primaryColor),
+                  borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.5),
@@ -80,8 +82,8 @@ class InitialPage extends StatelessWidget {
                     ),
                     ButtonWithIcon(
                       function: () => {
-                        debugPrint("Hola desde login"),        
-                        Navigator.pushReplacementNamed(context, Routes.LOGIN)
+                        debugPrint("Hola desde auth page "),        
+                        Navigator.pushNamed(context, Routes.AUTHPAGE)
                       },
                       icon: Icons.login_rounded,
                       textButton: "Iniciar Sesión",

@@ -42,21 +42,22 @@ A new Flutter project.
 
 ## Backlog del Proyecto
 
-- Permitir a los usuarios registrar múltiples tarjetas de crédito o débito creando una billetera virtual.
+- Permitir al usuario ingresar a su cuenta por medio de un correo y clave. ✖️
+- Permitir a los usuarios registrar múltiples tarjetas de crédito o débito creando una billetera virtual. ✖️
 - Permitir pagos móviles utilizando tarjetas tanto en la página web como en la aplicación.
-- Permitir a los usuarios añadir y eliminar tarjetas de crédito o débito.
+- Permitir a los usuarios añadir y eliminar tarjetas de crédito o débito. ✖️
 - Recargar saldo a través de la página web o la aplicación móvil.
-- Visualizar el saldo disponible en la cuenta.
+- Visualizar el saldo disponible en la cuenta. ✖️
 - Realizar transferencias de saldo entre usuarios.
-- Seleccionar y guardar el método de pago favorito.
-- Crear cuentas usando tarjetas de bancos pequeños para probar la aplicación.
+- Seleccionar y guardar el método de pago favorito. 
+- Crear cuentas usando tarjetas de bancos pequeños para probar la aplicación. 
 - Diseñar y desarrollar una base de datos relacional que incluya la entidad de tarjetas de los usuarios.
 - Implementar soporte para el uso de criptomonedas.
 - Realizar pagos mediante escaneo de códigos QR, con descuentos en bancos asociados.
 - Transferir el saldo de la aplicación de vuelta a la cuenta bancaria del usuario.
 - Dividir una transacción entre diferentes métodos de pago utilizando varias tarjetas.
 - Historial detallado de transacciones, recargas, pagos y transferencias.
-- Diseño atractivo y experiencia de usuario intuitiva.
+- Diseño atractivo y experiencia de usuario intuitiva. ✖️
 - Integración con métodos de pago como Apple Pay y Google Pay.
 
 ---
