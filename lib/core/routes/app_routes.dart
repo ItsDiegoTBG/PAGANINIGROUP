@@ -1,4 +1,6 @@
 // ignore_for_file: constant_identifier_names
+import 'package:paganini/presentation/pages/confirm_transfer_page.dart';
+
 abstract class Routes {
   static const HOME = "/home";
   static const INITIAL = "/initial_page";
@@ -11,4 +13,7 @@ abstract class Routes {
   static const AUTHPAGE = "/auth_page";
   static const RECHARGE = "/recharge_page";
   static const CONFRECHARGE = "/conf_recharge_page";
+  static const RECEIPTRECHARGE = "/recharge_receipt";
+  static const CONFTRANSFER = "/confirm_transfer_page";
+  static const RECEIPTRANSFER = "/transfer_receipt_page";
 }

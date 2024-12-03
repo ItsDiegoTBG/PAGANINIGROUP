@@ -11,13 +11,16 @@ import 'package:paganini/presentation/pages/auth_page.dart';
 import 'package:paganini/presentation/pages/cards/card_delete_page.dart';
 import 'package:paganini/presentation/pages/cards/card_page.dart';
 import 'package:paganini/presentation/pages/confirm_recharge_page.dart';
+import 'package:paganini/presentation/pages/confirm_transfer_page.dart';
 import 'package:paganini/presentation/pages/home_page.dart';
 import 'package:paganini/presentation/pages/initial_page.dart';
 import 'package:paganini/presentation/pages/login_page.dart';
 import 'package:paganini/presentation/pages/qr_pages.dart';
 import 'package:paganini/presentation/pages/cards/wallet_page.dart';
 import 'package:paganini/presentation/pages/recharge_page.dart';
+import 'package:paganini/presentation/pages/recharge_receipt.dart';
 import 'package:paganini/presentation/pages/register_page.dart';
+import 'package:paganini/presentation/pages/transfer_receipt_page.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
@@ -81,8 +84,10 @@ class MainApp extends StatelessWidget {
         Routes.AUTHPAGE: (context) => const AuthPage(),
         Routes.REGISTER: (context) => const RegisterPage(),
         Routes.RECHARGE: (context) => const RechargePage(),
-       // Routes.CONFRECHARGE: (context) => const ConfirmRechargePage()
-        
+        Routes.RECEIPTRECHARGE: (context) => const RechargeReceipt(),
+        // Routes.CONFRECHARGE: (context) => const ConfirmRechargePage()
+        Routes.RECEIPTRANSFER: (context) => TransferReceipt(),
+        Routes.CONFTRANSFER: (context) => ConfirmTransfer()
       },
       theme: ThemeData(
           appBarTheme: const AppBarTheme(color: Colors.white),
