@@ -44,15 +44,15 @@ class ContactUserWidget extends StatelessWidget {
                 Text("Nro +$numberAccount")
               ],
             ),
-          ),
-          const Padding(
+          )
+        /*const Padding(
             padding:EdgeInsets.only(top: 7, right: 10),
             child: Align(
                 alignment: Alignment.topRight,
                 child: Text("Paganini Mobile",
                     style:  TextStyle(
                         fontSize: 12, fontWeight: FontWeight.w400,overflow: TextOverflow.visible))),
-          )
+          )*/
         ],
       ),
     );

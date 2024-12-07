@@ -8,7 +8,7 @@ import 'package:paganini/presentation/widgets/buttons/button_second_version.dart
 import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:provider/provider.dart';
-import 'package:paganini/core/routes/app_routes.dart';
+//import 'package:paganini/core/routes/app_routes.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final saldoProviderWatch = context.watch<SaldoProvider>();
-    final saldoProviderRead = context.read<SaldoProvider>();
+    //final saldoProviderRead = context.read<SaldoProvider>();
 
     final userProviderWatch = context.watch<UserProvider>();
 

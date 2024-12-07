@@ -160,7 +160,7 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
             const SizedBox(
               height: 40,
             ),
-            //tarjatas
+            //tarjetas
             Column(
               children: [
                 SizedBox(
@@ -237,7 +237,9 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, Routes.HOME);
+                  },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(
@@ -266,7 +268,10 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
 
                       // Agrega la recarga al saldo general
                       saldoProviderWatch.addRecharge(myRecharge);
-                      await Duration(seconds: 3);                      // Navega de vuelta a la página de inicio
+                      // ignore: await_only_futures
+                      await const Duration(
+                          seconds: 3); // Navega de vuelta a la página de inicio
+                      // ignore: use_build_context_synchronously
                       Navigator.pushReplacementNamed(context, Routes.HOME);
                     } else {
                       // Muestra un mensaje si no hay saldo suficiente
@@ -276,7 +281,8 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                     }
 
                     const Duration(seconds: 1);
-                    Navigator.pushReplacementNamed(context, Routes.HOME);
+                    // ignore: use_build_context_synchronously
+            
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(

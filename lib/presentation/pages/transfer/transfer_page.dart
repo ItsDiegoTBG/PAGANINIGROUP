@@ -1,7 +1,10 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/presentation/pages/transfer/confirm_transfer_page.dart';
+import 'package:paganini/presentation/pages/transfer/contacts_page.dart';
 import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
@@ -40,9 +43,15 @@ class _TransferPageState extends State<TransferPage> {
   Widget build(BuildContext context) {
     double myHeight = MediaQuery.of(context).size.height;
     double myWidth = MediaQuery.of(context).size.width;
+    final double valueTransfered = trasferedController.text.isNotEmpty
+        ? double.tryParse(trasferedController.text.replaceAll(",", "")) ?? 0.0
+        : 0.0;
+
     final saldoProviderWatch = context.watch<SaldoProvider>();
     final contactTransfered =
         context.watch<ContactProvider>().contactTransfered;
+
+    final saldoActual = saldoProviderWatch.saldo;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -97,10 +106,56 @@ class _TransferPageState extends State<TransferPage> {
                   Icons.attach_money_outlined,
                   size: 70,
                 ),
-                hintText: "\$ 0.00",
+                hintText: "0.00",
                 hintTextDirection: TextDirection.ltr,
                 hintStyle: TextStyle(fontSize: 60, color: Colors.grey),
               ),
+              onChanged: (value) {
+                double? enteredValue = double.tryParse(value);
+
+                if (enteredValue != null && enteredValue > 15000) {
+                  trasferedController.text = "15000";
+                  trasferedController.selection =
+                      const TextSelection.collapsed(offset: 5);
+                  // Coloca el cursor al final
+                  AnimatedSnackBar(
+                    duration: const Duration(seconds: 3),
+                    builder: ((context) {
+                      return const MaterialAnimatedSnackBar(
+                        iconData: Icons.error_outline_rounded,
+                        messageText: 'Transferencia maxima de 15.000',
+                        type: AnimatedSnackBarType.warning,
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        backgroundColor: AppColors.secondaryColor,
+                        titleTextStyle: TextStyle(
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          fontSize: 10,
+                        ),
+                      );
+                    }),
+                  ).show(context);
+                }
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingresa un monto';
+                }
+
+                // Convertir el valor ingresado a número y eliminar posibles comas
+                double? enteredValue =
+                    double.tryParse(value.replaceAll(",", ""));
+
+                if (enteredValue == null || enteredValue <= 0) {
+                  return 'Por favor ingresa un monto válido';
+                }
+
+                // Validación del valor máximo (15000)
+                if (enteredValue > 15000) {
+                  return 'El monto máximo a transferir es 15000';
+                }
+
+                return null;
+              },
             ),
           ),
           SizedBox(
@@ -147,7 +202,7 @@ class _TransferPageState extends State<TransferPage> {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "\$${saldoProviderWatch.saldo}",
+                          "\$$saldoActual",
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 27,
@@ -190,7 +245,66 @@ class _TransferPageState extends State<TransferPage> {
               if (contactTransfered != null) ...[
                 ButtonSecondVersion(
                   text: "Continuar",
-                  function: () {},
+                  function: () {
+                    if (valueTransfered == 0.0) {
+                      AnimatedSnackBar(
+                        duration: const Duration(seconds: 3),
+                        builder: ((context) {
+                          return const MaterialAnimatedSnackBar(
+                            iconData: Icons.info_outline_rounded,
+                            messageText:
+                                'No has asigando un monto a la transferencia',
+                            type: AnimatedSnackBarType.info,
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            backgroundColor: Color.fromARGB(255, 60, 108, 219),
+                            titleTextStyle: TextStyle(
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 10,
+                            ),
+                          );
+                        }),
+                      ).show(context);
+                    } else if (saldoActual == 0.0) {
+                      AnimatedSnackBar(
+                        duration: const Duration(seconds: 3),
+                        builder: ((context) {
+                          return const MaterialAnimatedSnackBar(
+                            iconData: Icons.info_outline_rounded,
+                            messageText: 'No hay saldo en el sistema',
+                            type: AnimatedSnackBarType.info,
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            backgroundColor: Color.fromARGB(255, 60, 108, 219),
+                            titleTextStyle: TextStyle(
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 10,
+                            ),
+                          );
+                        }),
+                      ).show(context);
+                    } else if (valueTransfered <= saldoActual) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ConfirmTransfer()));
+                    } else {
+                      AnimatedSnackBar(
+                        duration: const Duration(seconds: 3),
+                        builder: ((context) {
+                          return const MaterialAnimatedSnackBar(
+                            iconData: Icons.error_outline_rounded,
+                            messageText: 'EL saldo es insuficiente',
+                            type: AnimatedSnackBarType.error,
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            backgroundColor: Color.fromARGB(255, 203, 21, 88),
+                            titleTextStyle: TextStyle(
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 10,
+                            ),
+                          );
+                        }),
+                      ).show(context);
+                    }
+                  },
                 )
               ]
             ],
@@ -233,7 +347,10 @@ class _TransferPageState extends State<TransferPage> {
               ),
               child: IconButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, Routes.CONTACTSPAGE);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ContactsPage()));
                 },
                 icon: const Icon(Icons.arrow_forward_ios_rounded),
                 iconSize: 20, // Tamaño del icono

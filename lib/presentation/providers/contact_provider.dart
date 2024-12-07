@@ -13,5 +13,6 @@ class ContactProvider with ChangeNotifier {
 
   void resetContact() {
     _contactTransfered = null;
+    notifyListeners();
   }
 }
