@@ -17,6 +17,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+   bool showAllMovements = false; // Estado para controlar la expansión.
+  List<String> movements = [
+    'Compra en Supermercado',
+    'Pago de Servicios',
+    'Transferencia recibida',
+    'Recarga de saldo',
+    'Pago en Restaurante',
+    'Suscripción mensual',
+  ];
   @override
   Widget build(BuildContext context) {
     final saldoProviderWatch = context.watch<SaldoProvider>();
@@ -92,7 +101,50 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.bold),
                 )),
           ),
-
+          const Padding(
+              padding: EdgeInsets.only(top: 20, left: 22, right: 8, bottom: 8),
+              child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "Últimos Movimientos",
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  )),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(left: 22),
+                child: Text(
+                  "Movimientos",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+              IconButton(
+                icon: Icon(showAllMovements ? Icons.expand_less : Icons.expand_more),
+                onPressed: () {
+                  setState(() {
+                    showAllMovements = !showAllMovements;
+                  });
+                },
+              ),
+            ],
+          ),
+          Expanded(
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: showAllMovements ? movements.length : 3,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(movements[index]),
+                  leading: Icon(Icons.check_circle, color: AppColors.primaryColor),
+                );
+              },
+            ),
+          ),
           //solo de prueba
           const Text("Para ejemplo didactico"),
           Text(
