@@ -16,4 +16,9 @@ class SaldoProvider with ChangeNotifier {
     _saldo = _saldo + recharge;
     notifyListeners();
   }
+
+  void subRecharge(double value) {
+    _saldo = _saldo - value;
+    notifyListeners();
+  }
 }

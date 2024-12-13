@@ -22,11 +22,16 @@ class _RegisterPageState extends State<RegisterPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
   bool _isPasswordVisible = false;
 
   Future<void> registerUser() async {
+    setState((){
+      _isLoading = true;
+    });
     debugPrint("Vamos a registerUser");
+
     try {
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
@@ -47,7 +52,7 @@ class _RegisterPageState extends State<RegisterPage> {
         // Puedes añadir más campos si lo necesitas
       });
 
-      clearFields();
+      await clearFields();
 
       // Mostrar mensaje de éxito
       // ignore: use_build_context_synchronously
@@ -72,6 +77,10 @@ class _RegisterPageState extends State<RegisterPage> {
           backgroundColor: Colors.red,
         ),
       );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -95,7 +104,7 @@ class _RegisterPageState extends State<RegisterPage> {
         });
   }
 
-  void clearFields() {
+  Future<void> clearFields() async {
     firstNameController.clear();
     lastNameController.clear();
     emailController.clear();
@@ -109,39 +118,41 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding:
-              const EdgeInsets.only(right: 16, left: 16, bottom: 16, top: 0),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 50,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding:
+                  const EdgeInsets.only(right: 16, left: 16, bottom: 16, top: 0),
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  const Text(
+                    'Bienvenido',
+                    style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 20),
+                  form(context)
+                ],
               ),
-              const Text(
-                'Bienvenido',
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-              form(context)
-            ],
+            ),
           ),
-        ),
+          if (_isLoading) // Mostrar CircularProgressIndicator cuando está cargando
+          Container(
+            color: Colors.black.withOpacity(0.5),
+            child: const Center(
+              child: CircularProgressIndicator(
+                color: AppColors.primaryColor,
+                strokeWidth: 5,
+                semanticsLabel: "Espera un segundo",  
+              ),
+            ),
+          ),
+        ],
       ),
-      /*floatingActionButton: FloatingActionButton(
-          //shape: RoundedRectangleBorder(
-          //  borderRadius: BorderRadius.circular(50)
-          //),
-          onPressed: () {
-            debugPrint("Pop to Initial Page Paganini");
-            Navigator.pop(context);
-          },
-          backgroundColor: AppColors.primaryColor,
-          hoverColor: AppColors.primaryColor,
-          foregroundColor: Colors.white,
-          focusColor: AppColors.secondaryColor,
-          child: const Icon(Icons.arrow_back_rounded),
-        )*/
+     
     );
   }
 
@@ -181,11 +192,10 @@ class _RegisterPageState extends State<RegisterPage> {
               controller: cedController,
               hintText: 'Ingresa su cedula',
               validator: (value) {
-                if (value == null ||
-                    value.isEmpty ||
-                    value.length != 10 ||
-                    !RegExp(r'^\d+$').hasMatch(value)) {
+                if (value == null ||value.isEmpty || !RegExp(r'^\d+$').hasMatch(value)) {
                   return 'Por favor ingresa tu cedula';
+                }else if ( value.length != 10 ) {
+                  return 'Deben ser 10 digitos';
                 }
                 return null;
               }),
@@ -265,10 +275,10 @@ class _RegisterPageState extends State<RegisterPage> {
               Expanded(
                   child: ButtonWithoutIcon(
                       text: "Crear Usuario",
-                      onPressed: () {
+                      onPressed: () async {
                         FocusScope.of(context).unfocus();
                         if (_formKey.currentState!.validate()) {
-                          registerUser();
+                          await registerUser();
                         }
                       })),
               const SizedBox(width: 10),

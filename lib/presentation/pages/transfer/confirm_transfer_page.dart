@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/pages/transfer/transfer_receipt_page.dart';
+import 'package:paganini/presentation/providers/contact_provider.dart';
+import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
 import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
+import 'package:provider/provider.dart';
 
 // ignore: use_key_in_widget_constructors
-class ConfirmTransfer extends StatelessWidget {
+class ConfirmTransfer extends StatefulWidget {
+  @override
+  State<ConfirmTransfer> createState() => _ConfirmTransferState();
+}
+
+class _ConfirmTransferState extends State<ConfirmTransfer> {
   @override
   Widget build(BuildContext context) {
+    final contactProviderRead = context.read<ContactProvider>();
+    final saldoProviderRead = context.read<SaldoProvider>();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -146,7 +156,10 @@ class ConfirmTransfer extends StatelessWidget {
               children: [
                 ButtonSecondVersion(
                   text: "Confirmar",
-                  function: () {
+                  function: () async {
+                    saldoProviderRead.subRecharge(50);
+                    contactProviderRead.resetContact();
+
                     Navigator.push(
                         context,
                         MaterialPageRoute(

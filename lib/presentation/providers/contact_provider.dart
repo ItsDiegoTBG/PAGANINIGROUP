@@ -12,6 +12,9 @@ class ContactProvider with ChangeNotifier {
   }
 
   void resetContact() {
+    if (WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
+    return; // Evita notificaciones si el árbol está bloqueado
+  }
     _contactTransfered = null;
     notifyListeners();
   }

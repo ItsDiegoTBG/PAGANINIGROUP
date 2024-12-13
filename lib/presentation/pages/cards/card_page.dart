@@ -248,7 +248,7 @@ class _CardPageState extends State<CardPage> {
                             textAlign: TextAlign.start,
                             controller: nameController,
                             hintext: "Por favor ingresa el nombre",
-                            textCapitalization: TextCapitalization.characters,
+                            textCapitalization: TextCapitalization.none,
                             icon: Icons.emoji_people_rounded,
                             keyboardType: TextInputType.text,
                           ),

@@ -19,7 +19,7 @@ import 'package:paganini/presentation/pages/login_page.dart';
 import 'package:paganini/presentation/pages/qr_pages.dart';
 import 'package:paganini/presentation/pages/cards/wallet_page.dart';
 import 'package:paganini/presentation/pages/recharge_page.dart';
-import 'package:paganini/presentation/pages/recharge_receipt.dart';
+import 'package:paganini/presentation/pages/transfer/recharge_receipt.dart';
 import 'package:paganini/presentation/pages/register_page.dart';
 import 'package:paganini/presentation/pages/transfer/transfer_page.dart';
 import 'package:paganini/presentation/pages/transfer/transfer_receipt_page.dart';

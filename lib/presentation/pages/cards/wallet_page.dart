@@ -105,6 +105,7 @@ class _WalletPageState extends State<WalletPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ButtonSecondVersion(
+                    horizontalPadding: 25,
                       text: "Agregar",
                       function: () {
                         Navigator.pushNamed(context, Routes.RECHARGE);
@@ -113,6 +114,7 @@ class _WalletPageState extends State<WalletPage> {
                     width: 10,
                   ),
                   ButtonSecondVersion(
+                    horizontalPadding: 25,
                     text: "Transferir",
                     function: () {
                         Navigator.pushNamed(context, Routes.TRANSFERPAGE);
