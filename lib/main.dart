@@ -90,7 +90,7 @@ class MainApp extends StatelessWidget {
         Routes.RECHARGE: (context) => const RechargePage(),
        // Routes.CONFRECHARGE: (context) => const ConfirmRechargePage()
         Routes.RECEIPTRANSFER: (context) => TransferReceipt(),
-        Routes.CONFTRANSFER: (context) => ConfirmTransfer(),
+       // Routes.CONFTRANSFER: (context) => ConfirmTransfer(),
         Routes.TRANSFERPAGE : (context) => const TransferPage()
         
       },

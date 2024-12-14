@@ -12,6 +12,8 @@ import 'package:provider/provider.dart';
 
 // ignore: use_key_in_widget_constructors
 class ConfirmTransfer extends StatefulWidget {
+  final double valueTransfered;
+  const ConfirmTransfer({required this.valueTransfered, super.key});
   @override
   State<ConfirmTransfer> createState() => _ConfirmTransferState();
 }
@@ -157,7 +159,7 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
                 ButtonSecondVersion(
                   text: "Confirmar",
                   function: () async {
-                    saldoProviderRead.subRecharge(50);
+                    saldoProviderRead.subRecharge(widget.valueTransfered);
                     contactProviderRead.resetContact();
 
                     Navigator.push(

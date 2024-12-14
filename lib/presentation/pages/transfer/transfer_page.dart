@@ -298,7 +298,10 @@ class _TransferPageState extends State<TransferPage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ConfirmTransfer()));
+                                builder: (context) => ConfirmTransfer(
+                                      valueTransfered: double.tryParse(
+                                          trasferedController.text)!,
+                                    )));
                       } else {
                         AnimatedSnackBar(
                           duration: const Duration(seconds: 3),
