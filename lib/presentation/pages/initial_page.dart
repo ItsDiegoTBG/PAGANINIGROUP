@@ -2,11 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/widgets/buttons/button_with_icon.dart';
-class InitialPage extends StatelessWidget {
+import '../providers/biometric_auth_provider.dart';
+
+class InitialPage extends StatefulWidget {
   const InitialPage({super.key});
 
   @override
+  _InitialPageState createState() => _InitialPageState();
+}
+
+class _InitialPageState extends State<InitialPage> {
+final BiometricAuthProvider _biometricAuthProvider  = BiometricAuthProvider();
+  bool _isBiometricAvailable = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBiometricAvailability();
+  }
+
+  Future<void> _checkBiometricAvailability() async {
+    bool isAvailable = await _biometricAuthProvider.canCheckBiometrics();
+    setState(() {
+      _isBiometricAvailable = isAvailable;
+    });
+  }
+
+
+  Future<void> _authenticateWithBiometrics() async {
+    bool isAuthenticated = await _biometricAuthProvider.authenticateWithBiometrics();
+    if (isAuthenticated) {
+ 
+      debugPrint("Biometric authentication successful.");
+   
+      Navigator.pushNamedAndRemoveUntil(
+          context, Routes.HOME, (Route<dynamic> route) => false);  
+    } else {
+      debugPrint("Biometric authentication failed.");
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
@@ -74,8 +112,9 @@ class InitialPage extends StatelessWidget {
                       icon: Icons.pin_rounded,
                       textButton: "6 Digitos",
                     ),
+                    //if (_isBiometricAvailable)
                     ButtonWithIcon(
-                      function: () {},
+                      function: _authenticateWithBiometrics,
                       icon: Icons.fingerprint_rounded,
                       textButton: "Biométrico",
                     ),
