@@ -112,7 +112,7 @@ final BiometricAuthProvider _biometricAuthProvider  = BiometricAuthProvider();
                       icon: Icons.pin_rounded,
                       textButton: "6 Digitos",
                     ),
-                    //if (_isBiometricAvailable)
+                    if (_isBiometricAvailable)
                     ButtonWithIcon(
                       function: _authenticateWithBiometrics,
                       icon: Icons.fingerprint_rounded,
