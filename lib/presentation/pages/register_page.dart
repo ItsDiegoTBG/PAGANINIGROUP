@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
@@ -25,9 +26,8 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _isLoading = false;
 
   bool _isPasswordVisible = false;
-
   Future<void> registerUser() async {
-    setState((){
+    setState(() {
       _isLoading = true;
     });
     debugPrint("Vamos a registerUser");
@@ -40,8 +40,11 @@ class _RegisterPageState extends State<RegisterPage> {
       );
       String uid = userCredential.user!.uid;
 
-      // Guardar el nombre y otros datos en Firestore
-      await _firestore.collection('users').doc(uid).set({
+      // Obtener la referencia a la base de datos en tiempo real
+      DatabaseReference userRef = FirebaseDatabase.instance.ref('users/$uid');
+
+      // Guardar los datos del usuario en Realtime Database
+      await userRef.set({
         'firstname': firstNameController.text.trim(),
         'lastname': lastNameController.text.trim(),
         'ced': cedController.text.trim(),
@@ -77,6 +80,7 @@ class _RegisterPageState extends State<RegisterPage> {
           backgroundColor: Colors.red,
         ),
       );
+      debugPrint(e.toString());
     } finally {
       setState(() {
         _isLoading = false;
@@ -122,8 +126,8 @@ class _RegisterPageState extends State<RegisterPage> {
         children: [
           SingleChildScrollView(
             child: Padding(
-              padding:
-                  const EdgeInsets.only(right: 16, left: 16, bottom: 16, top: 0),
+              padding: const EdgeInsets.only(
+                  right: 16, left: 16, bottom: 16, top: 0),
               child: Column(
                 children: [
                   const SizedBox(
@@ -140,19 +144,18 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ),
           if (_isLoading) // Mostrar CircularProgressIndicator cuando está cargando
-          Container(
-            color: Colors.black.withOpacity(0.5),
-            child: const Center(
-              child: CircularProgressIndicator(
-                color: AppColors.primaryColor,
-                strokeWidth: 5,
-                semanticsLabel: "Espera un segundo",  
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primaryColor,
+                  strokeWidth: 5,
+                  semanticsLabel: "Espera un segundo",
+                ),
               ),
             ),
-          ),
         ],
       ),
-     
     );
   }
 
@@ -192,9 +195,11 @@ class _RegisterPageState extends State<RegisterPage> {
               controller: cedController,
               hintText: 'Ingresa su cedula',
               validator: (value) {
-                if (value == null ||value.isEmpty || !RegExp(r'^\d+$').hasMatch(value)) {
+                if (value == null ||
+                    value.isEmpty ||
+                    !RegExp(r'^\d+$').hasMatch(value)) {
                   return 'Por favor ingresa tu cedula';
-                }else if ( value.length != 10 ) {
+                } else if (value.length != 10) {
                   return 'Deben ser 10 digitos';
                 }
                 return null;

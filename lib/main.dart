@@ -88,11 +88,10 @@ class MainApp extends StatelessWidget {
         Routes.AUTHPAGE: (context) => const AuthPage(),
         Routes.REGISTER: (context) => const RegisterPage(),
         Routes.RECHARGE: (context) => const RechargePage(),
-       // Routes.CONFRECHARGE: (context) => const ConfirmRechargePage()
+        // Routes.CONFRECHARGE: (context) => const ConfirmRechargePage()
         Routes.RECEIPTRANSFER: (context) => TransferReceipt(),
-       // Routes.CONFTRANSFER: (context) => ConfirmTransfer(),
-        Routes.TRANSFERPAGE : (context) => const TransferPage()
-        
+        // Routes.CONFTRANSFER: (context) => ConfirmTransfer(),
+        Routes.TRANSFERPAGE: (context) => const TransferPage(),
       },
       theme: ThemeData(
           appBarTheme: const AppBarTheme(color: Colors.white),

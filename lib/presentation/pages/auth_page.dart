@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:paganini/presentation/pages/home_page.dart';
 import 'package:paganini/presentation/pages/login_page.dart';
 
+
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
 

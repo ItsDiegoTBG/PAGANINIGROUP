@@ -6,48 +6,45 @@ class CreditCardModel {
   final String cardNumber;
   final String cardType;
   final String validThru;
-  final Color color;
   final bool isFavorite;
   final String cvv;
-   double balance;
-
+  double balance;
+  final Color color;
   CreditCardModel({
     required this.id,
     required this.cardHolderFullName,
     required this.cardNumber,
     required this.cardType,
     required this.validThru,
-    required this.color,
     required this.isFavorite,
     required this.cvv,
     required this.balance,
+    this.color = Colors.black,
   });
 
-  factory CreditCardModel.fromJson(Map<String, dynamic> json) {
-    return CreditCardModel(
-      id: json['id'],
-      cardHolderFullName: json['cardHolderFullName'],
-      cardNumber: json['cardNumber'],
-      cardType: json['cardType'],
-      validThru: json['validThru'],
-      color: Color(json['color']),
-      isFavorite: json['isFavorite'],
-      cvv: json['cvv'],
-      balance: json['balance']
-    );
-  }
-
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'id' : id,      
       'cardHolderFullName': cardHolderFullName,
       'cardNumber': cardNumber,
       'cardType': cardType,
       'validThru': validThru,
-      'color': color.value,
       'isFavorite': isFavorite,
       'cvv': cvv,
-      'balance':balance
+      'balance': balance,
     };
+  }
+
+  // Método fromMap: convierte un Map en un objeto CreditCardModel
+  factory CreditCardModel.fromMap(Map<String, dynamic> map, int id) {
+    return CreditCardModel(
+      id: id,
+      cardHolderFullName: map['cardHolderFullName'] ?? '',
+      cardNumber: map['cardNumber'] ?? '',
+      cardType: map['cardType'] ?? '',
+      validThru: map['validThru'] ?? '',
+      isFavorite: map['isFavorite'] ?? false,
+      cvv: map['cvv'] ?? '',
+      balance: map['balance']?.toDouble() ?? 0.0,
+    );
   }
 }

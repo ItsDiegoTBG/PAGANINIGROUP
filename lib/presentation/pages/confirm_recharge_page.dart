@@ -55,21 +55,27 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
         title: const ContentAppBar(),
       ),
       body: _isLoading
-          ? const Center(
+          ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    "Verificando...",
+                  SizedBox(
+                      width: 300,
+                      height: 130,
+                      child: Image.asset(
+                          "assets/image/paganini_logo_horizontal_negro.png")),
+                  const Text(
+                    "Verificando",
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
-                  CircularProgressIndicator(
+                  const CircularProgressIndicator(
                     color: AppColors.primaryColor,
                   ),
                 ],
@@ -313,7 +319,8 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                               builder: ((context) {
                                 return const MaterialAnimatedSnackBar(
                                   iconData: Icons.check,
-                                  messageText: 'Saldo insuficiente en la tarjeta',
+                                  messageText:
+                                      'Saldo insuficiente en la tarjeta',
                                   type: AnimatedSnackBarType.error,
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(20)),

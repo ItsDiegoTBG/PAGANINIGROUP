@@ -27,11 +27,10 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
         title: const ContentAppBar(),
       ),
-      backgroundColor: Colors.white,
       body: Column(
         children: [
           const SizedBox(
@@ -96,7 +95,9 @@ class _HomePageState extends State<HomePage> {
           //solo de prueba
           const Text("Para ejemplo didactico"),
           Text(
-              "Inicio de cuenta con ${userProviderWatch.user?.email ?? 'usuario no disponible'}")
+              "Inicio de cuenta con ${userProviderWatch.user?.email ?? 'usuario no disponible'}"),
+          Text(
+              "Inicio de cuenta con ${userProviderWatch.user?.uid ?? 'usuario no disponible'}")
         ],
       ),
       floatingActionButton: const FloatingButtonNavBarQr(),

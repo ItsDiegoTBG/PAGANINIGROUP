@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:paganini/core/routes/app_routes.dart';
@@ -9,6 +10,7 @@ import 'package:paganini/data/repositories/credit_card_repository_impl.dart';
 import 'package:paganini/domain/entity/card_credit.dart';
 import 'package:paganini/domain/usecases/credit_cards_use_case.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
+import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/credit_card_ui.dart';
@@ -74,6 +76,8 @@ class _CardPageState extends State<CardPage> {
     });
   }
 
+  bool _isLoading = true;
+
   @override
   void dispose() {
     nameController.dispose();
@@ -82,12 +86,61 @@ class _CardPageState extends State<CardPage> {
 
   bool isDateValid = true;
   bool isCvvValid = true;
+  bool registerOneCard = false;
 
   @override
   Widget build(BuildContext context) {
     double myHeight = MediaQuery.of(context).size.height;
     double myWidth = MediaQuery.of(context).size.width;
     final cardProviderRead = context.read<CreditCardProvider>();
+    final userId = context.read<UserProvider>().user!.uid;
+
+
+    Future<void> registerCreditCard() async {
+      setState(() {
+        _isLoading = true;
+      });
+      debugPrint("Vamos a registrar la tarjeta");
+
+      try {
+        DatabaseReference cardRef =
+            FirebaseDatabase.instance.ref('cards/$userId');
+        String cardId = DateTime.now().millisecondsSinceEpoch.toString();
+        Map<String, dynamic> cardData = {
+          'cardNumber': numberCreditCardController.text.trim(),
+          'expiryDate':
+              "${yearExpirationController.text.trim()}/${monthExpirationController.text.trim()}",
+          'cvv': cvvCardController.text.trim(),
+          'cardName': nameController.text.trim(),
+          'mount': 300,
+        };
+        await cardRef.child(cardId).set(cardData);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          duration: Duration(seconds: 1),
+          content: Text('Tarjeta registrada exitosamente'),
+          backgroundColor: Colors.green,
+        ));
+        setState(() {
+          registerOneCard = true;
+        });
+      } catch (e) {
+        debugPrint("Erro de REGISTRO DE TARJETAS AQUI!!!");
+        debugPrint(e.toString());
+        // Mostrar mensaje de error
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al registrar la tarjeta: $e'),
+            backgroundColor: Colors.red,
+            
+          ),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+
     final List<Color> colors = [
       Colors.red,
       Colors.green,
@@ -113,8 +166,8 @@ class _CardPageState extends State<CardPage> {
               padding: EdgeInsets.symmetric(
                 horizontal: myWidth * 0.08,
               ),
-              child: const Text(
-                'Agrega una nueva tarjeta a tu billetera',
+              child: Text(
+                'Agrega una nueva tarjeta a tu billetera $userId',
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.normal,
@@ -173,16 +226,18 @@ class _CardPageState extends State<CardPage> {
                               "$monthExpirationNewCard/$yearExpirationNewCard",
                           isFavorite: false,
                         );
-
+                        await registerCreditCard();
                         await cardProviderRead.addCreditCard(newCard);
 
                         await Navigator.pushReplacementNamed(
-                            context, Routes.WALLETPAGE);
+                            // ignore: use_build_context_synchronously
+                            context,
+                            Routes.WALLETPAGE);
                       }
                     }
                   }
                 },
-                text: "Aceptar",
+                text: registerOneCard ? "Registrar Otra" : "Registrar",
                 verticalPadding: 2,
                 horizontalPadding: 50,
               ),
