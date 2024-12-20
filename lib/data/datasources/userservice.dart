@@ -1,15 +1,21 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class UserService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseDatabase _database = FirebaseDatabase.instance;
+
+  // Método para obtener un usuario por ID
   Future<Map<String, dynamic>?> fetchUserById(String userId) async {
     try {
-      DocumentSnapshot<Map<String, dynamic>> snapshot =
-          await _firestore.collection('users').doc(userId).get();
+      // Obtener la referencia al usuario en la base de datos en tiempo real
+      DatabaseReference userRef = _database.ref('users/$userId');
 
-    if (snapshot.exists) {
-        return snapshot.data();
+      // Obtener los datos del usuario
+      DataSnapshot snapshot = await userRef.get();
+
+      if (snapshot.exists) {
+        // Si el usuario existe, retornar los datos
+        return Map<String, dynamic>.from(snapshot.value as Map);
       } else {
         debugPrint('Usuario no encontrado');
         return null;

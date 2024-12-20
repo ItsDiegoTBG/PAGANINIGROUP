@@ -1,7 +1,10 @@
 import 'dart:math';
 
+import 'package:animated_snack_bar/animated_snack_bar.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/data/datasources/credit_card_datasource.dart';
@@ -9,6 +12,7 @@ import 'package:paganini/data/repositories/credit_card_repository_impl.dart';
 import 'package:paganini/domain/entity/card_credit.dart';
 import 'package:paganini/domain/usecases/credit_cards_use_case.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
+import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/credit_card_ui.dart';
@@ -74,6 +78,8 @@ class _CardPageState extends State<CardPage> {
     });
   }
 
+  bool _isLoading = true;
+
   @override
   void dispose() {
     nameController.dispose();
@@ -82,18 +88,77 @@ class _CardPageState extends State<CardPage> {
 
   bool isDateValid = true;
   bool isCvvValid = true;
+  bool registerOneCard = false;
 
   @override
   Widget build(BuildContext context) {
-    double myHeight = MediaQuery.of(context).size.height;
-    double myWidth = MediaQuery.of(context).size.width;
     final cardProviderRead = context.read<CreditCardProvider>();
+    final userId = context.read<UserProvider>().user!.uid;
+
+    Future<void> registerCreditCard() async {
+      setState(() {
+        _isLoading = true;
+      });
+      debugPrint("Vamos a registrar la tarjeta");
+
+      try {
+        DatabaseReference cardRef =
+            FirebaseDatabase.instance.ref('cards/$userId');
+        String cardId = DateTime.now().millisecondsSinceEpoch.toString();
+        Map<String, dynamic> cardData = {
+          'cardNumber': numberCreditCardController.text.trim(),
+          'expiryDate':
+              "${yearExpirationController.text.trim()}/${monthExpirationController.text.trim()}",
+          'cvv': cvvCardController.text.trim(),
+          'cardName': nameController.text.trim(),
+          'mount': 300,
+          'type': selectedCardType
+        };
+        await cardRef.child(cardId).set(cardData);
+        // ignore: use_build_context_synchronously
+        AnimatedSnackBar(
+          duration: const Duration(seconds: 3),
+          builder: ((context) {
+            return const MaterialAnimatedSnackBar(
+              iconData: Icons.check,
+              messageText: 'La tarjeta se agrego correctamente',
+              type: AnimatedSnackBarType.success,
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+              backgroundColor: Color.fromARGB(255, 59, 141, 55),
+              titleTextStyle: TextStyle(
+                color: Color.fromARGB(255, 255, 255, 255),
+                fontSize: 10,
+              ),
+            );
+          }),
+        ).show(context);
+        setState(() {
+          registerOneCard = true;
+        });
+      } catch (e) {
+        debugPrint("Erro de REGISTRO DE TARJETAS AQUI!!!");
+        debugPrint(e.toString());
+        // Mostrar mensaje de error
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al registrar la tarjeta: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+
     final List<Color> colors = [
       Colors.red,
       Colors.green,
       Colors.black,
       Colors.blue,
-      Colors.amber,
+      const Color.fromARGB(255, 203, 159, 26),
       AppColors.primaryColor,
     ];
 
@@ -104,29 +169,254 @@ class _CardPageState extends State<CardPage> {
         backgroundColor: Colors.white,
         title: const ContentAppBar(),
       ),
-      body: SizedBox(
-        height: myHeight,
-        width: myWidth,
-        child: SingleChildScrollView(
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(children: [
+            CreditCardWidget(
+                balance: 0.0,
+                width: 300,
+                cardHolderFullName: nameNewCard,
+                cardNumber: numberCreditCardController.text,
+                validThru: "$monthExpirationNewCard/$yearExpirationNewCard",
+                color: selectedColor ?? AppColors.primaryColor,
+                cardType: selectedCardType,
+                cvv: cvvNewCard),
+            Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 15, right: 15, top: 10, bottom: 10),
+                  child: Column(
+                    children: [
+                      const Text("Registra tu tarjeta",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w400)),
+                      const SizedBox(height: 10),
+                      TextFormFieldSecondVersion(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Por favor ingrese un nombre";
+                          }
+                          return null;
+                        },
+                        inputFormatters: const [],
+                        onChanged: (value) {},
+                        textAlign: TextAlign.start,
+                        controller: nameController,
+                        hintext: "Ponle un nombre",
+                        textCapitalization: TextCapitalization.none,
+                        icon: Icons.people,
+                        keyboardType: TextInputType.text,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextFormFieldSecondVersion(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Ingresa un numero de tarjeta porfa";
+                          } else if (value.length < 16) {
+                            return "El numero de tarjeta no puede ser menor a 16";
+                          }
+                          return null;
+                        },
+                        textAlign: TextAlign.start,
+                        onChanged: (value) {},
+                        textCapitalization: TextCapitalization.none,
+                        hintext: "****************",
+                        icon: Icons.credit_score_rounded,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [LengthLimitingTextInputFormatter(16)],
+                        controller: numberCreditCardController,
+                        inputBorder: InputBorder.none,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormFieldSecondVersion(
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(2),
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'^(0?[1-9]|1[0-2])$')),
+                                ],
+                                controller: monthExpirationController,
+                                textCapitalization: TextCapitalization.none,
+                                icon: Icons.calendar_month,
+                                hintext: "xx",
+                                onChanged: (value) {
+                                  setState(() {
+                                    isDateValid = value.length == 2;
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.isEmpty ||
+                                      value.length < 2) {
+                                    setState(() {
+                                      isDateValid = false;
+                                    });
+                                  }
+                                  return null;
+                                },
+                                keyboardType: TextInputType.datetime),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            child: Text(
+                              "/",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 30),
+                            ),
+                          ),
+                          Expanded(
+                            child: TextFormFieldSecondVersion(
+                                controller: yearExpirationController,
+                                textCapitalization: TextCapitalization.none,
+                                icon: Icons.calendar_month_outlined,
+                                hintext: 'xx',
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(2),
+                                  FilteringTextInputFormatter.allow(RegExp(
+                                      r'[0-9/]')), // Permite solo números y "/"
+                                ],
+                                onChanged: (value) {},
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {}
+                                  return null;
+                                },
+                                keyboardType: TextInputType.datetime),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextFormFieldSecondVersion(
+                        controller: cvvCardController,
+                        textCapitalization: TextCapitalization.none,
+                        icon: Icons.lock,
+                        hintext: "xxx",
+                        onChanged: (value) {},
+                        validator: (value) {
+                          if (value == null ||
+                              value.isEmpty ||
+                              value.length < 3) {
+                            setState(() {
+                              isCvvValid = false;
+                            });
+                            return null;
+                          }
+                          return null;
+                        },
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(3),
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Container(
+                              height: 50,
+                              // padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
+                              decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Center(
+                                child: RadioListTile<String>(
+                                  activeColor:
+                                      const Color.fromARGB(255, 244, 244, 244),
+                                  value: "credit",
+                                  groupValue: selectedCardType,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      selectedCardType = val!;
+                                    });
+                                  },
+                                  title: const Text(
+                                    "Credito",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: Container(
+                              height: 50,
+                              padding: const EdgeInsets.all(0),
+                              decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  borderRadius: BorderRadius.circular(
+                                      10)), // Color de fondo para todo el tile
+                              child: RadioListTile<String>(
+                                value: "debit",
+                                activeColor:
+                                    const Color.fromARGB(255, 255, 255, 255),
+                                groupValue: selectedCardType,
+                                onChanged: (val) {
+                                  setState(() {
+                                    selectedCardType = val!;
+                                  });
+                                },
+                                title: const Text(
+                                  "Debito",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: colors.map((color) {
+                          bool isSelected = color == selectedColor;
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedColor = color;
+                                debugPrint("Color selected: $color");
+                              });
+                            },
+                            child: Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: isSelected
+                                    ? Border.all(
+                                        color: Colors.black,
+                                        width:
+                                            3) // Borde para el color seleccionado
+                                    : null,
+                              ),
+                              child: CircleAvatar(
+                                radius: 16,
+                                backgroundColor: color,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      )
+                    ],
+                  ),
+                )),
             Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: myWidth * 0.08,
-              ),
-              child: const Text(
-                'Agrega una nueva tarjeta a tu billetera',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal,
-                    color: Color.fromARGB(255, 0, 0, 0)),
-              ),
-            ),
-            SizedBox(
-              height: myHeight * 0.02,
-            ),
-            uiRegisterCreditCard(myWidth, myHeight, colors),
-            Padding(
-              padding: const EdgeInsets.only(top: 30),
+              padding: const EdgeInsets.only(top: 20),
               child: ButtonSecondVersion(
                 function: () async {
                   if (isCvvValid) {
@@ -162,7 +452,7 @@ class _CardPageState extends State<CardPage> {
 
                       if (confirmAddCreditCard == true) {
                         CreditCardEntity newCard = CreditCardEntity(
-                          balance: 0,
+                          balance: 300,
                           id: Random().nextInt(2000),
                           cvv: cvvNewCard,
                           color: selectedColor ?? AppColors.primaryColor,
@@ -173,428 +463,24 @@ class _CardPageState extends State<CardPage> {
                               "$monthExpirationNewCard/$yearExpirationNewCard",
                           isFavorite: false,
                         );
-
+                        await registerCreditCard();
                         await cardProviderRead.addCreditCard(newCard);
+                        await Future.delayed(const Duration(seconds: 2));
 
                         await Navigator.pushReplacementNamed(
-                            context, Routes.WALLETPAGE);
+                            // ignore: use_build_context_synchronously
+                            context,
+                            Routes.WALLETPAGE);
                       }
                     }
                   }
                 },
-                text: "Aceptar",
+                text: registerOneCard ? "Registrar Otra" : "Registrar",
                 verticalPadding: 2,
                 horizontalPadding: 50,
               ),
             ),
           ]),
-        ),
-      ),
-    );
-  }
-
-  Flexible uiRegisterCreditCard(
-      double myWidth, double myHeight, List<Color> colors) {
-    return Flexible(
-      fit: FlexFit.loose,
-      child: Form(
-        key: _formKey,
-        child: Stack(
-          children: [
-            Padding(
-                padding: EdgeInsets.only(
-                    left: myWidth * 0.06,
-                    right: myWidth * 0.06,
-                    top: myHeight * 0.08),
-                child: Container(
-                  height: myHeight * 0.64,
-                  width: myWidth * 0.88,
-                  decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 214, 199, 249),
-                      borderRadius: BorderRadius.circular(30)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: myHeight * 0.15,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: myWidth * 0.06),
-                        child: const Text(
-                          'Nombre de la Tarjeta',
-                          style: TextStyle(fontSize: 16, color: Colors.black),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: myWidth * 0.06,
-                            right: myWidth * 0.06,
-                            top: myHeight * 0),
-                        child: Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: myWidth * 0.03),
-                          decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              borderRadius: BorderRadius.circular(8)),
-                          child: TextFormFieldSecondVersion(
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Por favor ingrese un nombre";
-                              }
-                              return null;
-                            },
-                            inputFormatters: const [],
-                            onChanged: (value) {},
-                            textAlign: TextAlign.start,
-                            controller: nameController,
-                            hintext: "Por favor ingresa el nombre",
-                            textCapitalization: TextCapitalization.none,
-                            icon: Icons.emoji_people_rounded,
-                            keyboardType: TextInputType.text,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: myHeight * 0.01,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: myWidth * 0.06),
-                        child: const Text(
-                          'Numero de Tarjeta',
-                          style: TextStyle(fontSize: 16, color: Colors.black),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: myWidth * 0.06,
-                            right: myWidth * 0.06,
-                            top: myHeight * 0),
-                        child: Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: myWidth * 0.03),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: TextFormFieldSecondVersion(
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Ingresa un numero de tarjeta porfa";
-                              } else if (value.length < 16) {
-                                return "El numero de tarjeta no puede ser menor a 16";
-                              }
-                              return null;
-                            },
-                            textAlign: TextAlign.start,
-                            onChanged: (value) {},
-                            textCapitalization: TextCapitalization.none,
-                            hintext: "****************",
-                            icon: Icons.credit_score_rounded,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              LengthLimitingTextInputFormatter(16)
-                            ],
-                            controller: numberCreditCardController,
-                            inputBorder: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: myHeight * 0.01,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: myWidth * 0.06, right: myWidth * 0.10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(right: myWidth * 0),
-                              child: Row(
-                                children: [
-                                  const Text(
-                                    'Fecha de Expiración',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.black),
-                                  ),
-                                  if (isDateValid ==
-                                      false) // Si la fecha no es válida, muestra el asterisco rojo
-                                    const Text(
-                                      ' *',
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.red),
-                                    ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                                padding: EdgeInsets.only(left: myWidth * 0),
-                                child: Row(
-                                  children: [
-                                    const Text(
-                                      'Cvv',
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.black),
-                                    ),
-                                    if (isCvvValid == false)
-                                      const Text(
-                                        ' *',
-                                        style: TextStyle(
-                                            fontSize: 16, color: Colors.red),
-                                      ),
-                                  ],
-                                )),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: myWidth * 0.06,
-                            right: myWidth * 0.06,
-                            top: myHeight * 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  width: myWidth * 0.15,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[100],
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: TextFormField(
-                                    validator: (value) {
-                                      if (value == null ||
-                                          value.isEmpty ||
-                                          value.length < 2) {
-                                        setState(() {
-                                          isDateValid = false;
-                                        });
-                                      }
-                                      return null;
-                                    },
-                                    onChanged: (value) {
-                                      setState(() {
-                                        isDateValid = value.length == 2;
-                                      });
-                                    },
-                                    keyboardType: TextInputType.datetime,
-                                    controller: monthExpirationController,
-                                    inputFormatters: [
-                                      LengthLimitingTextInputFormatter(2),
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp(r'^(0?[1-9]|1[0-2])$')),
-                                    ],
-                                    textAlign: TextAlign.center,
-                                    decoration: InputDecoration(
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              width: 0,
-                                              color: isCvvValid
-                                                  ? Colors.grey.shade400
-                                                  : Colors.red),
-                                        ),
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey.shade400),
-                                        border: InputBorder.none,
-                                        hintText: "xx"),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: myWidth * 0.01),
-                                  child: const Text("/"),
-                                ),
-                                Container(
-                                  width: myWidth * 0.15,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[100],
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: TextFormField(
-                                    onChanged: (value) {},
-                                    keyboardType: TextInputType.datetime,
-                                    controller: yearExpirationController,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {}
-                                      return null;
-                                    },
-                                    inputFormatters: [
-                                      LengthLimitingTextInputFormatter(2),
-                                      FilteringTextInputFormatter.allow(RegExp(
-                                          r'[0-9/]')), // Permite solo números y "/"
-                                    ],
-                                    textAlign: TextAlign.center,
-                                    decoration: InputDecoration(
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              width: 0,
-                                              color: isCvvValid
-                                                  ? Colors.grey.shade400
-                                                  : Colors.red),
-                                        ),
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey.shade400),
-                                        border: InputBorder.none,
-                                        hintText: "xx"),
-                                  ),
-                                )
-                              ],
-                            ),
-                            Container(
-                              width: myWidth * 0.15,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[100],
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: TextFormField(
-                                validator: (value) {
-                                  if (value == null ||
-                                      value.isEmpty ||
-                                      value.length < 3) {
-                                    setState(() {
-                                      isCvvValid = false;
-                                    });
-                                    return null;
-                                  }
-                                  return null;
-                                },
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(3),
-                                  FilteringTextInputFormatter.digitsOnly,
-                                ],
-                                controller: cvvCardController,
-                                textAlign: TextAlign.center,
-                                keyboardType: TextInputType.datetime,
-                                decoration: InputDecoration(
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          width: 0,
-                                          color: isCvvValid
-                                              ? Colors.grey.shade400
-                                              : Colors.red),
-                                    ),
-                                    hintStyle:
-                                        TextStyle(color: Colors.grey.shade400),
-                                    border: InputBorder.none,
-                                    hintText: "xxx"),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: myHeight * 0.03,
-                      ),
-                      //radios de credit or debit include in future gift cards
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10, right: 10),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Container(
-                                // padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
-                                decoration: BoxDecoration(
-                                    color: AppColors.primaryColor,
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: RadioListTile<String>(
-                                  activeColor:
-                                      const Color.fromARGB(255, 244, 244, 244),
-                                  value: "credit",
-                                  groupValue: selectedCardType,
-                                  onChanged: (val) {
-                                    setState(() {
-                                      selectedCardType = val!;
-                                    });
-                                  },
-                                  title: const Text(
-                                    "Credito",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.all(0),
-                                decoration: BoxDecoration(
-                                    color: AppColors.primaryColor,
-                                    borderRadius: BorderRadius.circular(
-                                        10)), // Color de fondo para todo el tile
-                                child: RadioListTile<String>(
-                                  value: "debit",
-                                  activeColor:
-                                      const Color.fromARGB(255, 255, 255, 255),
-                                  groupValue: selectedCardType,
-                                  onChanged: (val) {
-                                    setState(() {
-                                      selectedCardType = val!;
-                                    });
-                                  },
-                                  title: const Text(
-                                    "Debito",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: myHeight * 0.02,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: colors.map((color) {
-                          bool isSelected = color == selectedColor;
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedColor = color;
-                                debugPrint("Color selected: $color");
-                              });
-                            },
-                            child: Container(
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 12),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: isSelected
-                                    ? Border.all(
-                                        color: Colors.black,
-                                        width:
-                                            3) // Borde para el color seleccionado
-                                    : null,
-                              ),
-                              child: CircleAvatar(
-                                radius: 10,
-                                backgroundColor: color,
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      )
-                    ],
-                  ),
-                )),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 60),
-              child: CreditCardWidget(
-                  balance: 0.0,
-                  width: 300,
-                  cardHolderFullName: nameNewCard,
-                  cardNumber: numberCreditCardController.text,
-                  validThru: "$monthExpirationNewCard/$yearExpirationNewCard",
-                  color: selectedColor ?? AppColors.primaryColor,
-                  cardType: selectedCardType,
-                  cvv: cvvNewCard),
-            ),
-          ],
         ),
       ),
     );

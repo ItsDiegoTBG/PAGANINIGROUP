@@ -37,6 +37,7 @@ class CreditCardProvider extends ChangeNotifier {
   Future<void> updateBalance(int idCreditCard, double newBalance) async {
     try {
       await creditCardsUseCase.updateBalance(idCreditCard, newBalance);
+      notifyListeners();
     } catch (e) {
       throw Exception('Error al actualizar el saldo: $e');
     }
