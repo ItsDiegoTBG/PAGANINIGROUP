@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
 import 'package:paganini/presentation/widgets/text_form_field_widget.dart';
@@ -21,7 +22,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController cedController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  //final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
@@ -66,6 +67,10 @@ class _RegisterPageState extends State<RegisterPage> {
           backgroundColor: Colors.green,
         ),
       );
+      await Future.delayed(const Duration(seconds: 1));
+
+      // ignore: use_build_context_synchronously
+      await Navigator.pushNamed(context, Routes.LOGIN);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         wrongWeakPasswordMessage();
@@ -237,24 +242,61 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           const SizedBox(height: 10),
           const Text("Contraseña", style: TextStyle(fontSize: 16)),
+          
           TextFormField(
             obscureText: !_isPasswordVisible,
             controller: passwordController,
             decoration: InputDecoration(
-                focusedBorder: const UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.primaryColor, width: 2)),
-                border: const UnderlineInputBorder(),
-                hintText: 'Crea una contraseña',
-                hintStyle: const TextStyle(fontWeight: FontWeight.w300),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.visibility),
-                  onPressed: () {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
-                  },
-                )),
+              suffixIcon: IconButton(
+                icon: _isPasswordVisible ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off),
+                onPressed: () {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                },
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20), // Borde circular
+                borderSide: const BorderSide(
+                  color: AppColors.primaryColor,
+                  width: 2,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20), // Borde circular
+                borderSide: const BorderSide(
+                  color: Colors.grey,
+                  width: 1.5,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: const BorderSide(
+                  color: Colors.red,
+                  width: 1.5,
+                ),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: const BorderSide(
+                  color: Colors.red,
+                  width: 2,
+                ),
+              ),
+              hintText: 'Ingresa tu contraseña',
+              hintStyle: const TextStyle(
+                fontWeight: FontWeight.w300,
+                fontSize: 18, // Tamaño de texto del hint
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 16, // Espaciado vertical
+                horizontal: 20, // Espaciado horizontal
+              ),
+            ),
+            style: const TextStyle(
+              fontSize: 18, // Tamaño del texto ingresado
+              height: 1.5, // Espaciado entre líneas
+            ),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Por favor ingresa una contraseña';

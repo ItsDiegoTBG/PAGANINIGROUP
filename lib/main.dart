@@ -85,7 +85,7 @@ class MainApp extends StatelessWidget {
         Routes.WALLETPAGE: (context) => const WalletPage(),
         Routes.CARDPAGE: (context) => const CardPage(),
         Routes.CARDDELETEPAGE: (context) => const CardDeletePage(),
-        Routes.AUTHPAGE: (context) => const AuthPage(),
+        //Routes.AUTHPAGE: (context) => const AuthPage(),
         Routes.REGISTER: (context) => const RegisterPage(),
         Routes.RECHARGE: (context) => const RechargePage(),
         // Routes.CONFRECHARGE: (context) => const ConfirmRechargePage() 

@@ -106,7 +106,7 @@ class _TransferPageState extends State<TransferPage> {
                 textAlign: TextAlign.end,
                 inputFormatters: [
                   LengthLimitingTextInputFormatter(8),
-                  FilteringTextInputFormatter.digitsOnly
+                  
                 ],
                 controller: trasferedController,
                 decoration: const InputDecoration(
@@ -135,7 +135,7 @@ class _TransferPageState extends State<TransferPage> {
                           messageText: 'Transferencia maxima de 15.000',
                           type: AnimatedSnackBarType.warning,
                           borderRadius: BorderRadius.all(Radius.circular(20)),
-                          backgroundColor: AppColors.secondaryColor,
+                          backgroundColor: Color.fromARGB(255, 95, 38, 228),
                           titleTextStyle: TextStyle(
                             color: Color.fromARGB(255, 255, 255, 255),
                             fontSize: 10,

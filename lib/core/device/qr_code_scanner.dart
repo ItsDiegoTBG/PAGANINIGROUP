@@ -1,3 +1,5 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:paganini/core/routes/app_routes.dart';
@@ -49,17 +51,45 @@ class QrCodeScanner extends StatelessWidget {
             if (data != null) {
               setResult(barcode.rawValue);
               //print(barcode.rawValue);
-              await controller
-                  .stop()
-                  .then((value) => controller.dispose())
-                  // ignore: use_build_context_synchronously
-                  .then((value) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PaymentPage(dataId: data)),
-                );
-              });
+              final databaseRef = FirebaseDatabase.instance.ref('/users/$data');
+              debugPrint("El databse databseRef es : $databaseRef");
+              final snapshot = await databaseRef.get();
+              if (snapshot.exists) {
+                // Si el usuario existe, proceder
+                setResult(data);
+                await controller
+                    .stop()
+                    .then((value) => controller.dispose())
+                    .then((value) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PaymentPage(dataId: data)),
+                  );
+                });
+              } else {
+                // Si el usuario no existe, mostrar un mensaje de error
+                // ignore: use_build_context_synchronously
+
+                Navigator.pushNamed(context, Routes.QRPAGE);
+
+                /* AnimatedSnackBar(
+                  duration: const Duration(seconds: 2),
+                  builder: ((context) {
+                    return const MaterialAnimatedSnackBar(
+                      iconData: Icons.check,
+                      messageText: 'Ocurrio un error al escanear el QR',
+                      type: AnimatedSnackBarType.error,
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      backgroundColor: Colors.white,
+                      titleTextStyle: TextStyle(
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        fontSize: 10,
+                      ),
+                    );
+                  }),
+                ).show(context); */
+              }
             } else {
               Navigator.of(context).pop();
             }

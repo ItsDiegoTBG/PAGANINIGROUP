@@ -40,25 +40,27 @@ class CreditCardWidget extends StatelessWidget {
     }
 
     return CreditCardUi(
-      showBalance: true,
-      balance: balance,
-      width: 300,
-      cardHolderFullName: cardHolderFullName,
-      doesSupportNfc: true,
-      cardNumber: cardNumber,
-      validThru: validThru,
-      cardType: whatCardTypeIs(cardType),
-      topLeftColor: const Color.fromARGB(255, 26, 24, 24),
-      bottomRightColor: color,
-      cvvNumber: cvv,
-      cardProviderLogo: isFavorite == true
-          ? const Icon(
-              Icons.star,
-              color: Colors.yellow,
-              size: 30,
-            )
-          : const SizedBox(),
-      cardProviderLogoPosition: CardProviderLogoPosition.right    
-    );
+        
+        autoHideBalance: true,
+        showValidFrom: false,
+        showBalance: true,
+        balance: balance,
+        width: width,
+        cardHolderFullName: cardHolderFullName,
+        doesSupportNfc: true,
+        cardNumber: cardNumber,
+        validThru: validThru,
+        cardType: whatCardTypeIs(cardType),
+        topLeftColor: color,
+        bottomRightColor: color,
+        cvvNumber: cvv,
+        cardProviderLogo: isFavorite == true
+            ? const Icon(
+                Icons.star,
+                color: Colors.yellow,
+                size: 30,
+              )
+            : const SizedBox(),
+        cardProviderLogoPosition: CardProviderLogoPosition.right);
   }
 }
