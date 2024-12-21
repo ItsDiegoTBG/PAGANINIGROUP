@@ -2,10 +2,17 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/data/datasources/credit_card_datasource.dart';
+import 'package:paganini/data/local/hive_service.dart';
+import 'package:paganini/data/models/contact_model.dart';
 import 'package:paganini/data/repositories/credit_card_repository_impl.dart';
 import 'package:paganini/domain/usecases/credit_cards_use_case.dart';
+import 'package:paganini/domain/usecases/delete_contact_use_case.dart';
+import 'package:paganini/domain/usecases/fetch_contacts_use_case.dart';
+import 'package:paganini/domain/usecases/save_contact_use_case.dart';
 import 'package:paganini/firebase_options.dart';
 import 'package:paganini/presentation/pages/auth_page.dart';
 import 'package:paganini/presentation/pages/cards/card_delete_page.dart';
@@ -36,6 +43,14 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await Hive.initFlutter();
+  //regiustra adaptadores
+  //if (!Hive.isAdapterRegistered(0)) {
+  //  Hive.registerAdapter(ContactAdapter());
+  //}
+  //abre las cajas de Hive
+  final hiveService = HiveService();
+  await hiveService.init();
 
   final remoteDataSource = CreditCardRemoteDataSourceImpl();
   final creditCardRepository =
@@ -48,13 +63,14 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-            create: (_) => CreditCardProvider(
-                  creditCardsUseCase: creditCardsUseCase,
-                )),
+        ChangeNotifierProvider(create: (_) => CreditCardProvider(creditCardsUseCase: creditCardsUseCase)),
         ChangeNotifierProvider(create: (_) => SaldoProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => ContactProvider())
+        ChangeNotifierProvider(create: (_) => ContactProvider()),
+        Provider<HiveService>(create: (_) => hiveService),
+        Provider<FetchContactsUseCase>(create: (context) =>FetchContactsUseCase(context.read<HiveService>()),),
+        Provider<SaveContactUseCase>(create: (context) => SaveContactUseCase(context.read<HiveService>()), ), 
+        Provider<DeleteContactUseCase>(create: (_) => DeleteContactUseCase(hiveService)),
       ],
       child: const MainApp(),
     ),
@@ -88,7 +104,7 @@ class MainApp extends StatelessWidget {
         //Routes.AUTHPAGE: (context) => const AuthPage(),
         Routes.REGISTER: (context) => const RegisterPage(),
         Routes.RECHARGE: (context) => const RechargePage(),
-        // Routes.CONFRECHARGE: (context) => const ConfirmRechargePage() 
+        // Routes.CONFRECHARGE: (context) => const ConfirmRechargePage()
         Routes.RECEIPTRANSFER: (context) => TransferReceipt(),
         // Routes.CONFTRANSFER: (context) => ConfirmTransfer(),
         Routes.TRANSFERPAGE: (context) => const TransferPage(),

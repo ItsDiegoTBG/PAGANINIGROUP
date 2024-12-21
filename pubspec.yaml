@@ -41,7 +41,7 @@ dependencies:
   qr_flutter: ^4.1.0
   camera: ^0.11.0+2
   provider: ^6.1.2
-  path_provider: ^2.1.4
+  path_provider: ^2.1.5
   url_launcher: ^6.3.0
   screenshot: ^3.0.0
   path: ^1.9.0
@@ -63,6 +63,9 @@ dependencies:
   google_fonts: ^4.0.4
   font_awesome_flutter: ^10.8.0
   flutter_swiper_view: ^1.1.8
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  flutter_slidable: ^3.1.2
 
 
 dev_dependencies:
@@ -75,6 +78,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
+  hive_generator: ^2.0.0
+  build_runner: ^2.3.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

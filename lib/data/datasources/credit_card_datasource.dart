@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paganini/data/models/credit_card_model.dart';
 
+
 abstract class CreditCardRemoteDataSource {
   Future<List<CreditCardModel>> fetchCreditCards();
   Future<void> addCreditCard(CreditCardModel creditCard);
@@ -67,6 +68,10 @@ CreditCardRemoteDataSource {
     final cardIndex = _creditCards.indexWhere((card)=>card.id==idCreditCard);
       _creditCards[cardIndex].balance = newBalance;
   }
+
+
+// IMPLEMENTACION DE GET DE TARJETAS DEL FIREBASE 
+
 
   
 
