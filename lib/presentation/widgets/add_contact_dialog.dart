@@ -32,7 +32,7 @@ class AddContactDialog extends StatelessWidget {
             final name = nameController.text.trim();
             final phone = phoneController.text.trim();
             if (name.isNotEmpty && phone.isNotEmpty) {
-              Navigator.pop(context, Contact(name: name, phone: phone));
+              Navigator.pop(context, ContactUser(name: name, phone: phone));
             }
           },
           child: const Text("Guardar"),

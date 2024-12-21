@@ -7,20 +7,18 @@ class ContactUserWidget extends StatelessWidget {
   final Color color;
   final String nameUser;
   final String phoneUser;
-  final String numberAccount;
 
-  const ContactUserWidget(
-      {super.key,
-      this.width = 200,
-      this.height = 100,
-      this.color = AppColors.secondaryColor,
-      required this.nameUser,
-      required this.phoneUser,
-      required this.numberAccount});
+  const ContactUserWidget({
+    super.key,
+    this.width = 200,
+    this.height = 100,
+    this.color = AppColors.secondaryColor,
+    required this.nameUser,
+    required this.phoneUser,
+  });
 
   @override
   Widget build(BuildContext context) {
-    
     return Container(
       width: width,
       height: height,
@@ -39,13 +37,20 @@ class ContactUserWidget extends StatelessWidget {
               children: [
                 Text(nameUser,
                     style: const TextStyle(
-                        fontSize: 17, fontWeight: FontWeight.w400,overflow: TextOverflow.visible)),
-                 Text("📱$phoneUser",style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400,overflow: TextOverflow.visible),),
-                Text("Nro +$numberAccount")
+                        fontSize: 17,
+                        fontWeight: FontWeight.w400,
+                        overflow: TextOverflow.visible)),
+                Text(
+                  "📱$phoneUser",
+                  style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      overflow: TextOverflow.visible),
+                ),
               ],
             ),
           )
-        /*const Padding(
+          /*const Padding(
             padding:EdgeInsets.only(top: 7, right: 10),
             child: Align(
                 alignment: Alignment.topRight,

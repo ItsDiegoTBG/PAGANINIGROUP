@@ -12,9 +12,6 @@ abstract class CreditCardRemoteDataSource {
 class CreditCardRemoteDataSourceImpl implements 
 
 CreditCardRemoteDataSource {
-
- 
-
   final List<CreditCardModel> _creditCards =  [
       CreditCardModel(
         id: 1,

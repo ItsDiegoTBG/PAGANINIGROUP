@@ -6,7 +6,7 @@ class SaveContactUseCase {
 
   SaveContactUseCase(this.hiveService);
 
-  Future<void> call(Contact contact) {
+  Future<void> call(ContactUser contact) {
     return hiveService.saveContact(contact);
   }
 }

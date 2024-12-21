@@ -6,7 +6,7 @@ class FetchContactsUseCase {
 
   FetchContactsUseCase(this.hiveService);
 
-  Future<List<Contact>> call() {
+  Future<List<ContactUser>> call() {
     return hiveService.getContacts();
   }
 }
