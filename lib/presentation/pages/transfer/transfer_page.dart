@@ -37,8 +37,8 @@ class _TransferPageState extends State<TransferPage> {
 
   @override
   void dispose() {
-   // contactProviderWacth
-   //     .resetContact(); // Reinicia el estado solo si el widget está montado
+    // contactProviderWacth
+    //     .resetContact(); // Reinicia el estado solo si el widget está montado
 
     super.dispose();
   }
@@ -239,14 +239,37 @@ class _TransferPageState extends State<TransferPage> {
                   endIndent: 30,
                 ),
               ],
-              contactTransfered ??
-                  selectBeneficiary(myHeight, myWidth, context),
+              contactTransfered == null
+                  ? selectBeneficiary(myHeight, myWidth, context)
+                  : Padding(
+                    padding: const EdgeInsets.only(left: 35, right: 25),
+                    child: Row(
+                      children: [
+                        Expanded(child: contactTransfered),
+                        const SizedBox(width: 10),
+                        IconButton(
+                         // focusColor: AppColors.primaryColor,
+                          hoverColor: AppColors.primaryColor,
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const ContactsPage()));
+                          },
+                          icon: const Icon(Icons.change_circle_rounded),
+                          iconSize: 40,
+                           // Tamaño del icono
+                        color: AppColors.primaryColor // Color del icono
+                        ),
+                      ],
+                    ),
+                  ),
               const SizedBox(
                 height: 40,
               ),
               if (contactTransfered != null) ...[
                 Padding(
-                  padding: const EdgeInsets.only(left: 25,right: 25),
+                  padding: const EdgeInsets.only(left: 25, right: 25),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -276,7 +299,7 @@ class _TransferPageState extends State<TransferPage> {
                             ).show(context);
                           } else if (saldoActual == 0.0) {
                             AnimatedSnackBar(
-                              duration: const Duration(seconds: 3),
+                              duration: const Duration(seconds: 2),
                               builder: ((context) {
                                 return const MaterialAnimatedSnackBar(
                                   iconData: Icons.info_outline_rounded,
@@ -293,6 +316,66 @@ class _TransferPageState extends State<TransferPage> {
                                 );
                               }),
                             ).show(context);
+                            Future.delayed(const Duration(seconds: 1), () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        side: const BorderSide(
+                                            color: AppColors.primaryColor)),
+                                    backgroundColor: Colors.white,
+                                    title: const Text(
+                                      "Recargar saldo",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontStyle: FontStyle.italic,
+                                          fontSize: 24),
+                                    ),
+                                    content: const Text(
+                                        "¿Quieres recargar saldo en la aplicación?"),
+                                    actions: [
+                                      TextButton(
+                                        style: TextButton.styleFrom(
+                                          backgroundColor: Colors.red[300]!,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pop(); // Cerrar el diálogo
+                                        },
+                                        child: const Text(
+                                          "No",
+                                          style: TextStyle(color: Colors.black),
+                                        ),
+                                      ),
+                                      TextButton(
+                                        style: TextButton.styleFrom(
+                                          backgroundColor:
+                                              AppColors.secondaryColor,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.pushNamed(
+                                              context, Routes.RECHARGE);
+                                        },
+                                        child: const Text(
+                                          "Sí",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            });
                           } else if (valueTransfered <= saldoActual) {
                             Navigator.push(
                                 context,
@@ -324,8 +407,8 @@ class _TransferPageState extends State<TransferPage> {
                         },
                       ),
                       ButtonSecondVersion(
-                        horizontalPadding: 25,
-                        backgroundColor: Colors.red[400]!,
+                          horizontalPadding: 25,
+                          backgroundColor: Colors.red[300]!,
                           text: "Cancelar",
                           function: () {
                             contactProviderWacth.resetContact();

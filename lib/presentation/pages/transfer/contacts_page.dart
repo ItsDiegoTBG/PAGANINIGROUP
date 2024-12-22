@@ -6,17 +6,17 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'package:paganini/core/utils/colors.dart';
-import 'package:paganini/domain/usecases/delete_contact_use_case.dart';
+import 'package:paganini/domain/usecases/contact_use_case.dart';
 import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/contact_user.dart';
+import 'package:paganini/presentation/widgets/edit_contact_dialog.dart';
 import 'package:provider/provider.dart';
 
 import 'package:paganini/data/models/contact_model.dart';
-import 'package:paganini/domain/usecases/fetch_contacts_use_case.dart';
-import 'package:paganini/domain/usecases/save_contact_use_case.dart';
 
 import 'package:paganini/presentation/widgets/add_contact_dialog.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({super.key});
@@ -27,24 +27,26 @@ class ContactsPage extends StatefulWidget {
 
 class _ContactsPageState extends State<ContactsPage> {
   TextEditingController textEditingController = TextEditingController();
-  late FetchContactsUseCase fetchContacts;
-  late SaveContactUseCase saveContact;
-  late DeleteContactUseCase deleteContact;
+  late ContactUseCase contactUseCase;
 
   List<ContactUser> contactsList = [];
-
+  bool contactsImported = false;
   @override
   void initState() {
     super.initState();
-    fetchContacts = context.read<FetchContactsUseCase>();
-    saveContact = context.read<SaveContactUseCase>();
-    deleteContact = context.read<DeleteContactUseCase>();
+
+    contactUseCase = context.read<ContactUseCase>();
     loadContacts();
   }
 
   Future<void> loadContacts() async {
-    contactsList = await fetchContacts();
+    contactsList = await contactUseCase.callFetch();
     setState(() {});
+  }
+
+  Future<void> deleteContactIndex(int index) async {
+    await contactUseCase.callDelete(index);
+    await loadContacts();
   }
 
   Future<void> addContact() async {
@@ -53,8 +55,19 @@ class _ContactsPageState extends State<ContactsPage> {
       builder: (_) => AddContactDialog(),
     );
     if (newContact != null) {
-      await saveContact(newContact);
+      await contactUseCase.callSaveToFirst(newContact);
       await loadContacts();
+    }
+  }
+
+  Future<void> editContact(int index, ContactUser contact) async {
+    final updatedContact = await showDialog<ContactUser>(
+      context: context,
+      builder: (_) => EditContactDialog(contact: contact),
+    );
+    if (updatedContact != null) {
+      await contactUseCase.callUpdateName(index, updatedContact.name);
+      await loadContacts(); // Refresca la lista después de actualizar
     }
   }
 
@@ -72,11 +85,19 @@ class _ContactsPageState extends State<ContactsPage> {
               : "Sin número",
         );
       }).toList();
-
       setState(() {
-        // Se agregan al principio de la lista
-        contactsList = contactsList + decodedContacts;
+        // Cambiar el estado para indicar que los contactos han sido importados
+        contactsImported = true;
       });
+
+      //Guarda los contactos en Hive usando ContactUseCase
+      for (var contact in decodedContacts) {
+        await contactUseCase.callSave(contact); // Guardar en Hive
+      }
+
+      // Recargar la lista desde Hive (opcional, si deseas actualizar la UI después de guardar)
+      await loadContacts();
+
       debugPrint("Cantidad de contactos");
       debugPrint(contactsList.length.toString());
     }
@@ -247,6 +268,31 @@ class _ContactsPageState extends State<ContactsPage> {
                                 horizontal: myWidth * 0.08,
                               ),
                               child: Slidable(
+                                startActionPane: ActionPane(
+                                    motion: const StretchMotion(),
+                                    children: [
+                                      SlidableAction(
+                                        onPressed: (context) async {
+                                          await shareContact(
+                                              contact.name, contact.phone);
+                                        },
+                                        borderRadius: BorderRadius.circular(10),
+                                        backgroundColor: Colors.green[400]!,
+                                        foregroundColor: Colors.white,
+                                        icon: Icons.share_rounded,
+                                        label: 'Share',
+                                      ),
+                                      SlidableAction(
+                                        onPressed: (context) async {
+                                          await editContact(index, contact);
+                                        },
+                                        borderRadius: BorderRadius.circular(10),
+                                        backgroundColor: Colors.blue[400]!,
+                                        foregroundColor: Colors.white,
+                                        icon: Icons.edit_rounded,
+                                        label: 'Editar',
+                                      ),
+                                    ]),
                                 endActionPane: ActionPane(
                                     motion: const BehindMotion(),
                                     children: [
@@ -255,10 +301,9 @@ class _ContactsPageState extends State<ContactsPage> {
                                         onPressed: (context) async {
                                           debugPrint(
                                               "Eliminar contacto agregado");
-                                          await deleteContact(index);
-                                          setState(() {});
+                                          await deleteContactIndex(index);
                                         },
-                                        backgroundColor: Colors.red,
+                                        backgroundColor: Colors.red[400]!,
                                         icon: Icons.delete_rounded,
                                         label: 'Delete',
                                       )
@@ -271,10 +316,9 @@ class _ContactsPageState extends State<ContactsPage> {
                                       width: myWidth * 0.85,
                                       height: myHeight * 0.10,
                                     );
-
+                                    Navigator.pop(context);
                                     await contactProviderRead
                                         .setContactTransfered(contact);
-                                    Navigator.pop(context);
                                   },
                                   child: ContactUserWidget(
                                     nameUser: contact.name,
@@ -293,13 +337,23 @@ class _ContactsPageState extends State<ContactsPage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          debugPrint("Importar valores de  los contacto sdel telefono");
-          contactsFetch();
-        },
-        child: const Icon(Icons.import_contacts),
-      ),
+      floatingActionButton: contactsImported
+          ? null  // Si los contactos han sido importados, no mostrar el FloatingActionButton
+          : FloatingActionButton(
+              onPressed: () {
+                debugPrint("Importar valores de los contactos del teléfono");
+                contactsFetch(); // Llama a la función para importar los contactos
+              },
+              child: const Icon(Icons.import_contacts),
+            ),
     );
   }
+}
+
+Future<void> shareContact(String contactName, String phoneNumber) async {
+  // Crear el texto con los detalles del contacto
+  final contactDetails =
+      'Contacto:\nNombre: $contactName\nTeléfono: $phoneNumber';
+  // Usar el paquete share_plus para compartir el texto
+  await Share.share(contactDetails, subject: 'Detalles del Contacto');
 }
