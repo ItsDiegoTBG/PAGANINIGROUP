@@ -72,7 +72,9 @@ class TransferReceipt extends StatelessWidget {
                     height: 30,
                   ),
                   Center(
-                      child: ButtonSecondVersion(
+                    child: ButtonSecondVersion(
+                    backgroundColor: AppColors.primaryColor,
+                    colorText: Colors.white,
                     text: "Guardar comprobante",
                     function: () {},
                     buttonWidth: 280,

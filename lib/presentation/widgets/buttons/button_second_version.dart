@@ -10,6 +10,7 @@ class ButtonSecondVersion extends StatelessWidget {
   final double? buttonWidth;
   final double? buttonHeight;
   final double? fontSize;
+  final Color? colorText;
 
   const ButtonSecondVersion({
     super.key,
@@ -17,6 +18,7 @@ class ButtonSecondVersion extends StatelessWidget {
     required this.function,
     this.backgroundColor = AppColors.secondaryColor,
     this.verticalPadding = 5,
+    this.colorText = Colors.black,
     this.horizontalPadding = 30, this.buttonWidth, this.buttonHeight, this.fontSize
    
   });
@@ -46,7 +48,7 @@ class ButtonSecondVersion extends StatelessWidget {
             textAlign: TextAlign.center, // Centra el texto dentro del botón
             style:  TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: colorText,
               fontSize: fontSize ?? 22,
             ),
           ),

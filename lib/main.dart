@@ -10,9 +10,8 @@ import 'package:paganini/data/local/hive_service.dart';
 import 'package:paganini/data/models/contact_model.dart';
 import 'package:paganini/data/repositories/credit_card_repository_impl.dart';
 import 'package:paganini/domain/usecases/credit_cards_use_case.dart';
-import 'package:paganini/domain/usecases/delete_contact_use_case.dart';
-import 'package:paganini/domain/usecases/fetch_contacts_use_case.dart';
-import 'package:paganini/domain/usecases/save_contact_use_case.dart';
+import 'package:paganini/domain/usecases/contact_use_case.dart';
+
 import 'package:paganini/firebase_options.dart';
 import 'package:paganini/presentation/pages/auth_page.dart';
 import 'package:paganini/presentation/pages/cards/card_delete_page.dart';
@@ -26,7 +25,6 @@ import 'package:paganini/presentation/pages/login_page.dart';
 import 'package:paganini/presentation/pages/qr_pages.dart';
 import 'package:paganini/presentation/pages/cards/wallet_page.dart';
 import 'package:paganini/presentation/pages/recharge_page.dart';
-import 'package:paganini/presentation/pages/transfer/recharge_receipt.dart';
 import 'package:paganini/presentation/pages/register_page.dart';
 import 'package:paganini/presentation/pages/transfer/transfer_page.dart';
 import 'package:paganini/presentation/pages/transfer/transfer_receipt_page.dart';
@@ -68,9 +66,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => ContactProvider()),
         Provider<HiveService>(create: (_) => hiveService),
-        Provider<FetchContactsUseCase>(create: (context) =>FetchContactsUseCase(context.read<HiveService>()),),
-        Provider<SaveContactUseCase>(create: (context) => SaveContactUseCase(context.read<HiveService>()), ), 
-        Provider<DeleteContactUseCase>(create: (_) => DeleteContactUseCase(hiveService)),
+        Provider<ContactUseCase>(create: (context) => ContactUseCase(context.read<HiveService>()),),
       ],
       child: const MainApp(),
     ),
@@ -101,12 +97,9 @@ class MainApp extends StatelessWidget {
         Routes.WALLETPAGE: (context) => const WalletPage(),
         Routes.CARDPAGE: (context) => const CardPage(),
         Routes.CARDDELETEPAGE: (context) => const CardDeletePage(),
-        //Routes.AUTHPAGE: (context) => const AuthPage(),
         Routes.REGISTER: (context) => const RegisterPage(),
         Routes.RECHARGE: (context) => const RechargePage(),
-        // Routes.CONFRECHARGE: (context) => const ConfirmRechargePage()
         Routes.RECEIPTRANSFER: (context) => TransferReceipt(),
-        // Routes.CONFTRANSFER: (context) => ConfirmTransfer(),
         Routes.TRANSFERPAGE: (context) => const TransferPage(),
       },
       theme: ThemeData(

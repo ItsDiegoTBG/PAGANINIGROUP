@@ -1,3 +1,4 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
@@ -41,19 +42,29 @@ class _LoginRegisterScreenState extends State<LoginPage> {
         password: passwordController.text.trim(),
       );
 
-      // ignore: use_build_context_synchronously
-      Navigator.pop(context); // Cierra el diálogo de carga
+      // Cierra el diálogo de carga
+      Navigator.pop(context);
 
-      // Muestra un mensaje de éxito
-      _showSnackBar(
-        'Inicio de sesión exitoso',
-        AppColors.primaryColor,
-        topPosition: true,
-      );
+      // Muestra un mensaje de éxito solo después de un inicio de sesión exitoso
+      AnimatedSnackBar(
+        duration: const Duration(seconds: 3),
+        builder: ((context) {
+          return MaterialAnimatedSnackBar(
+            iconData: Icons.check,
+            messageText: 'Inicio de sesión exitoso',
+            type: AnimatedSnackBarType.success,
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
+            backgroundColor: Colors.green[400],
+            titleTextStyle: const TextStyle(
+              color: Color.fromARGB(255, 255, 255, 255),
+              fontSize: 16,
+            ),
+          );
+        }),
+      ).show(context);
 
-      // Navega a la pantalla principal
+      // Navega a la pantalla principal después de un inicio de sesión exitoso
       Navigator.pushNamedAndRemoveUntil(
-        // ignore: use_build_context_synchronously
         context,
         Routes.HOME,
         (Route<dynamic> route) => false,

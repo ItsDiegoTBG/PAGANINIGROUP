@@ -114,9 +114,19 @@ class RechargePageState extends State<RechargePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                _buildAmountButton('10'),
                 _buildAmountButton('20'),
+                _buildAmountButton('30'),
+
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [              
                 _buildAmountButton('50'),
                 _buildAmountButton('100'),
+              
               ],
             ),
             const SizedBox(height: 20),
