@@ -17,6 +17,7 @@ import 'package:paganini/firebase_options.dart';
 import 'package:paganini/presentation/pages/auth_page.dart';
 import 'package:paganini/presentation/pages/cards/card_delete_page.dart';
 import 'package:paganini/presentation/pages/cards/card_page.dart';
+import 'package:paganini/presentation/pages/introduction_page.dart';
 import 'package:paganini/presentation/pages/transfer/contacts_page.dart';
 import 'package:paganini/presentation/pages/confirm_recharge_page.dart';
 import 'package:paganini/presentation/pages/transfer/confirm_transfer_page.dart';
@@ -94,7 +95,7 @@ class MainApp extends StatelessWidget {
       // ignore: deprecated_member_use
       title: 'Paganini',
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.INITIAL,
+      initialRoute: Routes.INTRODUCTIONPAGE,
       routes: {
         Routes.INITIAL: (context) => const InitialPage(),
         Routes.HOME: (context) => const HomePage(),
@@ -107,6 +108,7 @@ class MainApp extends StatelessWidget {
         Routes.RECHARGE: (context) => const RechargePage(),
         Routes.RECEIPTRANSFER: (context) => TransferReceipt(),
         Routes.TRANSFERPAGE: (context) => const TransferPage(),
+        Routes.INTRODUCTIONPAGE : (context) => const OnBoardingPage(),
       },
       theme: ThemeData(
           appBarTheme: const AppBarTheme(color: Colors.white),
