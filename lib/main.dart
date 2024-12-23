@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +17,7 @@ import 'package:paganini/firebase_options.dart';
 import 'package:paganini/presentation/pages/auth_page.dart';
 import 'package:paganini/presentation/pages/cards/card_delete_page.dart';
 import 'package:paganini/presentation/pages/cards/card_page.dart';
+import 'package:paganini/presentation/pages/introduction_page.dart';
 import 'package:paganini/presentation/pages/transfer/contacts_page.dart';
 import 'package:paganini/presentation/pages/confirm_recharge_page.dart';
 import 'package:paganini/presentation/pages/transfer/confirm_transfer_page.dart';
@@ -61,12 +63,16 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => CreditCardProvider(creditCardsUseCase: creditCardsUseCase)),
+        ChangeNotifierProvider(
+            create: (_) =>
+                CreditCardProvider(creditCardsUseCase: creditCardsUseCase)),
         ChangeNotifierProvider(create: (_) => SaldoProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => ContactProvider()),
         Provider<HiveService>(create: (_) => hiveService),
-        Provider<ContactUseCase>(create: (context) => ContactUseCase(context.read<HiveService>()),),
+        Provider<ContactUseCase>(
+          create: (context) => ContactUseCase(context.read<HiveService>()),
+        ),
       ],
       child: const MainApp(),
     ),
@@ -86,9 +92,10 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     Provider.of<UserProvider>(context, listen: false).initializeUser();
     return MaterialApp(
+      // ignore: deprecated_member_use
       title: 'Paganini',
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.INITIAL,
+      initialRoute: Routes.INTRODUCTIONPAGE,
       routes: {
         Routes.INITIAL: (context) => const InitialPage(),
         Routes.HOME: (context) => const HomePage(),
@@ -101,10 +108,41 @@ class MainApp extends StatelessWidget {
         Routes.RECHARGE: (context) => const RechargePage(),
         Routes.RECEIPTRANSFER: (context) => TransferReceipt(),
         Routes.TRANSFERPAGE: (context) => const TransferPage(),
+        Routes.INTRODUCTIONPAGE : (context) => const OnBoardingPage(),
       },
       theme: ThemeData(
           appBarTheme: const AppBarTheme(color: Colors.white),
           scaffoldBackgroundColor: Colors.white),
     );
   }
+  /* return DevicePreview(
+      enabled: true,
+      builder: (context) => MaterialApp(
+        // ignore: deprecated_member_use
+        useInheritedMediaQuery: true,
+        locale: DevicePreview.locale(
+            context), // Simula la configuración regional del dispositivo
+        builder: DevicePreview.appBuilder,
+        title: 'Paganini',
+        debugShowCheckedModeBanner: false,
+        initialRoute: Routes.INITIAL,
+        routes: {
+          Routes.INITIAL: (context) => const InitialPage(),
+          Routes.HOME: (context) => const HomePage(),
+          Routes.LOGIN: (context) => const LoginPage(),
+          Routes.QRPAGE: (context) => const QrPage(),
+          Routes.WALLETPAGE: (context) => const WalletPage(),
+          Routes.CARDPAGE: (context) => const CardPage(),
+          Routes.CARDDELETEPAGE: (context) => const CardDeletePage(),
+          Routes.REGISTER: (context) => const RegisterPage(),
+          Routes.RECHARGE: (context) => const RechargePage(),
+          Routes.RECEIPTRANSFER: (context) => TransferReceipt(),
+          Routes.TRANSFERPAGE: (context) => const TransferPage(),
+        },
+        theme: ThemeData(
+            appBarTheme: const AppBarTheme(color: Colors.white),
+            scaffoldBackgroundColor: Colors.white),
+      ),
+    );
+  }*/
 }
