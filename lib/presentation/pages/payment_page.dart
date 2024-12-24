@@ -57,7 +57,7 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   Widget build(BuildContext context) {
     final UserService userService = UserService();
-    final saldo = context.watch<SaldoProvider>().saldo;
+    final saldo = context.read<SaldoProvider>().saldo;
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
     final creditCards = creditCardProviderWatch.creditCards;
     double myHeight = MediaQuery.of(context).size.height;
@@ -142,7 +142,6 @@ class _PaymentPageState extends State<PaymentPage> {
           const SizedBox(
             height: 4,
           ),
-          
           ButtonSecondVersion(
               text: "Siguiente",
               function: () {
@@ -150,7 +149,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   context: context,
                   shape: const RoundedRectangleBorder(
                     borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(20)),
+                        BorderRadius.vertical(top: Radius.circular(30)),
                   ),
                   builder: (context) {
                     return const PaymentOptions();
@@ -362,41 +361,147 @@ class _PaymentPageState extends State<PaymentPage> {
   }
 }
 
-class PaymentOptions extends StatelessWidget {
+class PaymentOptions extends StatefulWidget {
   const PaymentOptions({super.key});
 
   @override
+  State<PaymentOptions> createState() => _PaymentOptionsState();
+}
+
+class _PaymentOptionsState extends State<PaymentOptions> {
+  bool isSaldoSelected = false;
+  Map<int, bool> selectedCards = {};
+  @override
   Widget build(BuildContext context) {
+    final saldo = context.read<SaldoProvider>().saldo;
+    final creditCardProviderWatch = context.watch<CreditCardProvider>();
+    final creditCards = creditCardProviderWatch.creditCards;
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      height: 900,
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'Seleccionar Método de Pago',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.arrow_back)),
+              const Text(
+                '¿Como quieres pagar? ',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              IconButton(
+                  onPressed: () {
+                    FocusScope.of(context).unfocus();
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.close)),
+            ],
           ),
           const SizedBox(height: 20),
-          ListTile(
-            leading: const Icon(Icons.account_balance_wallet),
-            title: const Text('Saldo Disponible'),
-            onTap: () {
-              // Acción al seleccionar esta opción
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  'Utilizar mi saldo de Paganini: \$$saldo\USD',
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Switch(
+                  value: isSaldoSelected,
+                  onChanged: (value) {
+                    setState(() {
+                      isSaldoSelected = value;
+                    });
+                  },
+                ),
+              ),
+            ],
           ),
-          ListTile(
-            leading: const Icon(Icons.credit_card),
-            title: const Text('Tarjeta 1: **** **** **** 1234'),
-            onTap: () {
-              // Acción al seleccionar esta opción
-            },
+          if (isSaldoSelected)
+            ElevatedButton(
+              onPressed: () {
+                // Acción para seleccionar cuánto pagar del saldo
+              },
+              child: const Text('Seleccionar cuánto pagar'),
+            ),
+          const Divider(),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: creditCards.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final card = entry.value;
+
+                  return Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  card.cardHolderFullName, // El nombre de la tarjeta
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(
+                                    height: 4), // Espaciado entre líneas
+                                Text(
+                                  '${card.cardType == "credit" ? "Tarjeta de crédito" : "Tarjeta de débito"} •••• ${card.cardNumber.substring(card.cardNumber.length - 4)}',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Color.fromARGB(255, 100, 99, 99),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Switch(
+                            activeColor: Colors.white,
+                            activeTrackColor: AppColors.primaryColor,
+                            value: selectedCards[index] ?? false,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedCards[index] = value;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      if (selectedCards[index] == true)
+                        ElevatedButton(
+                          onPressed: () {
+                            // Acción para seleccionar cuánto pagar con esta tarjeta
+                          },
+                          child: const Text('Seleccionar cuánto pagar'),
+                        ),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ),
           ),
-          ListTile(
-            leading: const Icon(Icons.credit_card),
-            title: const Text('Tarjeta 2: **** **** **** 5678'),
-            onTap: () {
-              // Acción al seleccionar esta opción
-            },
+          ButtonSecondVersion(
+            text: "Pagar",
+            function: () {},
+            colorText: Colors.white,
+            backgroundColor: AppColors.primaryColor,
+            verticalPadding: 2,
+            horizontalPadding: 120,
           ),
         ],
       ),

@@ -233,6 +233,7 @@ class _CardPageState extends State<CardPage> {
                       const SizedBox(
                         height: 10,
                       ),
+                      const Text("Fecha de Vencimiento",style: TextStyle(fontSize: 16),),
                       Row(
                         children: [
                           Expanded(
@@ -292,7 +293,8 @@ class _CardPageState extends State<CardPage> {
                         ],
                       ),
                       const SizedBox(
-                        height: 10,
+                        height: 20,
+                        child: Text("CVV",),
                       ),
                       TextFormFieldSecondVersion(
                         controller: cvvCardController,
