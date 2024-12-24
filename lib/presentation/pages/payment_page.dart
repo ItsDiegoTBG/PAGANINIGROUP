@@ -142,20 +142,23 @@ class _PaymentPageState extends State<PaymentPage> {
           const SizedBox(
             height: 4,
           ),
-          ButtonSecondVersion(
-              text: "Siguiente",
-              function: () {
-                showModalBottomSheet(
-                  context: context,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(30)),
-                  ),
-                  builder: (context) {
-                    return const PaymentOptions();
-                  },
-                );
-              }),
+          pageToUserController.text.isNotEmpty
+              ? ButtonSecondVersion(
+                  text: "Siguiente",
+                  function: () {
+                    showModalBottomSheet(
+                      context: context,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(30)),
+                      ),
+                      isScrollControlled: true,
+                      builder: (context) {
+                        return const PaymentOptions();
+                      },
+                    );
+                  })
+              : const Text("Asigna un monto para poder avanzar")
         ],
       ),
       floatingActionButton: const FloatingButtonNavBarQr(),
@@ -330,7 +333,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 minimumSize: const Size(133, 50),
               ),
               child: const Text(
-                'Pagar',
+                'Agregar',
                 style: TextStyle(color: Colors.black, fontSize: 20),
               ),
             ),
@@ -370,15 +373,17 @@ class PaymentOptions extends StatefulWidget {
 
 class _PaymentOptionsState extends State<PaymentOptions> {
   bool isSaldoSelected = false;
+  double montoPagar = 0.0;
   Map<int, bool> selectedCards = {};
   @override
   Widget build(BuildContext context) {
     final saldo = context.read<SaldoProvider>().saldo;
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
     final creditCards = creditCardProviderWatch.creditCards;
+    final myHeight = MediaQuery.of(context).size.height;
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      height: 900,
+      //margin: const EdgeInsets.symmetric(horizontal: 8),
+      height: myHeight * 0.8,
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -417,6 +422,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
               Padding(
                 padding: const EdgeInsets.only(left: 20),
                 child: Switch(
+                  activeTrackColor: Colors.black,
                   value: isSaldoSelected,
                   onChanged: (value) {
                     setState(() {
@@ -428,71 +434,210 @@ class _PaymentOptionsState extends State<PaymentOptions> {
             ],
           ),
           if (isSaldoSelected)
-            ElevatedButton(
-              onPressed: () {
-                // Acción para seleccionar cuánto pagar del saldo
-              },
-              child: const Text('Seleccionar cuánto pagar'),
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Ingresa el monto que deseas pagar con tu saldo:',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            hintText: '\$0.00',
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              montoPagar = double.tryParse(value) ?? 0.0;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10), // Espaciado entre widgets
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            backgroundColor: AppColors.secondaryColor),
+                        onPressed: () {
+                          if (montoPagar > saldo) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'El monto supera tu saldo disponible.'),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Monto aceptado: \$$montoPagar'),
+                              ),
+                            );
+                          }
+                        },
+                        child: const Text(
+                          'Aceptar',
+                          style: TextStyle(color: Colors.black, fontSize: 14),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           const Divider(),
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: creditCards.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final card = entry.value;
-
-                  return Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+            child: CustomScrollView(
+              slivers: [
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final card = creditCards[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  card.cardHolderFullName, // El nombre de la tarjeta
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                Expanded(
+                                  child: CreditCardWidget(
+                                    balance: card.balance,
+                                    width: 100,
+                                    cardHolderFullName: card.cardHolderFullName,
+                                    cardNumber: card.cardNumber,
+                                    validThru: card.validThru,
+                                    cardType: card.cardType,
+                                    cvv: card.cvv,
+                                    color: card.color,
+                                    isFavorite: card.isFavorite,
                                   ),
                                 ),
-                                const SizedBox(
-                                    height: 4), // Espaciado entre líneas
-                                Text(
-                                  '${card.cardType == "credit" ? "Tarjeta de crédito" : "Tarjeta de débito"} •••• ${card.cardNumber.substring(card.cardNumber.length - 4)}',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Color.fromARGB(255, 100, 99, 99),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              card.cardHolderFullName,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Switch(
+                                              activeColor: Colors.white,
+                                              activeTrackColor:
+                                                  AppColors.primaryColor,
+                                              value:
+                                                  selectedCards[index] ?? false,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  selectedCards[index] = value;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 3),
+                                      Text(
+                                        '${card.cardType == "credit" ? "Tarjeta de crédito" : "Tarjeta de débito"} ••• ${card.cardNumber.substring(card.cardNumber.length - 4)}',
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color:
+                                              Color.fromARGB(255, 100, 99, 99),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                          Switch(
-                            activeColor: Colors.white,
-                            activeTrackColor: AppColors.primaryColor,
-                            value: selectedCards[index] ?? false,
-                            onChanged: (value) {
-                              setState(() {
-                                selectedCards[index] = value;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      if (selectedCards[index] == true)
-                        ElevatedButton(
-                          onPressed: () {
-                            // Acción para seleccionar cuánto pagar con esta tarjeta
-                          },
-                          child: const Text('Seleccionar cuánto pagar'),
+                            if (selectedCards[index] == true)
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        keyboardType: TextInputType.number,
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          hintText: '\$0.00',
+                                        ),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            montoPagar =
+                                                double.tryParse(value) ?? 0.0;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                        width: 10), // Espaciado entre widgets
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                          ),
+                                          backgroundColor:
+                                              AppColors.secondaryColor),
+                                      onPressed: () {
+                                        if (montoPagar > saldo) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                  'El monto supera tu saldo disponible.'),
+                                            ),
+                                          );
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                  'Monto aceptado: \$$montoPagar'),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      child: const Text(
+                                        'Aceptar',
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 14),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
                         ),
-                    ],
-                  );
-                }).toList(),
-              ),
+                      );
+                    },
+                    childCount:
+                        creditCards.length, // Número de elementos a renderizar
+                  ),
+                ),
+              ],
             ),
           ),
           ButtonSecondVersion(
