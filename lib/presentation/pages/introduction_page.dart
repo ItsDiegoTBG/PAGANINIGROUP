@@ -61,7 +61,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
       key: introKey,
       globalBackgroundColor: Colors.white,
       allowImplicitScrolling: true,
-      autoScrollDuration: 3000,
+      autoScrollDuration: 5000,
       infiniteAutoScroll: true,
       globalHeader: Align(
         alignment: Alignment.topRight,
@@ -175,7 +175,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
             imageFlex: 6,
             safeArea: 80,
           ),
-          footer: Padding(
+          /*footer: Padding(
             padding: const EdgeInsets.only(left: 15, right: 15),
             child: ElevatedButton(
               onPressed: () {
@@ -195,7 +195,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
                 ),
               ),
             ),
-          ),
+          ),*/
         ),
       ],
       onDone: () => _onIntroEnd(context),
@@ -207,10 +207,10 @@ class OnBoardingPageState extends State<OnBoardingPage> {
       //rtl: true, // Display as right-to-left
       back: const Icon(Icons.arrow_back),
       skip: const Text('Saltar',
-          style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black)),
+          style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white)),
       next: const Icon(Icons.arrow_forward),
       done: const Text('Ir',
-          style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black)),
+          style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white)),
       curve: Curves.fastLinearToSlowEaseIn,
       controlsMargin: const EdgeInsets.all(16),
       controlsPadding: kIsWeb
@@ -218,14 +218,14 @@ class OnBoardingPageState extends State<OnBoardingPage> {
           : const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
       dotsDecorator: const DotsDecorator(
         size: Size(10.0, 10.0),
-        color: AppColors.primaryColor,
+        color: AppColors.secondaryColor,
         activeSize: Size(22.0, 10.0),
         activeShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(25.0)),
         ),
       ),
       dotsContainerDecorator: const ShapeDecoration(
-        color: AppColors.secondaryColor,
+        color: AppColors.primaryColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),

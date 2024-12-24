@@ -114,57 +114,84 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-           Container(
-          height: 200,
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(25),
-              bottomRight: Radius.circular(25),
-            ),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: creditCards.isNotEmpty
-                  ? creditCards.length > 1
-                      ? Swiper(
-                          itemWidth: 400,
-                          itemHeight: 190,
-                          loop: true,
-                          duration: 500,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            final card = creditCards[index];
-                            return CreditCardWidget(
-                              balance: card.balance,
-                              cardHolderFullName: card.cardHolderFullName,
-                              cardNumber: card.cardNumber,
-                              validThru: card.validThru,
-                              cardType: card.cardType,
-                              cvv: card.cvv,
-                              color: card.color,
-                              isFavorite: card.isFavorite,
-                            );
-                          },
-                          itemCount: creditCards.length,
-                          layout: SwiperLayout.TINDER,
-                        )
-                      : CreditCardWidget(
-                          balance: creditCards[0].balance,
-                          cardHolderFullName: creditCards[0].cardHolderFullName,
-                          cardNumber: creditCards[0].cardNumber,
-                          validThru: creditCards[0].validThru,
-                          cardType: creditCards[0].cardType,
-                          cvv: creditCards[0].cvv,
-                          color: creditCards[0].color,
-                          isFavorite: creditCards[0].isFavorite,
-                        )
-                  : Center(
-                      child: Text("No tienes tarjetas de crédito.",
-                          style: TextStyle(fontSize: 18, color: Colors.black)),
-                    ),
-            ),
-          ),
-        ),
+          Container(
+              height: 200,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(25),
+                  bottomRight: Radius.circular(25),
+                ),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: creditCards.isNotEmpty
+                      ? creditCards.length > 1
+                          ? Swiper(
+                              itemWidth: 400,
+                              itemHeight: 190,
+                              loop: true,
+                              duration: 500,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                final card = creditCards[index];
+                                return CreditCardWidget(
+                                  balance: card.balance,
+                                  cardHolderFullName: card.cardHolderFullName,
+                                  cardNumber: card.cardNumber,
+                                  validThru: card.validThru,
+                                  cardType: card.cardType,
+                                  cvv: card.cvv,
+                                  color: card.color,
+                                  isFavorite: card.isFavorite,
+                                );
+                              },
+                              itemCount: creditCards.length,
+                              layout: SwiperLayout.TINDER,
+                            )
+                          : CreditCardWidget(
+                              balance: creditCards[0].balance,
+                              cardHolderFullName:
+                                  creditCards[0].cardHolderFullName,
+                              cardNumber: creditCards[0].cardNumber,
+                              validThru: creditCards[0].validThru,
+                              cardType: creditCards[0].cardType,
+                              cvv: creditCards[0].cvv,
+                              color: creditCards[0].color,
+                              isFavorite: creditCards[0].isFavorite,
+                            )
+                      : Center(
+                          child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("Aun no tienes una tarjeta registrada",
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.black)),
+                            const Text("Registra una ahora",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    color: AppColors.primaryColor)),
+                            const SizedBox(height: 5,),
+                            Container(
+                                decoration: BoxDecoration(
+                                    color: AppColors
+                                        .primaryColor, // Cambia el color del fondo
+                                    borderRadius: BorderRadius.circular(
+                                        30)), // Agrega bordes redondeados
 
+                                child: IconButton(
+                                    color: Colors.white,
+                                    onPressed: () {
+                                      Navigator.pushNamed(
+                                          context, Routes.PAYMENTPAGE);
+                                    },
+                                    icon: const Icon(
+                                      FontAwesomeIcons.arrowRightFromBracket,
+                                      size: 30,
+                                    )))
+                          ],
+                        )),
+                ),
+              )),
           const Padding(
             padding: EdgeInsets.only(top: 20, left: 22, right: 8, bottom: 2),
             child: Align(
@@ -177,10 +204,10 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.bold),
                 )),
           ),
-        
           Text(
               "Inicio de cuenta con ${userProviderWatch.user?.email ?? 'usuario no disponible'}"),
-          Text("Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator."),
+          const Text(
+              "Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator."),
           const Padding(
             padding: EdgeInsets.only(top: 25, left: 22, right: 8, bottom: 0),
             child: Align(
@@ -193,9 +220,12 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.bold),
                 )),
           ),
-          Text("Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator."),
-          Text("Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator."),
-           Text("Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator."),
+          const Text(
+              "Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator."),
+          const Text(
+              "Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator."),
+          const Text(
+              "Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator."),
         ],
       ),
       floatingActionButton: const FloatingButtonNavBarQr(),

@@ -72,7 +72,7 @@ class _WalletPageState extends State<WalletPage> {
                   child: Column(
                     children: [
                       const Padding(
-                        padding:  EdgeInsets.only(left: 40, top: 8),
+                        padding: EdgeInsets.only(left: 40, top: 8),
                         child: Align(
                           alignment: Alignment.topLeft,
                           child: Text(
@@ -105,7 +105,7 @@ class _WalletPageState extends State<WalletPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ButtonSecondVersion(
-                    horizontalPadding: 25,
+                      horizontalPadding: 28,
                       text: "Agregar",
                       function: () {
                         Navigator.pushNamed(context, Routes.RECHARGE);
@@ -114,20 +114,29 @@ class _WalletPageState extends State<WalletPage> {
                     width: 10,
                   ),
                   ButtonSecondVersion(
-                    horizontalPadding: 25,
+                    horizontalPadding: 26,
                     text: "Transferir",
                     function: () {
-                        Navigator.pushNamed(context, Routes.TRANSFERPAGE);
+                      Navigator.pushNamed(context, Routes.TRANSFERPAGE);
                     },
                   )
                 ],
               ),
             ),
             //Text(creditCards.length.toString()),
-            creditCards.isEmpty ? const Padding(
-              padding:  EdgeInsets.symmetric(vertical: 25),
-              child: Text("No tiene tarjetas registradas",style: TextStyle(color: Colors.black,fontSize: 25,fontWeight: FontWeight.bold),overflow: TextOverflow.visible,),
-            ) : const Text(""),
+            creditCards.isEmpty
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 25),
+                    child: Text(
+                      "No tiene tarjetas registradas",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.visible,
+                    ),
+                  )
+                : const Text(""),
 
             //tarjatas
             Column(
@@ -143,7 +152,7 @@ class _WalletPageState extends State<WalletPage> {
                       itemBuilder: (context, index) {
                         final card = creditCards.isEmpty
                             ? CreditCardEntity(
-                              balance: 0,
+                                balance: 0,
                                 id: 4,
                                 cardHolderFullName: 'Paganini',
                                 cardNumber: '999999999999999999',
@@ -170,6 +179,7 @@ class _WalletPageState extends State<WalletPage> {
                                 child: Opacity(
                                   opacity: 1,
                                   child: CreditCardWidget(
+                                    width: 400,
                                     balance: card.balance,
                                     cardHolderFullName: card.cardHolderFullName,
                                     cardNumber: card.cardNumber,
@@ -183,6 +193,9 @@ class _WalletPageState extends State<WalletPage> {
                               );
                             });
                       }),
+                ),
+                const SizedBox(
+                  height: 10,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 5),
@@ -206,6 +219,7 @@ class _WalletPageState extends State<WalletPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ButtonSecondVersionIcon(
+                    horizontalPadding: 12,
                     function: () {
                       Navigator.pushNamed(context, Routes.CARDDELETEPAGE);
                     },
@@ -213,6 +227,7 @@ class _WalletPageState extends State<WalletPage> {
                     icon: Icons.delete_rounded,
                     iconAlignment: IconAlignment.end),
                 ButtonSecondVersionIcon(
+                  horizontalPadding: 12,
                     function: () {
                       Navigator.pushNamed(context, Routes.CARDPAGE);
                     },

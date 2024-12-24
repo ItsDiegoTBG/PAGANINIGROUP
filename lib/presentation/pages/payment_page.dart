@@ -1,5 +1,6 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/data/datasources/userservice.dart';
@@ -7,6 +8,7 @@ import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
+import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/credit_card_ui.dart';
 import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +23,8 @@ class PaymentPage extends StatefulWidget {
 }
 
 class _PaymentPageState extends State<PaymentPage> {
-  TextEditingController saldoController = TextEditingController();
+  TextEditingController pageToUserController = TextEditingController();
+  TextEditingController noteController = TextEditingController();
   List<TextEditingController> saldoControllers = [];
 
   @override
@@ -57,6 +60,8 @@ class _PaymentPageState extends State<PaymentPage> {
     final saldo = context.watch<SaldoProvider>().saldo;
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
     final creditCards = creditCardProviderWatch.creditCards;
+    double myHeight = MediaQuery.of(context).size.height;
+    double myWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -71,218 +76,87 @@ class _PaymentPageState extends State<PaymentPage> {
             height: 20,
           ),
           firstPart(userService, context),
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 30,
-                    right: 10,
-                    top: 16,
-                    bottom: 16), // Espaciado horizontal adicional
-                child: SizedBox(
-                  width: 150, // Ancho fijo para el TextFormField
-                  child: TextFormField(
-                    controller: saldoController,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 12),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(20), // Borde circular
-                        borderSide: const BorderSide(
-                          color: Colors.black,
-                          width: 2,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(20), // Borde circular
-                        borderSide: const BorderSide(
-                          color: AppColors.primaryColor,
-                          width: 2,
-                        ),
-                      ),
-                      border: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Colors.black), // Borde negro por defecto
-                        borderRadius:
-                            BorderRadius.circular(0), // Sin bordes circulares
-                      ),
-                      hintText: '', // Sin texto visible
-                    ),
-                    style: const TextStyle(
-                        color: Colors
-                            .black), // Asegura que el texto ingresado sea visible
-                    keyboardType: TextInputType.number, // Para números
-                    obscureText:
-                        false, // Si quieres ocultar datos como contraseñas
-                  ),
-                ),
-              ),
-              Container(
-                height: 100,
-                width: 180, // Controla el tamaño del contenedor
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: AppColors.primaryColor,
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Saldo",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25,
-                            fontWeight: FontWeight.w800),
-                      ),
-                      Text(
-                        "\$$saldo",
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              )
-            ],
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            "Con tarjeta",
-            style: TextStyle(
-                color: Colors.black,
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-                fontStyle: FontStyle.italic),
-          ),
-          if (saldoControllers.isNotEmpty)
-            Expanded(
-              child: CustomScrollView(
-                slivers: [
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      childCount: creditCards.length, // Número de tarjetas
-                      (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 30,
-                                    right: 10,
-                                    top: 16,
-                                    bottom:
-                                        16), // Espaciado horizontal adicional
-                                child: SizedBox(
-                                  width:
-                                      150, // Ancho fijo para el TextFormField
-                                  child: TextFormField(
-                                    controller: saldoControllers[index],
-                                    decoration: InputDecoration(
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 12),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            20), // Borde circular
-                                        borderSide: const BorderSide(
-                                          color: Colors.black,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            20), // Borde circular
-                                        borderSide: const BorderSide(
-                                          color: AppColors.primaryColor,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: Colors
-                                                .black), // Borde negro por defecto
-                                        borderRadius: BorderRadius.circular(
-                                            0), // Sin bordes circulares
-                                      ),
-                                      hintText: '', // Sin texto visible
-                                    ),
-                                    style: const TextStyle(
-                                        color: Colors
-                                            .black), // Asegura que el texto ingresado sea visible
-                                    keyboardType:
-                                        TextInputType.number, // Para números
-                                    obscureText: false,
-                                  ),
-                                ),
-                              ),
-                              // Aquí reemplazamos el contenedor de saldo por el widget de tarjeta de crédito
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 50),
-                                  child: Transform.scale(
-                                    scale:
-                                        1.0, // Ajusta la escala si es necesario
-                                    child: Opacity(
-                                      opacity:
-                                          1, // Ajusta la opacidad si es necesario
-                                      child: SizedBox(
-                                        width:
-                                            300, // Establecemos un ancho fijo para que la tarjeta esté recortada
-                                        child: ClipRect(
-                                          child: Align(
-                                            alignment: Alignment
-                                                .centerLeft, // Ajusta la alineación para mostrar solo la parte izquierda de la tarjeta
-                                            widthFactor:
-                                                0.5, // Esto hará que solo se vea la mitad de la tarjeta
-                                            child: CreditCardWidget(
-                                              balance:
-                                                  creditCards[index].balance,
-                                              cardHolderFullName:
-                                                  creditCards[index]
-                                                      .cardHolderFullName,
-                                              cardNumber:
-                                                  creditCards[index].cardNumber,
-                                              validThru:
-                                                  creditCards[index].validThru,
-                                              cardType:
-                                                  creditCards[index].cardType,
-                                              cvv: creditCards[index].cvv,
-                                              color: creditCards[index].color,
-                                              isFavorite:
-                                                  creditCards[index].isFavorite,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 12,
+              right: 12,
             ),
+            child: TextFormField(
+              keyboardType: TextInputType.number,
+              style: const TextStyle(fontSize: 60, color: Colors.black),
+              textAlign: TextAlign.end,
+              inputFormatters: const [
+                // LengthLimitingTextInputFormatter(8),
+              ],
+              controller: pageToUserController,
+              decoration: const InputDecoration(
+                prefixIconColor: AppColors.primaryColor,
+                prefixIcon: Icon(
+                  Icons.attach_money_outlined,
+                  size: 70,
+                ),
+                hintText: "0.00",
+                hintTextDirection: TextDirection.ltr,
+                hintStyle: TextStyle(fontSize: 60, color: Colors.grey),
+              ),
+              onChanged: (value) {
+                //algo
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingresa un monto';
+                }
+
+                // Convertir el valor ingresado a número y eliminar posibles comas
+                double? enteredValue =
+                    double.tryParse(value.replaceAll(",", ""));
+
+                if (enteredValue == null || enteredValue <= 0) {
+                  return 'Por favor ingresa un monto válido';
+                }
+
+                // Validación del valor máximo (15000)
+                if (enteredValue > 15000) {
+                  return 'El monto máximo a transferir es 15000';
+                }
+
+                return null;
+              },
+            ),
+          ),
           const SizedBox(
-            height: 25,
-          )
+            height: 45,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 12, right: 12),
+            child: TextField(
+              controller: noteController,
+              decoration: const InputDecoration(
+                labelText: 'Añadir un mensaje',
+                hintText: 'E.j., Pago de la compra',
+                border: OutlineInputBorder(),
+              ),
+              maxLength: 100, // Límite de caracteres opcional
+            ),
+          ),
+          const SizedBox(
+            height: 4,
+          ),
+          
+          ButtonSecondVersion(
+              text: "Siguiente",
+              function: () {
+                showModalBottomSheet(
+                  context: context,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(20)),
+                  ),
+                  builder: (context) {
+                    return const PaymentOptions();
+                  },
+                );
+              }),
         ],
       ),
       floatingActionButton: const FloatingButtonNavBarQr(),
@@ -355,7 +229,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
                 // Convierte el saldo ingresado a double
                 double valueSaldo =
-                    double.tryParse(saldoController.text) ?? 0.0;
+                    double.tryParse(pageToUserController.text) ?? 0.0;
 
                 if (valueSaldo >= 0.0) {
                   if (valueSaldo <= saldo) {
@@ -484,6 +358,48 @@ class _PaymentPageState extends State<PaymentPage> {
           ],
         )
       ],
+    );
+  }
+}
+
+class PaymentOptions extends StatelessWidget {
+  const PaymentOptions({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'Seleccionar Método de Pago',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 20),
+          ListTile(
+            leading: const Icon(Icons.account_balance_wallet),
+            title: const Text('Saldo Disponible'),
+            onTap: () {
+              // Acción al seleccionar esta opción
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.credit_card),
+            title: const Text('Tarjeta 1: **** **** **** 1234'),
+            onTap: () {
+              // Acción al seleccionar esta opción
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.credit_card),
+            title: const Text('Tarjeta 2: **** **** **** 5678'),
+            onTap: () {
+              // Acción al seleccionar esta opción
+            },
+          ),
+        ],
+      ),
     );
   }
 }
