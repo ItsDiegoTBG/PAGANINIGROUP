@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:paganini/core/routes/app_routes.dart';
+import 'package:paganini/presentation/pages/payment/payment_page.dart';
 import 'package:paganini/presentation/pages/recharge_page.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
@@ -204,6 +205,9 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.bold),
                 )),
           ),
+          TextButton(onPressed:(){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const PaymentPage(dataId: "n03rQ2aXZcPs2zKB2d6eGeZ9poB2",)));
+          },child: const Text("Paganina de pago")),
           Text(
               "Inicio de cuenta con ${userProviderWatch.user?.email ?? 'usuario no disponible'}"),
           const Text(

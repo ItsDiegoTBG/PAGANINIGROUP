@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:paganini/core/routes/app_routes.dart';
-import 'package:paganini/presentation/pages/payment_page.dart';
+import 'package:paganini/presentation/pages/payment/payment_page.dart';
 
 class QrCodeScanner extends StatelessWidget {
   QrCodeScanner({

@@ -4,7 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/data/datasources/userservice.dart';
+import 'package:paganini/presentation/pages/payment/confirm_payments_options_selected.dart';
+import 'package:paganini/presentation/pages/payment/payments_options.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
+import 'package:paganini/presentation/providers/payment_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
@@ -57,11 +60,12 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   Widget build(BuildContext context) {
     final UserService userService = UserService();
-    final saldo = context.watch<SaldoProvider>().saldo;
+    final saldo = context.read<SaldoProvider>().saldo;
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
     final creditCards = creditCardProviderWatch.creditCards;
     double myHeight = MediaQuery.of(context).size.height;
     double myWidth = MediaQuery.of(context).size.width;
+    final paymentProviderWatch = context.watch<PaymentProvider>();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -142,21 +146,31 @@ class _PaymentPageState extends State<PaymentPage> {
           const SizedBox(
             height: 4,
           ),
-          
-          ButtonSecondVersion(
-              text: "Siguiente",
-              function: () {
-                showModalBottomSheet(
-                  context: context,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(20)),
-                  ),
-                  builder: (context) {
-                    return const PaymentOptions();
-                  },
-                );
-              }),
+          pageToUserController.text.isNotEmpty
+              ? ButtonSecondVersion(
+                  text: "Siguiente",
+                  function: () {
+                    paymentProviderWatch.setTotalAmountPayUser(double.tryParse(pageToUserController.text) ?? 0.0);
+                    paymentProviderWatch.setNoteUserToPay(noteController.text);
+                    showModalBottomSheet(
+                      context: context,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(30)),
+                      ),
+                      isScrollControlled: true,
+                      builder: (context) {
+                        return Consumer<PaymentProvider>(
+                            builder: (context, paymentProviderWatch, child) {
+                          return paymentProviderWatch
+                                  .isConfirmPaymetOrPaymentSelected
+                              ? const ConfirmPaymentPage()
+                              : const PaymentOptions();
+                        });
+                      },
+                    );
+                  })
+              : const Text("Asigna un monto para poder avanzar")
         ],
       ),
       floatingActionButton: const FloatingButtonNavBarQr(),
@@ -191,6 +205,7 @@ class _PaymentPageState extends State<PaymentPage> {
                               'Error al cargar datos'); // Muestra un mensaje de error
                         } else if (snapshot.hasData) {
                           final userData = snapshot.data!;
+
                           return Text(
                             "Pagar a ${userData['firstname']}", // Muestra el nombre del usuario
                             style: const TextStyle(
@@ -331,7 +346,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 minimumSize: const Size(133, 50),
               ),
               child: const Text(
-                'Pagar',
+                'Agregar',
                 style: TextStyle(color: Colors.black, fontSize: 20),
               ),
             ),
@@ -358,48 +373,6 @@ class _PaymentPageState extends State<PaymentPage> {
           ],
         )
       ],
-    );
-  }
-}
-
-class PaymentOptions extends StatelessWidget {
-  const PaymentOptions({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text(
-            'Seleccionar Método de Pago',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 20),
-          ListTile(
-            leading: const Icon(Icons.account_balance_wallet),
-            title: const Text('Saldo Disponible'),
-            onTap: () {
-              // Acción al seleccionar esta opción
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.credit_card),
-            title: const Text('Tarjeta 1: **** **** **** 1234'),
-            onTap: () {
-              // Acción al seleccionar esta opción
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.credit_card),
-            title: const Text('Tarjeta 2: **** **** **** 5678'),
-            onTap: () {
-              // Acción al seleccionar esta opción
-            },
-          ),
-        ],
-      ),
     );
   }
 }

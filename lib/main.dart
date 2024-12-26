@@ -18,7 +18,7 @@ import 'package:paganini/presentation/pages/auth_page.dart';
 import 'package:paganini/presentation/pages/cards/card_delete_page.dart';
 import 'package:paganini/presentation/pages/cards/card_page.dart';
 import 'package:paganini/presentation/pages/introduction_page.dart';
-import 'package:paganini/presentation/pages/payment_page.dart';
+import 'package:paganini/presentation/pages/payment/payment_page.dart';
 import 'package:paganini/presentation/pages/transfer/contacts_page.dart';
 import 'package:paganini/presentation/pages/confirm_recharge_page.dart';
 import 'package:paganini/presentation/pages/transfer/confirm_transfer_page.dart';
@@ -33,6 +33,7 @@ import 'package:paganini/presentation/pages/transfer/transfer_page.dart';
 import 'package:paganini/presentation/pages/transfer/transfer_receipt_page.dart';
 import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
+import 'package:paganini/presentation/providers/payment_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -74,6 +75,7 @@ void main() async {
         Provider<ContactUseCase>(
           create: (context) => ContactUseCase(context.read<HiveService>()),
         ),
+        ChangeNotifierProvider(create: (_) => PaymentProvider()),
       ],
       child: const MainApp(),
     ),

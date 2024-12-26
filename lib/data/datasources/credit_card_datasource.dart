@@ -16,7 +16,7 @@ CreditCardRemoteDataSource {
       CreditCardModel(
         id: 1,
         cardHolderFullName: 'Principal',
-        cardNumber: '1234 5678 9012 3456',
+        cardNumber: '4564 5678 9012 3456',
         cardType: 'credit',
         validThru: '12/26',
         color: Colors.blueAccent,
@@ -27,7 +27,7 @@ CreditCardRemoteDataSource {
       CreditCardModel(
         id: 2,
         cardHolderFullName: 'Jane Smith',
-        cardNumber: '9876 5432 1098 7654',
+        cardNumber: '5876 5432 1098 7654',
         cardType: 'debit',
         validThru: '11/25',
         color: Colors.green,
@@ -38,7 +38,7 @@ CreditCardRemoteDataSource {
       CreditCardModel(
         id:3,
         cardHolderFullName: 'Alice Johnson',
-        cardNumber: '1111 2222 3333 4444',
+        cardNumber: '4111 2222 3333 4444',
         cardType: 'giftCard',
         validThru: '10/24',
         color: Colors.purple,
