@@ -108,23 +108,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                           },
                         ),
                       ),
-                      const SizedBox(width: 10), // Espaciado entre widgets
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            backgroundColor: AppColors.secondaryColor),
-                        onPressed: () {
-                          setState(() {
-                            isMontoAccepted = !isMontoAccepted;
-                          });
-                        },
-                        child: const Text(
-                          'Aceptar',
-                          style: TextStyle(color: Colors.black, fontSize: 14),
-                        ),
-                      ),
+                      
                     ],
                   ),
                 ],
@@ -187,7 +171,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                                               onChanged: (value) {
                                                 setState(() {
                                                   selectedCards[index] = value;
-                                                  if (!value) {
+                                                  if (value==true) {
                                                     selectedCardsAmounts
                                                         .remove(index);
                                                   }
@@ -233,7 +217,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                                         },
                                       ),
                                     ),
-                                    const SizedBox(
+                                    /*const SizedBox(
                                         width: 10), // Espaciado entre widgets
                                     ElevatedButton(
                                       style: ElevatedButton.styleFrom(
@@ -263,7 +247,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                                               style: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 14)),
-                                    ),
+                                    ),*/
                                   ],
                                 ),
                               ),
@@ -295,7 +279,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                   return ConfirmPaymentPage(
                       selectedCardAmounts: selectedCardsAmounts,
                       montoSaldo: montoSaldo,
-                      isSaldoSelected: true);
+                      isSaldoSelected: isSaldoSelected);
                 },
               );
             },

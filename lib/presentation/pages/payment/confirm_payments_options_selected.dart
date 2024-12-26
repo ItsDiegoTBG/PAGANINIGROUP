@@ -41,7 +41,11 @@ class ConfirmPaymentPage extends StatelessWidget {
                   "Resumen del Pago",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
+                IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.close)),
               ],
             ),
             const SizedBox(height: 10),
@@ -49,15 +53,34 @@ class ConfirmPaymentPage extends StatelessWidget {
               ListTile(
                 title: const Text("Saldo de la cuenta"),
                 subtitle: Text("Monto seleccionado: \$$montoSaldo"),
-                leading: const Icon(Icons.account_balance_wallet),
+                leading: const Icon(Icons.account_balance_wallet,color: Colors.black,),
               ),
             ...selectedCardAmounts.entries.map((entry) {
+              final cardIndex = entry.key;
+              final cardAmount = entry.value;
+              final card = creditCards[cardIndex];
               return ListTile(
-                title: Text("Tarjeta ${entry.key + 1}"),
-                subtitle: Text("Monto seleccionado: \$$entry.value"),
-                leading: const Icon(Icons.credit_card),
+                title: Text(
+                    "Tarjeta ${entry.key + 1} : ${card.cardHolderFullName}"),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Monto seleccionado: \$$cardAmount"),
+                    Text(
+                      '${card.cardType == "credit" ? "Tarjeta de crédito" : "Tarjeta de débito"} ••• ${card.cardNumber.substring(card.cardNumber.length - 4)}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color.fromARGB(255, 100, 99, 99),
+                      ),
+                    ),
+                  ],
+                ),
+                leading: const Icon(
+                  Icons.credit_card,
+                  color: AppColors.primaryColor,
+                ),
               );
-            }).toList(),
+            }),
             const Divider(),
             ListTile(
               title: const Text(
@@ -80,6 +103,7 @@ class ConfirmPaymentPage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               onPressed: () {
+                debugPrint("El total es $montoSaldo");
                 debugPrint(
                     "El saldo es: $saldo, lo que el usuario escogio  es: $montoSaldo y es  verdadero o falso $isSaldoSelected");
                 debugPrint(
