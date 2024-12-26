@@ -4,8 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/data/datasources/userservice.dart';
+import 'package:paganini/presentation/pages/payment/confirm_payments_options_selected.dart';
 import 'package:paganini/presentation/pages/payment/payments_options.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
+import 'package:paganini/presentation/providers/payment_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
@@ -63,6 +65,7 @@ class _PaymentPageState extends State<PaymentPage> {
     final creditCards = creditCardProviderWatch.creditCards;
     double myHeight = MediaQuery.of(context).size.height;
     double myWidth = MediaQuery.of(context).size.width;
+    final paymentProviderWatch = context.watch<PaymentProvider>();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -147,6 +150,8 @@ class _PaymentPageState extends State<PaymentPage> {
               ? ButtonSecondVersion(
                   text: "Siguiente",
                   function: () {
+                    paymentProviderWatch.setTotalAmountPayUser(double.tryParse(pageToUserController.text) ?? 0.0);
+                    paymentProviderWatch.setNoteUserToPay(noteController.text);
                     showModalBottomSheet(
                       context: context,
                       shape: const RoundedRectangleBorder(
@@ -155,7 +160,13 @@ class _PaymentPageState extends State<PaymentPage> {
                       ),
                       isScrollControlled: true,
                       builder: (context) {
-                        return const PaymentOptions();
+                        return Consumer<PaymentProvider>(
+                            builder: (context, paymentProviderWatch, child) {
+                          return paymentProviderWatch
+                                  .isConfirmPaymetOrPaymentSelected
+                              ? const ConfirmPaymentPage()
+                              : const PaymentOptions();
+                        });
                       },
                     );
                   })
@@ -194,6 +205,7 @@ class _PaymentPageState extends State<PaymentPage> {
                               'Error al cargar datos'); // Muestra un mensaje de error
                         } else if (snapshot.hasData) {
                           final userData = snapshot.data!;
+
                           return Text(
                             "Pagar a ${userData['firstname']}", // Muestra el nombre del usuario
                             style: const TextStyle(
@@ -364,4 +376,3 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 }
-

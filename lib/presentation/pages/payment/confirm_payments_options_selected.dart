@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
+import 'package:paganini/presentation/providers/payment_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:provider/provider.dart';
 
 class ConfirmPaymentPage extends StatelessWidget {
-  final Map<int, double> selectedCardAmounts;
-  final double montoSaldo;
-  final bool isSaldoSelected;
-
   const ConfirmPaymentPage({
     super.key,
-    required this.selectedCardAmounts,
-    required this.montoSaldo,
-    required this.isSaldoSelected,
   });
 
   @override
@@ -22,9 +16,13 @@ class ConfirmPaymentPage extends StatelessWidget {
     final saldo = context.read<SaldoProvider>().saldo;
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
     final creditCards = creditCardProviderWatch.creditCards;
+    final paymentProvider = context.watch<PaymentProvider>();
+    final montoSaldo = paymentProvider.montoSaldo;
+    final selectedCardAmounts = paymentProvider.selectedCardAmounts;
+    final isSaldoSelected = paymentProvider.isSaldoSelected;
+    final noteUserToPay = paymentProvider.noteUserToPay;
 
-    final totalAmount = montoSaldo +
-        selectedCardAmounts.values.fold(0.0, (sum, amount) => sum + amount);
+    final totalAmount = montoSaldo + selectedCardAmounts.values.fold(0.0, (sum, amount) => sum + amount);
 
     return Container(
       height: myHeight * 0.8,
@@ -37,12 +35,20 @@ class ConfirmPaymentPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                IconButton(
+                  onPressed: () {
+                    paymentProvider.toggleConfirmPaymetOrPaymentSelected();
+                    paymentProvider.clearSelection();
+                  },
+                  icon: const Icon(Icons.arrow_back),
+                ),
                 const Text(
                   "Resumen del Pago",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
                     onPressed: () {
+                      paymentProvider.toggleConfirmPaymetOrPaymentSelected();
                       Navigator.pop(context);
                     },
                     icon: const Icon(Icons.close)),
@@ -53,7 +59,10 @@ class ConfirmPaymentPage extends StatelessWidget {
               ListTile(
                 title: const Text("Saldo de la cuenta"),
                 subtitle: Text("Monto seleccionado: \$$montoSaldo"),
-                leading: const Icon(Icons.account_balance_wallet,color: Colors.black,),
+                leading: const Icon(
+                  Icons.account_balance_wallet,
+                  color: Colors.black,
+                ),
               ),
             ...selectedCardAmounts.entries.map((entry) {
               final cardIndex = entry.key;
@@ -82,13 +91,34 @@ class ConfirmPaymentPage extends StatelessWidget {
               );
             }),
             const Divider(),
+            noteUserToPay.isNotEmpty ? 
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text("Nota del usuario : $noteUserToPay", style: const  TextStyle(fontSize: 16, fontWeight: FontWeight.w600,fontStyle: FontStyle.italic),),
+            ) : const SizedBox(),
             ListTile(
               title: const Text(
-                "Total a pagar",
+                "Suma total de tus opciones de pagos ",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               trailing: Text(
                 "\$$totalAmount",
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryColor,
+                ),
+              ),
+            ),
+            const Divider(),
+            ListTile(
+              title: Text(
+                "Costo total a pagar a ${paymentProvider.nameUserToPay}",
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              trailing: Text(
+                "\$${paymentProvider.totalAmountPayUser}",
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -97,26 +127,30 @@ class ConfirmPaymentPage extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryColor,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              onPressed: () {
-                debugPrint("El total es $montoSaldo");
-                debugPrint(
-                    "El saldo es: $saldo, lo que el usuario escogio  es: $montoSaldo y es  verdadero o falso $isSaldoSelected");
-                debugPrint(
-                    "Los montos de las tarjetas son: $selectedCardAmounts");
-                for (int i = 0; i < selectedCardAmounts.length; i++) {
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                onPressed: () {
+                  debugPrint("El total es $montoSaldo");
                   debugPrint(
-                      "El saldo de la tarjeta $i es: ${creditCards[i].balance} y el nombre es ${creditCards[i].cardHolderFullName}");
-                }
-              },
-              child: const Center(
-                child: Text(
-                  "Confirmar Pago",
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                      "El saldo es: $saldo, lo que el usuario escogio  es: $montoSaldo y es  verdadero o falso $isSaldoSelected");
+                  debugPrint(
+                      "Los montos de las tarjetas son: $selectedCardAmounts");
+                  for (int i = 0; i < selectedCardAmounts.length; i++) {
+                    debugPrint(
+                        "El saldo de la tarjeta $i es: ${creditCards[i].balance} y el nombre es ${creditCards[i].cardHolderFullName}");
+                  }
+                },
+                
+                child: const Center(
+                  child: Text(
+                    "Confirmar Pago",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
                 ),
               ),
             ),

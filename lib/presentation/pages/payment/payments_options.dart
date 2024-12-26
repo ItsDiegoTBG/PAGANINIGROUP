@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/pages/payment/confirm_payments_options_selected.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
+import 'package:paganini/presentation/providers/payment_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/credit_card_ui.dart';
@@ -15,11 +16,7 @@ class PaymentOptions extends StatefulWidget {
 }
 
 class _PaymentOptionsState extends State<PaymentOptions> {
-  bool isSaldoSelected = false;
-  bool isMontoAccepted = false;
-  double montoSaldo = 0.0;
   Map<int, bool> selectedCards = {};
-  Map<int, double> selectedCardsAmounts = {};
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +24,10 @@ class _PaymentOptionsState extends State<PaymentOptions> {
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
     final creditCards = creditCardProviderWatch.creditCards;
     final myHeight = MediaQuery.of(context).size.height;
+    final paymentProviderWatch = context.watch<PaymentProvider>();
+    final montoSaldo = paymentProviderWatch.montoSaldo;
+    final isSaldoSelected = paymentProviderWatch.isSaldoSelected;
+    final selectedCardAmounts = paymentProviderWatch.selectedCardAmounts;
 
     return Container(
       height: myHeight * 0.8,
@@ -71,9 +72,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                   activeTrackColor: Colors.black,
                   value: isSaldoSelected,
                   onChanged: (value) {
-                    setState(() {
-                      isSaldoSelected = value;
-                    });
+                    paymentProviderWatch.toggleSaldoSelection();
                   },
                 ),
               ),
@@ -95,20 +94,17 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                       Expanded(
                         child: TextFormField(
                           keyboardType: TextInputType.number,
-                          readOnly: isMontoAccepted,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10)),
                             hintText: '\$0.00',
                           ),
                           onChanged: (value) {
-                            
-                              montoSaldo = double.tryParse(value) ?? 0.0;
-                            
+                            final montoSaldo = double.tryParse(value) ?? 0.0;
+                            paymentProviderWatch.setMontoSaldo(montoSaldo);
                           },
                         ),
                       ),
-                      
                     ],
                   ),
                 ],
@@ -163,21 +159,20 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                                           Expanded(
                                             flex: 1,
                                             child: Switch(
-                                              activeColor: Colors.white,
-                                              activeTrackColor:
-                                                  AppColors.primaryColor,
-                                              value:
-                                                  selectedCards[index] ?? false,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  selectedCards[index] = value;
-                                                  if (value==true) {
-                                                    selectedCardsAmounts
-                                                        .remove(index);
-                                                  }
-                                                });
-                                              },
-                                            ),
+                                                activeColor: Colors.white,
+                                                activeTrackColor:
+                                                    AppColors.primaryColor,
+                                                value: selectedCards[index] ??
+                                                    false,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    selectedCards[index] =
+                                                        value;
+                                                    if (value == true) {
+                                                      paymentProviderWatch.selectedCardAmounts.remove(index);
+                                                    }
+                                                  });
+                                                }),
                                           ),
                                         ],
                                       ),
@@ -210,10 +205,10 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                                           hintText: '\$0.00',
                                         ),
                                         onChanged: (value) {
-                                          setState(() {
-                                            selectedCardsAmounts[index] =
-                                                double.tryParse(value) ?? 0.0;
-                                          });
+                                          final amount =
+                                              double.tryParse(value) ?? 0.0;
+                                          paymentProviderWatch.setCardAmount(
+                                              index, amount);
                                         },
                                       ),
                                     ),
@@ -268,7 +263,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
             onPressed: () {
-              Navigator.pop(context);
+              /*Navigator.pop(context);
               showModalBottomSheet(
                 context: context,
                 shape: const RoundedRectangleBorder(
@@ -276,12 +271,10 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                 ),
                 isScrollControlled: true,
                 builder: (context) {
-                  return ConfirmPaymentPage(
-                      selectedCardAmounts: selectedCardsAmounts,
-                      montoSaldo: montoSaldo,
-                      isSaldoSelected: isSaldoSelected);
+                  return const ConfirmPaymentPage();
                 },
-              );
+              );*/
+              paymentProviderWatch.toggleConfirmPaymetOrPaymentSelected();
             },
             child: const Center(
               child: Text(
