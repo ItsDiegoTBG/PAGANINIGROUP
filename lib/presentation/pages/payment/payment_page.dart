@@ -150,7 +150,7 @@ class _PaymentPageState extends State<PaymentPage> {
               ? ButtonSecondVersion(
                   text: "Siguiente",
                   function: () {
-                    paymentProviderWatch.setTotalAmountPayUser(double.tryParse(pageToUserController.text) ?? 0.0);
+                    paymentProviderWatch.setTotalAmountPayUser(double.tryParse(pageToUserController.text)!);
                     paymentProviderWatch.setNoteUserToPay(noteController.text);
                     showModalBottomSheet(
                       context: context,

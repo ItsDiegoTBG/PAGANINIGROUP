@@ -56,11 +56,16 @@ class PaymentProvider with ChangeNotifier {
 
   void clearSelection() {
     _isConfirmPaymetOrPaymentSelected = false;
-    _totalAmountPayUser = 0.0;
+   // _totalAmountPayUser = 0.0;
     _noteUserToPay = "";
     _selectedCardAmounts.clear();
     _montoSaldo = 0.0;
     _isSaldoSelected = false;
+    notifyListeners();
+  }
+
+  void clearTotalAmountPayUser() {
+    _totalAmountPayUser = 0.0;
     notifyListeners();
   }
 }

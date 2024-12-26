@@ -179,6 +179,7 @@ class _WalletPageState extends State<WalletPage> {
                                 child: Opacity(
                                   opacity: 1,
                                   child: CreditCardWidget(
+                                    supportNfc: true,
                                     width: 400,
                                     balance: card.balance,
                                     cardHolderFullName: card.cardHolderFullName,

@@ -37,6 +37,7 @@ import 'package:paganini/presentation/providers/payment_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,11 +47,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await Hive.initFlutter();
-  //regiustra adaptadores
-  //if (!Hive.isAdapterRegistered(0)) {
-  //  Hive.registerAdapter(ContactAdapter());
-  //}
-  //abre las cajas de Hive
   final hiveService = HiveService();
   await hiveService.init();
 
@@ -65,16 +61,12 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-            create: (_) =>
-                CreditCardProvider(creditCardsUseCase: creditCardsUseCase)),
+        ChangeNotifierProvider(create: (_) =>CreditCardProvider(creditCardsUseCase: creditCardsUseCase)),
         ChangeNotifierProvider(create: (_) => SaldoProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => ContactProvider()),
         Provider<HiveService>(create: (_) => hiveService),
-        Provider<ContactUseCase>(
-          create: (context) => ContactUseCase(context.read<HiveService>()),
-        ),
+        Provider<ContactUseCase>(create: (context) => ContactUseCase(context.read<HiveService>()),),
         ChangeNotifierProvider(create: (_) => PaymentProvider()),
       ],
       child: const MainApp(),
@@ -89,13 +81,14 @@ void setup() async {
 }
 
 class MainApp extends StatelessWidget {
+
   const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     Provider.of<UserProvider>(context, listen: false).initializeUser();
+
     return MaterialApp(
-      // ignore: deprecated_member_use
       title: 'Paganini',
       debugShowCheckedModeBanner: false,
       initialRoute: Routes.INTRODUCTIONPAGE,
@@ -111,7 +104,7 @@ class MainApp extends StatelessWidget {
         Routes.RECHARGE: (context) => const RechargePage(),
         Routes.RECEIPTRANSFER: (context) => TransferReceipt(),
         Routes.TRANSFERPAGE: (context) => const TransferPage(),
-        Routes.INTRODUCTIONPAGE : (context) => const OnBoardingPage(),
+        Routes.INTRODUCTIONPAGE: (context) => const OnBoardingPage(),
         //Routes.PAYMENTPAGE : (context) => const PaymentPage(),
       },
       theme: ThemeData(

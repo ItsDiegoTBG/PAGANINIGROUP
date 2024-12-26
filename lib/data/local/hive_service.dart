@@ -6,10 +6,9 @@ class HiveService {
   static const String contactsBoxName = 'contactsBox';
 
   Future<void> init() async {
-    Hive.registerAdapter(
-        ContactUserAdapter()); // Registra el adaptador correctamente
-    await Hive.openBox<ContactUser>(
-        contactsBoxName); // Usa ContactUser, no Contact
+    Hive.registerAdapter(ContactUserAdapter()); // Registra el adaptador correctamente
+    await Hive.openBox<ContactUser>(contactsBoxName);
+
   }
 
   Future<List<ContactUser>> getContacts() async {
@@ -53,4 +52,6 @@ class HiveService {
       await box.add(c); // Vuelve a añadir todos los contactos
     }
   }
+
+
 }

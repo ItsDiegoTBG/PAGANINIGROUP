@@ -113,6 +113,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
           const Divider(),
           Expanded(
             child: CustomScrollView(
+              
               slivers: [
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
@@ -127,6 +128,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                               children: [
                                 Expanded(
                                   child: CreditCardWidget(
+                                    supportNfc: false,
                                     balance: card.balance,
                                     width: 100,
                                     cardHolderFullName: card.cardHolderFullName,
@@ -212,37 +214,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                                         },
                                       ),
                                     ),
-                                    /*const SizedBox(
-                                        width: 10), // Espaciado entre widgets
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(30),
-                                          ),
-                                          backgroundColor:
-                                              AppColors.secondaryColor),
-                                      onPressed: () {
-                                        setState(() {
-                                          if (selectedCardsAmounts
-                                              .containsKey(index)) {
-                                            selectedCardsAmounts.remove(index);
-                                            selectedCards[index] = false;
-                                          } else {
-                                            selectedCardsAmounts[index] = 0.0;
-                                          }
-                                        });
-                                      },
-                                      child: isMontoAccepted
-                                          ? const Text('Aceptar',
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 14))
-                                          : const Text('Cancelar',
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 14)),
-                                    ),*/
+                                    
                                   ],
                                 ),
                               ),
@@ -263,17 +235,6 @@ class _PaymentOptionsState extends State<PaymentOptions> {
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
             onPressed: () {
-              /*Navigator.pop(context);
-              showModalBottomSheet(
-                context: context,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-                ),
-                isScrollControlled: true,
-                builder: (context) {
-                  return const ConfirmPaymentPage();
-                },
-              );*/
               paymentProviderWatch.toggleConfirmPaymetOrPaymentSelected();
             },
             child: const Center(
