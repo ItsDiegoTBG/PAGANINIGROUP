@@ -159,16 +159,23 @@ class _PaymentPageState extends State<PaymentPage> {
                             BorderRadius.vertical(top: Radius.circular(30)),
                       ),
                       isScrollControlled: true,
-                      builder: (context) {
-                        return Consumer<PaymentProvider>(
+                      builder: (context) => DraggableScrollableSheet(
+                        expand: false,
+                        initialChildSize: 0.7,
+                        minChildSize: 0.32,
+                        maxChildSize: 0.9,
+                        builder: (context, scrollController) => SingleChildScrollView(
+                          controller: scrollController,
+                          child: Consumer<PaymentProvider>(
                             builder: (context, paymentProviderWatch, child) {
-                          return paymentProviderWatch
+                              return paymentProviderWatch
                                   .isConfirmPaymetOrPaymentSelected
-                              ? const ConfirmPaymentPage()
-                              : const PaymentOptions();
-                        });
-                      },
-                    );
+                                  ? const ConfirmPaymentPage()
+                                  : const PaymentOptions();
+                            },
+                          ),
+                        ),
+                      ));
                   })
               : const Text("Asigna un monto para poder avanzar")
         ],

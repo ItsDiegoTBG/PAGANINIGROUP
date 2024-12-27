@@ -80,9 +80,23 @@ class _CardPageState extends State<CardPage> {
 
   bool _isLoading = true;
 
+  void cleanTextEditingControllers() {
+    nameController.text = "";
+    numberCreditCardController.text = "";
+    monthExpirationController.text = "";
+    yearExpirationController.text = "";
+    cvvCardController.text = "";
+
+    nameNewCard = "Nombre";
+    numberNewCard = "********************************";
+    monthExpirationNewCard = "00";
+    yearExpirationNewCard = "00";
+    cvvNewCard = "***";
+  }
+
   @override
   void dispose() {
-    nameController.dispose();
+    // cleanTextEditingControllers();
     super.dispose();
   }
 
@@ -114,8 +128,6 @@ class _CardPageState extends State<CardPage> {
           'mount': 300,
           'type': selectedCardType
         };
-        await cardRef.child(cardId).set(cardData);
-        // ignore: use_build_context_synchronously
         AnimatedSnackBar(
           duration: const Duration(seconds: 3),
           builder: ((context) {
@@ -132,6 +144,12 @@ class _CardPageState extends State<CardPage> {
             );
           }),
         ).show(context);
+        await cardRef.child(cardId).set(cardData);
+        // ignore: use_build_context_synchronously
+        Future.delayed(const Duration(seconds: 1), () {
+          cleanTextEditingControllers();
+        });
+
         setState(() {
           registerOneCard = true;
         });
@@ -233,7 +251,10 @@ class _CardPageState extends State<CardPage> {
                       const SizedBox(
                         height: 10,
                       ),
-                      const Text("Fecha de Vencimiento",style: TextStyle(fontSize: 16),),
+                      const Text(
+                        "Fecha de Vencimiento",
+                        style: TextStyle(fontSize: 16),
+                      ),
                       Row(
                         children: [
                           Expanded(
@@ -259,6 +280,7 @@ class _CardPageState extends State<CardPage> {
                                     setState(() {
                                       isDateValid = false;
                                     });
+                                    return "Ingresa el dia";
                                   }
                                   return null;
                                 },
@@ -281,11 +303,13 @@ class _CardPageState extends State<CardPage> {
                                 inputFormatters: [
                                   LengthLimitingTextInputFormatter(2),
                                   FilteringTextInputFormatter.allow(RegExp(
-                                      r'[0-9/]')), // Permite solo números y "/"
+                                      r'^[1-9]$|^[1-2][0-9]$|^3[0-1]$')), // Permite del 1 al 31
                                 ],
                                 onChanged: (value) {},
                                 validator: (value) {
-                                  if (value == null || value.isEmpty) {}
+                                  if (value == null || value.isEmpty) {
+                                    return "Ingresa el mes";
+                                  }
                                   return null;
                                 },
                                 keyboardType: TextInputType.datetime),
@@ -294,7 +318,9 @@ class _CardPageState extends State<CardPage> {
                       ),
                       const SizedBox(
                         height: 20,
-                        child: Text("CVV",),
+                        child: Text(
+                          "CVV",
+                        ),
                       ),
                       TextFormFieldSecondVersion(
                         controller: cvvCardController,
@@ -309,7 +335,7 @@ class _CardPageState extends State<CardPage> {
                             setState(() {
                               isCvvValid = false;
                             });
-                            return null;
+                            return "Ingresa el cvv";
                           }
                           return null;
                         },
@@ -421,60 +447,81 @@ class _CardPageState extends State<CardPage> {
               padding: const EdgeInsets.only(top: 20),
               child: ButtonSecondVersion(
                 function: () async {
-                  if (isCvvValid) {
-                    if (_formKey.currentState!.validate()) {
-                      bool? confirmAddCreditCard = await showDialog<bool>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Agregar nueva tarjeta'),
-                              content: const Text(
-                                "¿Estás seguro de agregar la tarjeta?",
-                                style: TextStyle(fontSize: 18),
-                              ),
-                              actions: [
-                                ButtonSecondVersion(
-                                    backgroundColor: AppColors.secondaryColor,
-                                    verticalPadding: 2,
-                                    horizontalPadding: 3,
-                                    text: "Cancelar",
-                                    function: () =>
-                                        Navigator.of(context).pop(false)),
-                                ButtonSecondVersion(
-                                  backgroundColor: AppColors.primaryColor,
-                                  text: "Agregar",
-                                  function: () =>
-                                      Navigator.of(context).pop(true),
+                  if (_formKey.currentState!.validate()) {
+                    bool? confirmAddCreditCard = await showDialog<bool>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Agregar nueva tarjeta'),
+                            content: const Text(
+                              "¿Estás seguro de agregar la tarjeta?",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            actions: [
+                              ButtonSecondVersion(
+                                  backgroundColor: AppColors.secondaryColor,
                                   verticalPadding: 2,
                                   horizontalPadding: 3,
-                                )
-                              ],
-                            );
-                          });
+                                  text: "Cancelar",
+                                  function: () =>
+                                      Navigator.of(context).pop(false)),
+                              ButtonSecondVersion(
+                                backgroundColor: AppColors.primaryColor,
+                                text: "Agregar",
+                                function: () => Navigator.of(context).pop(true),
+                                verticalPadding: 2,
+                                horizontalPadding: 3,
+                              )
+                            ],
+                          );
+                        });
 
-                      if (confirmAddCreditCard == true) {
-                        CreditCardEntity newCard = CreditCardEntity(
-                          balance: 300,
-                          id: Random().nextInt(2000),
-                          cvv: cvvNewCard,
-                          color: selectedColor ?? AppColors.primaryColor,
-                          cardHolderFullName: nameNewCard,
-                          cardNumber: numberNewCard,
-                          cardType: selectedCardType,
-                          validThru:
-                              "$monthExpirationNewCard/$yearExpirationNewCard",
-                          isFavorite: false,
-                        );
-                        await registerCreditCard();
-                        await cardProviderRead.addCreditCard(newCard);
-                        await Future.delayed(const Duration(seconds: 2));
-
-                        await Navigator.pushReplacementNamed(
-                            // ignore: use_build_context_synchronously
-                            context,
-                            Routes.WALLETPAGE);
-                      }
+                    if (confirmAddCreditCard == true) {
+                      CreditCardEntity newCard = CreditCardEntity(
+                        balance: 300,
+                        id: 0,
+                        cvv: cvvNewCard,
+                        color: selectedColor ?? AppColors.primaryColor,
+                        cardHolderFullName: nameNewCard,
+                        cardNumber: numberNewCard,
+                        cardType: selectedCardType,
+                        validThru:
+                            "$monthExpirationNewCard/$yearExpirationNewCard",
+                        isFavorite: false,
+                      );
+                      /*
+                          1. validar datos de la tarjeta que los campos no pueden estar vacios
+                          2. validar que el cvv sea de 3 digitos
+                          3. validar que el mes y el año de vencimiento sean de 2 digitos
+                          4. validar que el mes y el dia de vencimiento sean del 1 al 31
+                          5. validar que el mes y el año de vencimiento sean del 1 al 12
+                          6. validar los otros atributos
+                          7. registrar la tarjeta
+                          8. agregar la tarjeta al usuario
+                          9. borrar los datos del registro anterior para otro registro
+                        */
+                      await registerCreditCard();
+                      await cardProviderRead.addCreditCard(newCard);
                     }
+                  } else {
+                    AnimatedSnackBar(
+                      duration: const Duration(seconds: 3),
+                      builder: ((context) {
+                        return MaterialAnimatedSnackBar(
+                          iconData: Icons.info,
+                          messageText:
+                              'Revisa que los datos de la tarjeta sean correctos',
+                          type: AnimatedSnackBarType.error,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20)),
+                          backgroundColor: Colors.blue[800]!,
+                          titleTextStyle: const TextStyle(
+                            color: Color.fromARGB(255, 255, 255, 255),
+                            fontSize: 10,
+                          ),
+                        );
+                      }),
+                    ).show(context);
                   }
                 },
                 text: registerOneCard ? "Registrar Otra" : "Registrar",
