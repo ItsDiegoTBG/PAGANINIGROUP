@@ -39,7 +39,7 @@ class CreditCardProvider extends ChangeNotifier {
       await creditCardsUseCase.updateBalance(idCreditCard, newBalance);
       notifyListeners();
     } catch (e) {
-      throw Exception('Error al actualizar el saldo: $e');
+      throw Exception('Error al actualizar el saldo de la tarjeta: $e');
     }
   }
 }

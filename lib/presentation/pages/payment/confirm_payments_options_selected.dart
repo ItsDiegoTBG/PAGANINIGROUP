@@ -1,5 +1,6 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/payment_provider.dart';
@@ -135,8 +136,7 @@ class ConfirmPaymentPage extends StatelessWidget {
               ListTile(
                 title: const Text(
                   "Costo total a pagar :",
-                  style: TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 trailing: Text(
                   "\$${paymentProvider.totalAmountPayUser}",
@@ -151,84 +151,121 @@ class ConfirmPaymentPage extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryColor,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  onPressed: () {
-                    debugPrint("El total es $montoSaldo");
-                    debugPrint(
-                        "El saldo es: $saldo, lo que el usuario escogio  es: $montoSaldo y es  verdadero o falso $isSaldoSelected");
-                    debugPrint(
-                        "Los montos de las tarjetas son: $selectedCardAmounts");
-                    for (int i = 0; i < selectedCardAmounts.length; i++) {
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryColor,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    onPressed: () {
+                      debugPrint("El total es $montoSaldo");
                       debugPrint(
-                          "El saldo de la tarjeta $i es: ${creditCards[i].balance} y el nombre es ${creditCards[i].cardHolderFullName}");
-                    }
+                          "El saldo es: $saldo, lo que el usuario escogio  es: $montoSaldo y es  verdadero o falso $isSaldoSelected");
+                      debugPrint(
+                          "Los montos de las tarjetas son: $selectedCardAmounts");
 
-                    /*
+                      /*OK open youtube please
                       1.verificamos que la suma total de sus opcion de pago sea igual al total que paga el usuario
                       2.si elijio pagar con saldo, verificamos que el monto del saldo sea igual o menor al monto saldo que tiene en la cuenta y le restamos el monto que elijio del saldo al saldo de la cuenta                     
                       3.si elijio las tarjetas, verificamos que el motno de cada tarjeta sea igual o menor al monto de cada tarjeta y se la restamos 
                       4.dejar los atributos del provider limpio para realizar otro paog
                     */
 
-                    //1
-                    if (totalAmount != paymentProvider.totalAmountPayUser) {
+                      //1
+                      if (totalAmount != paymentProvider.totalAmountPayUser) {
+                        AnimatedSnackBar(
+                          duration: const Duration(seconds: 3),
+                          builder: ((context) {
+                            return const MaterialAnimatedSnackBar(
+                              iconData: Icons.error,
+                              messageText:
+                                  'El total de tus opciones de pago no cumple con el total que paga al usuario',
+                              type: AnimatedSnackBarType.error,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
+                              backgroundColor: Color.fromARGB(255, 213, 55, 84),
+                              titleTextStyle: TextStyle(
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                fontSize: 10,
+                              ),
+                            );
+                          }),
+                        ).show(context);
+                        return;
+                      }
+                      //2
+                      if (montoSaldo > saldo) {
+                        AnimatedSnackBar(
+                          duration: const Duration(seconds: 3),
+                          builder: ((context) {
+                            return MaterialAnimatedSnackBar(
+                              iconData: Icons.info,
+                              messageText:
+                                  'El monto de Saldo es mayor al que tiene en la cuenta',
+                              type: AnimatedSnackBarType.error,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(20)),
+                              backgroundColor: Colors.blue[800]!,
+                              titleTextStyle: const TextStyle(
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                fontSize: 10,
+                              ),
+                            );
+                          }),
+                        ).show(context);
+                        return;
+                      } else {
+                        saldoProviderWatch.subRecharge(montoSaldo);
+                      }
+
+                      //3 por cada tarjeta
+                      for (int cardIndex in selectedCardAmounts.keys) {
+                        // Verifica si el monto seleccionado es nulo
+                        if (selectedCardAmounts[cardIndex] == null) continue;
+
+                        // Obtén el monto seleccionado
+                        double selectedAmount = selectedCardAmounts[cardIndex]!;
+                        debugPrint("El monto de la tarjeta $cardIndex es: $selectedAmount");
+                        // Verifica si el monto seleccionado es mayor que el saldo de la tarjeta
+                        if (selectedAmount > creditCards[cardIndex].balance) {    
+                          AnimatedSnackBar(
+                            duration: const Duration(seconds: 3),
+                            builder: ((context) {
+                              return MaterialAnimatedSnackBar(
+                                iconData: Icons.info,
+                                messageText:
+                                    'El monto de la tarjeta ${creditCards[cardIndex].cardHolderFullName} es mayor al que tiene en la tarjeta',
+                                type: AnimatedSnackBarType.error,
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(20)),
+                                backgroundColor: Colors.blue[800]!,
+                                titleTextStyle: const TextStyle(
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                  fontSize: 10,
+                                ),
+                              );
+                            }),
+                          ).show(context);
+                          return;
+                        }
+
+                        // Calcula el nuevo saldo
+                        final newBalance =creditCards[cardIndex].balance - selectedAmount;
+                        creditCardProviderWatch.updateBalance(cardIndex+1, newBalance);
+                        debugPrint("El nuevo saldo de la tarjeta $cardIndex es: $newBalance");
+                      }
+                      //4
+                      paymentProvider.clearSelection();
+                      paymentProvider.clearTotalAmountPayUser();
+
+                      //este mensaje es para indicar que se ha realizado un pago correcto
                       AnimatedSnackBar(
                         duration: const Duration(seconds: 3),
                         builder: ((context) {
-                          return const MaterialAnimatedSnackBar(
-                            iconData: Icons.error,
-                            messageText: 'El total de tus opciones de pago no cumple con el total que paga al usuario',
-                            type: AnimatedSnackBarType.error,
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                            backgroundColor: Color.fromARGB(255, 213, 55, 84),
-                            titleTextStyle: TextStyle(
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              fontSize: 10,
-                            ),
-                          );
-                        }),
-                      ).show(context);
-                      return;
-                    }
-                    //2
-                    if(montoSaldo > saldo){
-                      AnimatedSnackBar(
-                        duration: const Duration(seconds: 3),
-                        builder: ((context) {
-                          return  MaterialAnimatedSnackBar(
-                            iconData: Icons.info,
-                            messageText: 'El monto de Saldo es mayor al que tiene en la cuenta',
-                            type: AnimatedSnackBarType.error,
-                            borderRadius: const BorderRadius.all( Radius.circular(20)),
-                            backgroundColor: Colors.blue[800]!,
-                            titleTextStyle: const TextStyle(
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              fontSize: 10,
-                            ),
-                          );
-                        }),
-                      ).show(context);
-                      return;
-                    }else {
-                      saldoProviderWatch.subRecharge(montoSaldo);                      
-                    }
-
-                    //4
-                    paymentProvider.clearSelection();
-                    paymentProvider.clearTotalAmountPayUser();
-
-                    //este mensaje es para indicar que se ha realizado un pago correcto
-                    AnimatedSnackBar(
-                        duration: const Duration(seconds: 3),
-                        builder: ((context) {
-                          return  MaterialAnimatedSnackBar(
+                          return MaterialAnimatedSnackBar(
                             iconData: Icons.check,
                             messageText: 'El pago se ha realizado con exito!',
                             type: AnimatedSnackBarType.error,
-                            borderRadius: const BorderRadius.all( Radius.circular(20)),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
                             backgroundColor: Colors.green[800],
                             titleTextStyle: const TextStyle(
                               color: Color.fromARGB(255, 255, 255, 255),
@@ -237,15 +274,15 @@ class ConfirmPaymentPage extends StatelessWidget {
                           );
                         }),
                       ).show(context);
-                    Navigator.pop(context); 
-                  },
-                  child: const Center(
-                    child: Text(
-                      "Confirmar Pago",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                ),
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, Routes.HOME);
+                    },
+                    child: const Center(
+                      child: Text(
+                        "Confirmar Pago",
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                    )),
               ),
             ],
           ),

@@ -164,12 +164,10 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                                                 activeColor: Colors.white,
                                                 activeTrackColor:
                                                     AppColors.primaryColor,
-                                                value: selectedCards[index] ??
-                                                    false,
+                                                value: selectedCards[index] ??false,
                                                 onChanged: (value) {
                                                   setState(() {
-                                                    selectedCards[index] =
-                                                        value;
+                                                    selectedCards[index] =value;
                                                     if (value == true) {
                                                       paymentProviderWatch.selectedCardAmounts.remove(index);
                                                     }
