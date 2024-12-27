@@ -183,7 +183,7 @@ class _HomePageState extends State<HomePage> {
                                     color: Colors.white,
                                     onPressed: () {
                                       Navigator.pushNamed(
-                                          context, Routes.PAYMENTPAGE);
+                                          context, Routes.CARDPAGE);
                                     },
                                     icon: const Icon(
                                       FontAwesomeIcons.arrowRightFromBracket,
@@ -205,9 +205,7 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.bold),
                 )),
           ),
-          TextButton(onPressed:(){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const PaymentPage(dataId: "n03rQ2aXZcPs2zKB2d6eGeZ9poB2",)));
-          },child: const Text("Paganina de pago")),
+          
           Text(
               "Inicio de cuenta con ${userProviderWatch.user?.email ?? 'usuario no disponible'}"),
           const Text(

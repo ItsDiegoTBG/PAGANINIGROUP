@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/pages/confirm_recharge_page.dart';
@@ -17,10 +18,10 @@ class RechargePage extends StatefulWidget {
 class RechargePageState extends State<RechargePage> {
   TextEditingController controllerAmount = TextEditingController();
   String _selectedAmount = '';
+  
 
   void _selectAmount(String amount) {
     setState(() {
-      // _selectedAmount = amount;
       controllerAmount.text = amount;
     });
   }
@@ -47,20 +48,32 @@ class RechargePageState extends State<RechargePage> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppColors.primaryColor)),
-                child: const Text(
-                  'Recarga',
-                  style: TextStyle(color: AppColors.primaryColor, fontSize: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 24),
+                    decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: AppColors.primaryColor)),
+                    child: const Text(
+                      'Recarga',
+                      style: TextStyle(
+                          color: AppColors.primaryColor, fontSize: 24),
+                    ),
+                  ),
                 ),
-              ),
+                IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.arrow_back_rounded,
+                        color: AppColors.primaryColor))
+              ],
             ),
             const SizedBox(height: 60),
             const Text(
@@ -117,16 +130,14 @@ class RechargePageState extends State<RechargePage> {
                 _buildAmountButton('10'),
                 _buildAmountButton('20'),
                 _buildAmountButton('30'),
-
               ],
             ),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [              
+              children: [
                 _buildAmountButton('50'),
                 _buildAmountButton('100'),
-              
               ],
             ),
             const SizedBox(height: 20),
@@ -150,13 +161,53 @@ class RechargePageState extends State<RechargePage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    debugPrint('Monto seleccionado: $_selectedAmount');
+                    debugPrint('Monto seleccionado: $controllerAmount');
+                    final monto = controllerAmount.text.isNotEmpty ? double.tryParse(controllerAmount.text) : 0.0;
+                    if(controllerAmount.text.isEmpty){
+                       AnimatedSnackBar(
+                          duration: const Duration(seconds: 3),
+                          builder: ((context) {
+                            return  MaterialAnimatedSnackBar(
+                                iconData: Icons.check,
+                                messageText:'Por favor ingrese un monto',
+                                type: AnimatedSnackBarType.info,
+                                borderRadius: const BorderRadius.all(Radius.circular(20)),
+                                backgroundColor:Colors.blue[800]!,
+                                titleTextStyle: const TextStyle(
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                    fontSize: 10,
+                                  ),
+                                );
+                              }),
+                            ).show(context);
+                            return;
+                    }
+
+                    if(monto == null || monto <= 0){
+                      AnimatedSnackBar(
+                        duration: const Duration(seconds: 3),
+                        builder: ((context) {
+                          return  MaterialAnimatedSnackBar(
+                              iconData: Icons.check,
+                              messageText:'Por favor ingrese un monto válido',
+                              type: AnimatedSnackBarType.info,
+                              borderRadius: const BorderRadius.all(Radius.circular(20)),
+                              backgroundColor:Colors.blue[800]!,
+                              titleTextStyle: const TextStyle(
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                  fontSize: 10,
+                                ),
+                              );
+                            }),
+                          ).show(context);
+                          return;
+                    }
+                    
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => ConfirmRechargePage(
-                                valueRecharge:
-                                  controllerAmount.text)));
+                                valueRecharge: controllerAmount.text)));
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(

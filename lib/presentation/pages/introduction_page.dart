@@ -6,6 +6,7 @@ import 'package:paganini/presentation/pages/home_page.dart';
 import 'package:paganini/presentation/pages/initial_page.dart';
 import 'package:paganini/presentation/pages/register_page.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version_icon.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnBoardingPage extends StatefulWidget {
   const OnBoardingPage({super.key});
@@ -88,7 +89,9 @@ class OnBoardingPageState extends State<OnBoardingPage> {
                   fontWeight: FontWeight.bold,
                   color: Colors.white),
             ),
-            onPressed: () => _onIntroEnd(context),
+            onPressed: () async {
+              _onIntroEnd(context);
+            },
           ),
         ),
       ),
@@ -198,7 +201,8 @@ class OnBoardingPageState extends State<OnBoardingPage> {
           ),*/
         ),
       ],
-      onDone: () => _onIntroEnd(context),
+      onDone: () => _onIntroEnd(
+          context), //cambio de esto para que no vuelva a parecer la pagina de introduction screen
       onSkip: () => _onIntroEnd(context), // You can override onSkip callback
       showSkipButton: true,
       skipOrBackFlex: 0,

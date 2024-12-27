@@ -260,7 +260,8 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.pushReplacementNamed(context, Routes.HOME);
+                          debugPrint("Pantalla de cancelar recargar para volver atras");
+                          Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
