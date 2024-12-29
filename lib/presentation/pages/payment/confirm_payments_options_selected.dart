@@ -299,7 +299,7 @@ class ConfirmPaymentPage extends StatelessWidget {
                               }),
                             ).show(context);
                             Navigator.pop(context);
-                            Navigator.pushNamed(context, Routes.HOME);
+                            Navigator.pushNamed(context, Routes.NAVIGATIONPAGE);
                           },
                           child: const Center(
                             child: Text(

@@ -4,11 +4,11 @@ import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/domain/entity/card_credit.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
-import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version_icon.dart';
 import 'package:paganini/presentation/widgets/credit_card_ui.dart';
-import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
+import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
+
 import 'package:provider/provider.dart';
 
 class CardDeletePage extends StatefulWidget {
@@ -32,21 +32,36 @@ class _CardDeletePageState extends State<CardDeletePage> {
       ),
       backgroundColor: Colors.white,
       body: creditCards.isEmpty
-          ?  Center(
-            child: Column(
+          ? Center(
+              child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("No tiene tarjetas registradas",style: TextStyle(color: Colors.black,fontSize: 25,fontWeight: FontWeight.bold),overflow: TextOverflow.visible,),
-                ButtonSecondVersionIcon(text: "Regresar", function: (){
-                  Navigator.pop(context);
-                },icon:Icons.arrow_back_ios_rounded, iconAlignment: IconAlignment.start,),
+                const Text(
+                  "No tiene tarjetas registradas",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.visible,
+                ),
+                ButtonSecondVersionIcon(
+                  text: "Regresar",
+                  function: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icons.arrow_back_ios_rounded,
+                  iconAlignment: IconAlignment.start,
+                ),
               ],
-            )
-          )
+            ))
           : creditCardListView(creditCards, creditCardProviderRead),
-      floatingActionButton: const FloatingButtonNavBarQr(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: const BottomMainAppBar(),
+      floatingActionButton: FloatingButtonPaganini(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        iconData: Icons.arrow_back_rounded,
+      ),
+      //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 

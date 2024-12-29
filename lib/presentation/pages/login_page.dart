@@ -36,16 +36,9 @@ class _LoginRegisterScreenState extends State<LoginPage> {
     );
 
     try {
-      // Intenta iniciar sesión
-      await _auth.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
-
-      // Cierra el diálogo de carga
       Navigator.pop(context);
 
-      // Muestra un mensaje de éxito solo después de un inicio de sesión exitoso
+      // Intenta iniciar sesión
       AnimatedSnackBar(
         duration: const Duration(seconds: 3),
         builder: ((context) {
@@ -62,13 +55,21 @@ class _LoginRegisterScreenState extends State<LoginPage> {
           );
         }),
       ).show(context);
-
-      // Navega a la pantalla principal después de un inicio de sesión exitoso
       Navigator.pushNamedAndRemoveUntil(
         context,
-        Routes.HOME,
+        Routes.NAVIGATIONPAGE,
         (Route<dynamic> route) => false,
       );
+      await _auth.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      // Cierra el diálogo de carga
+
+      // Muestra un mensaje de éxito solo después de un inicio de sesión exitoso
+
+      // Navega a la pantalla principal después de un inicio de sesión exitoso
     } on FirebaseAuthException catch (e) {
       // ignore: use_build_context_synchronously
       Navigator.pop(context); // Cierra el diálogo de carga
