@@ -6,9 +6,9 @@ import 'package:paganini/domain/entity/card_credit.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
-import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/credit_card_ui.dart';
-import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
+import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
+
 import 'package:paganini/presentation/widgets/smooth_page_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -260,7 +260,8 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          debugPrint("Pantalla de cancelar recargar para volver atras");
+                          debugPrint(
+                              "Pantalla de cancelar recargar para volver atras");
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -308,7 +309,7 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                             // Navega de vuelta a la página de inicio
                             if (context.mounted) {
                               Navigator.pushReplacementNamed(
-                                  context, Routes.HOME);
+                                  context, Routes.NAVIGATIONPAGE);
                             }
                           } else {
                             // Muestra un mensaje si no hay saldo suficiente
@@ -357,9 +358,12 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                 ],
               ),
             ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: const FloatingButtonNavBarQr(),
-      bottomNavigationBar: const BottomMainAppBar(),
+      floatingActionButton: FloatingButtonPaganini(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        iconData: Icons.arrow_back_rounded,
+      ),
     );
   }
 }

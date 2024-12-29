@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/pages/confirm_recharge_page.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
-import 'package:paganini/presentation/widgets/bottom_main_app.dart';
-import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
+import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
 
 class RechargePage extends StatefulWidget {
   const RechargePage({super.key});
@@ -18,7 +17,6 @@ class RechargePage extends StatefulWidget {
 class RechargePageState extends State<RechargePage> {
   TextEditingController controllerAmount = TextEditingController();
   String _selectedAmount = '';
-  
 
   void _selectAmount(String amount) {
     setState(() {
@@ -67,12 +65,6 @@ class RechargePageState extends State<RechargePage> {
                     ),
                   ),
                 ),
-                IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.arrow_back_rounded,
-                        color: AppColors.primaryColor))
               ],
             ),
             const SizedBox(height: 60),
@@ -162,47 +154,51 @@ class RechargePageState extends State<RechargePage> {
                 ElevatedButton(
                   onPressed: () {
                     debugPrint('Monto seleccionado: $controllerAmount');
-                    final monto = controllerAmount.text.isNotEmpty ? double.tryParse(controllerAmount.text) : 0.0;
-                    if(controllerAmount.text.isEmpty){
-                       AnimatedSnackBar(
-                          duration: const Duration(seconds: 3),
-                          builder: ((context) {
-                            return  MaterialAnimatedSnackBar(
-                                iconData: Icons.check,
-                                messageText:'Por favor ingrese un monto',
-                                type: AnimatedSnackBarType.info,
-                                borderRadius: const BorderRadius.all(Radius.circular(20)),
-                                backgroundColor:Colors.blue[800]!,
-                                titleTextStyle: const TextStyle(
-                                  color: Color.fromARGB(255, 255, 255, 255),
-                                    fontSize: 10,
-                                  ),
-                                );
-                              }),
-                            ).show(context);
-                            return;
-                    }
-
-                    if(monto == null || monto <= 0){
+                    final monto = controllerAmount.text.isNotEmpty
+                        ? double.tryParse(controllerAmount.text)
+                        : 0.0;
+                    if (controllerAmount.text.isEmpty) {
                       AnimatedSnackBar(
                         duration: const Duration(seconds: 3),
                         builder: ((context) {
-                          return  MaterialAnimatedSnackBar(
-                              iconData: Icons.check,
-                              messageText:'Por favor ingrese un monto válido',
-                              type: AnimatedSnackBarType.info,
-                              borderRadius: const BorderRadius.all(Radius.circular(20)),
-                              backgroundColor:Colors.blue[800]!,
-                              titleTextStyle: const TextStyle(
-                                color: Color.fromARGB(255, 255, 255, 255),
-                                  fontSize: 10,
-                                ),
-                              );
-                            }),
-                          ).show(context);
-                          return;
+                          return MaterialAnimatedSnackBar(
+                            iconData: Icons.check,
+                            messageText: 'Por favor ingrese un monto',
+                            type: AnimatedSnackBarType.info,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
+                            backgroundColor: Colors.blue[800]!,
+                            titleTextStyle: const TextStyle(
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 10,
+                            ),
+                          );
+                        }),
+                      ).show(context);
+                      return;
                     }
-                    
+
+                    if (monto == null || monto <= 0) {
+                      AnimatedSnackBar(
+                        duration: const Duration(seconds: 3),
+                        builder: ((context) {
+                          return MaterialAnimatedSnackBar(
+                            iconData: Icons.check,
+                            messageText: 'Por favor ingrese un monto válido',
+                            type: AnimatedSnackBarType.info,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
+                            backgroundColor: Colors.blue[800]!,
+                            titleTextStyle: const TextStyle(
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 10,
+                            ),
+                          );
+                        }),
+                      ).show(context);
+                      return;
+                    }
+
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -227,9 +223,12 @@ class RechargePageState extends State<RechargePage> {
           ],
         ),
       ),
-      floatingActionButton: const FloatingButtonNavBarQr(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: const BottomMainAppBar(),
+      floatingActionButton: FloatingButtonPaganini(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        iconData: Icons.arrow_back_rounded,
+      ),
     );
   }
 

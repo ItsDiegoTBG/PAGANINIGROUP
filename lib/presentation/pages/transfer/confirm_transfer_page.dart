@@ -4,10 +4,9 @@ import 'package:paganini/presentation/pages/transfer/transfer_receipt_page.dart'
 import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
-import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
-import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
+
 import 'package:provider/provider.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -189,9 +188,7 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
           ],
         ),
       ),
-      floatingActionButton: const FloatingButtonNavBarQr(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: const BottomMainAppBar(),
+     
     );
   }
 }

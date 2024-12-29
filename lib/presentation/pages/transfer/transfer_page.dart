@@ -8,10 +8,10 @@ import 'package:paganini/presentation/pages/transfer/contacts_page.dart';
 import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
-import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
-import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
+import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
+
 import 'package:provider/provider.dart';
 
 class TransferPage extends StatefulWidget {
@@ -242,28 +242,29 @@ class _TransferPageState extends State<TransferPage> {
               contactTransfered == null
                   ? selectBeneficiary(myHeight, myWidth, context)
                   : Padding(
-                    padding: const EdgeInsets.only(left: 35, right: 25),
-                    child: Row(
-                      children: [
-                        Expanded(child: contactTransfered),
-                        const SizedBox(width: 10),
-                        IconButton(
-                         // focusColor: AppColors.primaryColor,
-                          hoverColor: AppColors.primaryColor,
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const ContactsPage()));
-                          },
-                          icon: const Icon(Icons.change_circle_rounded),
-                          iconSize: 40,
-                           // Tamaño del icono
-                        color: AppColors.primaryColor // Color del icono
-                        ),
-                      ],
+                      padding: const EdgeInsets.only(left: 35, right: 25),
+                      child: Row(
+                        children: [
+                          Expanded(child: contactTransfered),
+                          const SizedBox(width: 10),
+                          IconButton(
+                              // focusColor: AppColors.primaryColor,
+                              hoverColor: AppColors.primaryColor,
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ContactsPage()));
+                              },
+                              icon: const Icon(Icons.change_circle_rounded),
+                              iconSize: 40,
+                              // Tamaño del icono
+                              color: AppColors.primaryColor // Color del icono
+                              ),
+                        ],
+                      ),
                     ),
-                  ),
               const SizedBox(
                 height: 40,
               ),
@@ -422,9 +423,12 @@ class _TransferPageState extends State<TransferPage> {
           )
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: const FloatingButtonNavBarQr(),
-      bottomNavigationBar: const BottomMainAppBar(),
+      floatingActionButton: FloatingButtonPaganini(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        iconData: Icons.arrow_back_rounded,
+      ),
     );
   }
 

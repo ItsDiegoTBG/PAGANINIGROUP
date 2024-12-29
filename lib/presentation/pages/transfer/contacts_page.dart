@@ -11,6 +11,7 @@ import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/contact_user.dart';
 import 'package:paganini/presentation/widgets/edit_contact_dialog.dart';
+import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
 import 'package:provider/provider.dart';
 
 import 'package:paganini/data/models/contact_model.dart';
@@ -339,13 +340,12 @@ class _ContactsPageState extends State<ContactsPage> {
       ),
       floatingActionButton: contactsImported
           ? null  // Si los contactos han sido importados, no mostrar el FloatingActionButton
-          : FloatingActionButton(
+          : FloatingButtonPaganini(
               onPressed: () {
                 debugPrint("Importar valores de los contactos del teléfono");
                 contactsFetch(); // Llama a la función para importar los contactos
               },
-              child: const Icon(Icons.import_contacts),
-            ),
+              iconData : Icons.import_contacts)
     );
   }
 }

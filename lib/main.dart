@@ -6,6 +6,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:paganini/core/routes/app_routes.dart';
+import 'package:paganini/core/theme/app_theme.dart';
 import 'package:paganini/data/datasources/credit_card_datasource.dart';
 import 'package:paganini/data/local/hive_service.dart';
 import 'package:paganini/data/models/contact_model.dart';
@@ -18,6 +19,7 @@ import 'package:paganini/presentation/pages/auth_page.dart';
 import 'package:paganini/presentation/pages/cards/card_delete_page.dart';
 import 'package:paganini/presentation/pages/cards/card_page.dart';
 import 'package:paganini/presentation/pages/introduction_page.dart';
+import 'package:paganini/presentation/pages/navigation_page.dart';
 import 'package:paganini/presentation/pages/payment/payment_page.dart';
 import 'package:paganini/presentation/pages/transfer/contacts_page.dart';
 import 'package:paganini/presentation/pages/confirm_recharge_page.dart';
@@ -43,19 +45,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: WidgetsBinding.instance);
   //wait firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
   await Hive.initFlutter();
   final hiveService = HiveService();
   await hiveService.init();
-
   final remoteDataSource = CreditCardRemoteDataSourceImpl();
-  final creditCardRepository =
-      CreditCardRepositoryImpl(remoteDataSource: remoteDataSource);
-  final creditCardsUseCase =
-      CreditCardsUseCase(repository: creditCardRepository);
-
+  final creditCardRepository =CreditCardRepositoryImpl(remoteDataSource: remoteDataSource);
+  final creditCardsUseCase = CreditCardsUseCase(repository: creditCardRepository);
   await Future.delayed(const Duration(seconds: 2));
   FlutterNativeSplash.remove();
   runApp(
@@ -106,10 +102,9 @@ class MainApp extends StatelessWidget {
         Routes.TRANSFERPAGE: (context) => const TransferPage(),
         Routes.INTRODUCTIONPAGE: (context) => const OnBoardingPage(),
         //Routes.PAYMENTPAGE : (context) => const PaymentPage(),
+        Routes.NAVIGATIONPAGE: (context) => const NavigationPage(),
       },
-      theme: ThemeData(
-          appBarTheme: const AppBarTheme(color: Colors.white),
-          scaffoldBackgroundColor: Colors.white),
+      theme: AppTheme().theme(),
     );
   }
   /* return DevicePreview(

@@ -5,11 +5,9 @@ import 'package:paganini/domain/usecases/credit_cards_use_case.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
-import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version_icon.dart';
 import 'package:paganini/presentation/widgets/credit_card_ui.dart';
-import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
 import 'package:paganini/presentation/widgets/smooth_page_indicator.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:provider/provider.dart';
@@ -51,14 +49,7 @@ class _WalletPageState extends State<WalletPage> {
 
     // Obtenemos la lista de tarjetas actualizada directamente del provider
     final creditCards = creditCardProviderWatch.creditCards;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.white,
-        title: const ContentAppBar(),
-      ),
-      body: Center(
+    return Center(
         child: Column(
           children: [
             Padding(
@@ -239,10 +230,8 @@ class _WalletPageState extends State<WalletPage> {
             )
           ],
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: const FloatingButtonNavBarQr(),
-      bottomNavigationBar: const BottomMainAppBar(),
-    );
+      );
+    
+    
   }
 }

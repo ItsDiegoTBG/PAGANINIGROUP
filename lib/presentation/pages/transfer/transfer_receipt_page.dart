@@ -3,9 +3,9 @@ import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
-import 'package:paganini/presentation/widgets/bottom_main_app.dart';
+
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
-import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
+
 import 'package:provider/provider.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -106,7 +106,7 @@ class TransferReceipt extends StatelessWidget {
                   Navigator.pushNamedAndRemoveUntil(
                     // ignore: use_build_context_synchronously
                     context,
-                    Routes.HOME,
+                    Routes.NAVIGATIONPAGE,
                     (Route<dynamic> route) => false,
                   );
                 },
@@ -119,9 +119,8 @@ class TransferReceipt extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: const FloatingButtonNavBarQr(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: const BottomMainAppBar(),
+     
+     
     );
   }
 }
