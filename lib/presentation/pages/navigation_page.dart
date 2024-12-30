@@ -1,11 +1,14 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/pages/cards/wallet_page.dart';
 import 'package:paganini/presentation/pages/home_page.dart';
 import 'package:paganini/presentation/pages/qr_pages.dart';
 import 'package:paganini/presentation/pages/setting_page.dart';
+import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
+import 'package:provider/provider.dart';
 
 class NavigationPage extends StatefulWidget {
   final int initialIndex;
@@ -38,6 +41,7 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final  themeProvider = Provider.of<ThemeProvider>(context,listen: false);
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -46,12 +50,12 @@ class _NavigationPageState extends State<NavigationPage> {
         body: _pages[_selectedIndex],
         bottomNavigationBar: Theme(
             data: Theme.of(context).copyWith(
-              iconTheme: const IconThemeData(color: Colors.white),
+              iconTheme: IconThemeData(color: themeProvider.isDarkMode ? Colors.black : Colors.white),
             ),
             child: CurvedNavigationBar(
                 backgroundColor: Colors.transparent,
-                color: AppColors.primaryColor,
-                buttonBackgroundColor: AppColors.primaryColor,
+                color: themeProvider.isDarkMode ? Colors.white : AppColors.primaryColor,
+                buttonBackgroundColor: themeProvider.isDarkMode ? Colors.white : AppColors.primaryColor,
                 index: _selectedIndex,
                 onTap: (index) {
                   setState(() {

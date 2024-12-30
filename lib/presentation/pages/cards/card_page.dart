@@ -184,7 +184,6 @@ class _CardPageState extends State<CardPage> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.white,
         title: const ContentAppBar(),
       ),
       body: SingleChildScrollView(

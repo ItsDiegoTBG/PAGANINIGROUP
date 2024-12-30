@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/presentation/providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 class ContactUserWidget extends StatelessWidget {
   final double width;
@@ -19,12 +21,13 @@ class ContactUserWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: color,
+        color: themeProvider.isDarkMode ? Colors.white : color,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -36,13 +39,19 @@ class ContactUserWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(nameUser,
-                    style: const TextStyle(
+                    style: TextStyle(
+                        color: themeProvider.isDarkMode
+                            ? Colors.black
+                            : Colors.black,
                         fontSize: 17,
                         fontWeight: FontWeight.w400,
                         overflow: TextOverflow.visible)),
                 Text(
                   "📱$phoneUser",
-                  style: const TextStyle(
+                  style: TextStyle(
+                      color: themeProvider.isDarkMode
+                          ? Colors.black
+                          : Colors.black,
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
                       overflow: TextOverflow.visible),

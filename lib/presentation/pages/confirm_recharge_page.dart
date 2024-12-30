@@ -51,7 +51,6 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.white,
         title: const ContentAppBar(),
       ),
       body: _isLoading

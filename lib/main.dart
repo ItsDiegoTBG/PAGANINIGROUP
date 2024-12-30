@@ -37,6 +37,7 @@ import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/payment_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
+import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -64,6 +65,7 @@ void main() async {
         Provider<HiveService>(create: (_) => hiveService),
         Provider<ContactUseCase>(create: (context) => ContactUseCase(context.read<HiveService>()),),
         ChangeNotifierProvider(create: (_) => PaymentProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
       child: const MainApp(),
     ),
@@ -104,7 +106,7 @@ class MainApp extends StatelessWidget {
         //Routes.PAYMENTPAGE : (context) => const PaymentPage(),
         Routes.NAVIGATIONPAGE: (context) => const NavigationPage(),
       },
-      theme: AppTheme().theme(),
+      theme: Provider.of<ThemeProvider>(context).themeData,
     );
   }
   /* return DevicePreview(

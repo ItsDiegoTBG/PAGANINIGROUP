@@ -36,7 +36,6 @@ class RechargePageState extends State<RechargePage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         title: const ContentAppBar(),
       ),

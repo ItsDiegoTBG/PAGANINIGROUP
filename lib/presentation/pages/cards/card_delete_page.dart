@@ -26,7 +26,7 @@ class _CardDeletePageState extends State<CardDeletePage> {
     final creditCards = creditCardProviderWatch.creditCards;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+
         automaticallyImplyLeading: false,
         title: const ContentAppBar(),
       ),
