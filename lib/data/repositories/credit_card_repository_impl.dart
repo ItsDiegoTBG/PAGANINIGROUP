@@ -9,8 +9,8 @@ class CreditCardRepositoryImpl implements CreditCardRepository {
   CreditCardRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<List<CreditCardEntity>> getCreditCards() async {
-    final creditCardModels = await remoteDataSource.fetchCreditCards();
+  Future<List<CreditCardEntity>> getCreditCards(String userid) async {
+    final creditCardModels = await remoteDataSource.fetchCreditCards(userid);
 
     // Convertimos los modelos a entidades de dominio
     return creditCardModels

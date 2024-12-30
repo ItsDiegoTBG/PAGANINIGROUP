@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:animated_snack_bar/animated_snack_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,9 +44,10 @@ class _CardPageState extends State<CardPage> {
   String yearExpirationNewCard = "00";
   String cvvNewCard = "***";
 
+//FirebaseFirestore instance puede causar fallos.
   late CreditCardsUseCase addCreditCardUseCase = CreditCardsUseCase(
       repository: CreditCardRepositoryImpl(
-          remoteDataSource: CreditCardRemoteDataSourceImpl()));
+          remoteDataSource: CreditCardRemoteDataSourceImpl(FirebaseFirestore.instance)));
   @override
   void initState() {
     super.initState();
@@ -103,7 +105,7 @@ class _CardPageState extends State<CardPage> {
 
       try {
         DatabaseReference cardRef =
-            FirebaseDatabase.instance.ref('cards/$userId');
+            FirebaseDatabase.instance.ref('users/$userId/cards');
         String cardId = DateTime.now().millisecondsSinceEpoch.toString();
         Map<String, dynamic> cardData = {
           'cardNumber': numberCreditCardController.text.trim(),

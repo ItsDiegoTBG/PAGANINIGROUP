@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -36,8 +37,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  final remoteDataSource = CreditCardRemoteDataSourceImpl();
+//Be careful about this line, at the moment We dont know if it works.
+  final remoteDataSource = CreditCardRemoteDataSourceImpl(FirebaseFirestore.instance);
   final creditCardRepository =
       CreditCardRepositoryImpl(remoteDataSource: remoteDataSource);
   final creditCardsUseCase =

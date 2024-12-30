@@ -6,8 +6,8 @@ class CreditCardsUseCase {
 
   CreditCardsUseCase({required this.repository});
 
-  Future<List<CreditCardEntity>> call() async {
-    return await repository.getCreditCards();
+  Future<List<CreditCardEntity>> call(String userid) async {
+    return await repository.getCreditCards(userid);
   }
    Future<void> add(CreditCardEntity creditCard) async {
     await repository.addCreditCard(creditCard);

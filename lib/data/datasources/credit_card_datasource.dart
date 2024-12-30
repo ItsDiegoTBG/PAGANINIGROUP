@@ -1,16 +1,26 @@
+
+
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/data/models/credit_card_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+
 
 abstract class CreditCardRemoteDataSource {
-  Future<List<CreditCardModel>> fetchCreditCards();
+  Future<List<CreditCardModel>> fetchCreditCards(String userid);
   Future<void> addCreditCard(CreditCardModel creditCard);
   Future<void> deleteCreditCardById(int id);
   Future<void> updateBalance(int idCreditCard, double newBalance);
 }
 
-class CreditCardRemoteDataSourceImpl implements 
+class CreditCardRemoteDataSourceImpl implements CreditCardRemoteDataSource {
 
-CreditCardRemoteDataSource {
+  final FirebaseFirestore firestore;
+  final db = FirebaseDatabase.instance.ref();
+
+  CreditCardRemoteDataSourceImpl(this.firestore);
+
   final List<CreditCardModel> _creditCards =  [
       CreditCardModel(
         id: 1,
@@ -47,9 +57,38 @@ CreditCardRemoteDataSource {
       ),
       // Más tarjetas...
     ];
+
+  Future<List<CreditCardModel>> getUserCreditCards(String userId) async {
+    final path = 'users/$userId/cards';
+    final snapshot = await db.child(path).get();
+    
+  print(userId);
+  print(snapshot.children.first.value);
+
+ _creditCards.clear(); // Limpiar lista antes de llenarla.
+      // Safely cast to Map<dynamic, dynamic>
+    
+     if (snapshot.exists) {
+      // Safely cast and handle dynamic types
+      final rawData = snapshot.value as Map<dynamic, dynamic>;
+
+      rawData.forEach((key, value) {
+        final cardMap = {
+          'id': key.toString(), // Ensure the id is a string
+          ...Map<String, dynamic>.from(value as Map), // Safely cast value to Map<String, dynamic>
+        };
+
+        // Append to _creditCards list
+        _creditCards.add(CreditCardModel.fromMap(cardMap));
+      });
+    
+  }return _creditCards; // Retornar la lista.
+  }
+
   @override
-  Future<List<CreditCardModel>> fetchCreditCards() async {
-    return _creditCards;
+  Future<List<CreditCardModel>> fetchCreditCards(String userid) async {
+  
+    return getUserCreditCards(userid);
   }
 
    @override

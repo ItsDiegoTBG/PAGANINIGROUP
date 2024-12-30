@@ -35,15 +35,15 @@ class CreditCardModel {
   }
 
   // Método fromMap: convierte un Map en un objeto CreditCardModel
-  factory CreditCardModel.fromMap(Map<String, dynamic> map, int id) {
+  factory CreditCardModel.fromMap(Map<String, dynamic> map) {
     return CreditCardModel(
-      id: id,
+      id: int.tryParse(map['id'].toString()) ?? 0,
       cardHolderFullName: map['cardHolderFullName'] ?? '',
-      cardNumber: map['cardNumber'] ?? '',
+      cardNumber: map['cardNumber'].toString(),
       cardType: map['cardType'] ?? '',
       validThru: map['validThru'] ?? '',
       isFavorite: map['isFavorite'] ?? false,
-      cvv: map['cvv'] ?? '',
+      cvv: map['cvv'].toString(),
       balance: map['balance']?.toDouble() ?? 0.0,
     );
   }

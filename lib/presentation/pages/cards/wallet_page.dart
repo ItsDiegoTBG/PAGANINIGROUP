@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/domain/entity/card_credit.dart';
@@ -34,7 +35,7 @@ class _WalletPageState extends State<WalletPage> {
     _pageController = PageController(viewportFraction: 0.8, initialPage: 0);
     final creditCardProvider =
         Provider.of<CreditCardProvider>(context, listen: false);
-    creditCardProvider.fetchCreditCards();
+    creditCardProvider.fetchCreditCards(FirebaseAuth.instance.currentUser!.uid);
   }
 
   @override
@@ -45,6 +46,7 @@ class _WalletPageState extends State<WalletPage> {
 
   @override
   Widget build(BuildContext context) {
+    
     final saldoProviderWatch = context.watch<SaldoProvider>();
     final saldoProviderRead = context.read<SaldoProvider>();
     final creditCardProviderWatch = context.watch<CreditCardProvider>();

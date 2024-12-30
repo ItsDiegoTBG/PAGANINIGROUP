@@ -14,8 +14,8 @@ class CreditCardProvider extends ChangeNotifier {
 
   List<CreditCardEntity> get creditCards => _creditCards;
 
-  Future<void> fetchCreditCards() async {
-    _creditCards = await creditCardsUseCase.call();
+  Future<void> fetchCreditCards(String userid) async {
+    _creditCards = await creditCardsUseCase.call(userid);
     notifyListeners(); // Notificar a los listeners para actualizar la UI
   }
 

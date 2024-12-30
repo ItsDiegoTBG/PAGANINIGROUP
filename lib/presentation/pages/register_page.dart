@@ -53,6 +53,7 @@ class _RegisterPageState extends State<RegisterPage> {
         'phone': phoneController.text.trim(),
         'password': passwordController.text.trim(),
         'saldo': 0.0,
+        'cards': [],
         // Puedes añadir más campos si lo necesitas
       });
 

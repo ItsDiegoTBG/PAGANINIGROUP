@@ -1,4 +1,5 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
@@ -29,7 +30,7 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
     _pageController = PageController(viewportFraction: 0.8, initialPage: 0);
     final creditCardProvider =
         Provider.of<CreditCardProvider>(context, listen: false);
-    creditCardProvider.fetchCreditCards();
+    creditCardProvider.fetchCreditCards(FirebaseAuth.instance.currentUser!.uid);
   }
 
   @override
