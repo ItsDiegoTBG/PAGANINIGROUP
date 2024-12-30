@@ -50,9 +50,9 @@ class CreditCardRepositoryImpl implements CreditCardRepository {
   }
 
   @override
-  Future<bool> deleteCreditCard(int idCreditCard) async {
+  Future<bool> deleteCreditCard(String userId, int index) async {
     try {
-      await remoteDataSource.deleteCreditCardById(idCreditCard);
+      await remoteDataSource.deleteCreditCardById(userId,index);
       return true;
     } catch (e) {
       return false;
@@ -60,10 +60,10 @@ class CreditCardRepositoryImpl implements CreditCardRepository {
   }
 
   @override
-  Future<void> updateBalance(int idCreditCard, double newBalance) async {
+  Future<void> updateBalance(String userId, int idCreditCard, double newBalance) async {
     // TODO: implement updateBalance
     try {
-      await remoteDataSource.updateBalance(idCreditCard, newBalance);
+      await remoteDataSource.updateBalance(userId,idCreditCard, newBalance);
     } catch (e) {
       throw Exception('Error al agregar la tarjeta: $e');
     }

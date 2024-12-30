@@ -25,18 +25,18 @@ class CreditCardProvider extends ChangeNotifier {
     notifyListeners(); // Notificar a los listeners para que la UI se actualice
   }
 
-  Future<bool> deleteCreditCard(int idCreditCard) async {
-    final deleted = await creditCardsUseCase.delete(idCreditCard);
+  Future<bool> deleteCreditCard(String userId, int index) async {
+    final deleted = await creditCardsUseCase.delete(userId, index);
     if (deleted) {
-      _creditCards.removeWhere((card) => card.id == idCreditCard);
+      _creditCards.removeWhere((card) => card.id == index);
     }
     notifyListeners();
     return deleted;
   }
 
-  Future<void> updateBalance(int idCreditCard, double newBalance) async {
+  Future<void> updateBalance(String userId,int idCreditCard, double newBalance) async {
     try {
-      await creditCardsUseCase.updateBalance(idCreditCard, newBalance);
+      await creditCardsUseCase.updateBalance(userId,idCreditCard, newBalance);
       notifyListeners();
     } catch (e) {
       throw Exception('Error al actualizar el saldo: $e');

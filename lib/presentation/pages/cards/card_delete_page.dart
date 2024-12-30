@@ -3,6 +3,7 @@ import 'package:paganini/core/utils/colors.dart';
 
 import 'package:paganini/domain/entity/card_credit.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
+import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
@@ -24,6 +25,7 @@ class _CardDeletePageState extends State<CardDeletePage> {
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
     final creditCardProviderRead = context.read<CreditCardProvider>();
     final creditCards = creditCardProviderWatch.creditCards;
+    final userId = context.read<UserProvider>().user!.uid;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -43,7 +45,7 @@ class _CardDeletePageState extends State<CardDeletePage> {
               ],
             )
           )
-          : creditCardListView(creditCards, creditCardProviderRead),
+          : creditCardListView(creditCards, creditCardProviderRead,userId),
       floatingActionButton: const FloatingButtonNavBarQr(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: const BottomMainAppBar(),
@@ -51,7 +53,7 @@ class _CardDeletePageState extends State<CardDeletePage> {
   }
 
   Padding creditCardListView(List<CreditCardEntity> creditCards,
-      CreditCardProvider creditCardProviderRead) {
+      CreditCardProvider creditCardProviderRead,String userId) {
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8, top: 0, bottom: 30),
       child: CustomScrollView(
@@ -124,7 +126,7 @@ class _CardDeletePageState extends State<CardDeletePage> {
                           // Si el usuario confirma la eliminación
                           if (confirmDelete == true) {
                             await creditCardProviderRead
-                                .deleteCreditCard(card.id);
+                                .deleteCreditCard(userId, index);
                             // Aquí puedes agregar código para actualizar la interfaz o mostrar un mensaje
                           }
                         },

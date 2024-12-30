@@ -6,6 +6,7 @@ import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/domain/entity/card_credit.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
+import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/credit_card_ui.dart';
@@ -47,7 +48,7 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
     final saldoProviderRead = context.read<SaldoProvider>();
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
     final creditCards = creditCardProviderWatch.creditCards;
-
+    final userId = context.read<UserProvider>().user!.uid;  
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -294,6 +295,7 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                                 () {
                               // Resta el saldo de la tarjeta seleccionada
                               creditCardProviderWatch.updateBalance(
+                                  userId,
                                   selectedCard.id,
                                   selectedCard.balance - myRecharge);
 

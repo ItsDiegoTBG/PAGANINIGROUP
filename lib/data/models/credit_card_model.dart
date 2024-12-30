@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paganini/core/utils/colors.dart';
 
 class CreditCardModel {
   final int id;
@@ -19,11 +20,12 @@ class CreditCardModel {
     required this.isFavorite,
     required this.cvv,
     required this.balance,
-    this.color = Colors.black,
+    required this.color,
   });
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'cardHolderFullName': cardHolderFullName,
       'cardNumber': cardNumber,
       'cardType': cardType,
@@ -45,6 +47,28 @@ class CreditCardModel {
       isFavorite: map['isFavorite'] ?? false,
       cvv: map['cvv'].toString(),
       balance: map['balance']?.toDouble() ?? 0.0,
+      color: getColorFromString(map['color'].toString()),
     );
+  }
+
+
+}
+
+Color getColorFromString(String color) {
+  switch (color) {
+    case 'red':
+      return Colors.red;
+    case 'green':
+      return Colors.green;
+    case 'black':
+      return Colors.black;
+    case 'blue':
+      return Colors.blue;
+    case 'yellow':
+      return Colors.amber;
+    case 'primary':
+      return AppColors.primaryColor;
+    default:
+      return AppColors.primaryColor;
   }
 }

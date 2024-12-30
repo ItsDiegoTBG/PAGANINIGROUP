@@ -1,10 +1,12 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/data/datasources/userservice.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
+import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/credit_card_ui.dart';
@@ -23,7 +25,7 @@ class PaymentPage extends StatefulWidget {
 class _PaymentPageState extends State<PaymentPage> {
   TextEditingController saldoController = TextEditingController();
   List<TextEditingController> saldoControllers = [];
-
+  
   @override
   void initState() {
     super.initState();
@@ -57,7 +59,7 @@ class _PaymentPageState extends State<PaymentPage> {
     final saldo = context.watch<SaldoProvider>().saldo;
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
     final creditCards = creditCardProviderWatch.creditCards;
-
+final userId = context.read<UserProvider>().user!.uid;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -70,7 +72,7 @@ class _PaymentPageState extends State<PaymentPage> {
           const SizedBox(
             height: 20,
           ),
-          firstPart(userService, context),
+          firstPart(userService, context,userId),
           const SizedBox(
             height: 10,
           ),
@@ -291,7 +293,7 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  Row firstPart(UserService userService, BuildContext context) {
+  Row firstPart(UserService userService, BuildContext context,String userId) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -394,7 +396,7 @@ class _PaymentPageState extends State<PaymentPage> {
                     if (tarjetaSaldo >= saldoPago) {
                       // Realiza el descuento en la tarjeta y actualiza el saldo
                       double nuevoSaldo = tarjetaSaldo - saldoPago;
-                      await creditCardProviderWatch.updateBalance(
+                      await creditCardProviderWatch.updateBalance(userId,
                           creditCards[i].id, nuevoSaldo);
 
                       totalPago += saldoPago;

@@ -19,6 +19,7 @@ import 'package:paganini/presentation/widgets/buttons/button_second_version.dart
 import 'package:paganini/presentation/widgets/credit_card_ui.dart';
 import 'package:paganini/presentation/widgets/tex_form_fiedl_widget_second.dart';
 import 'package:provider/provider.dart';
+import 'dart:math';
 
 class CardPage extends StatefulWidget {
   const CardPage({super.key});
@@ -47,7 +48,8 @@ class _CardPageState extends State<CardPage> {
 //FirebaseFirestore instance puede causar fallos.
   late CreditCardsUseCase addCreditCardUseCase = CreditCardsUseCase(
       repository: CreditCardRepositoryImpl(
-          remoteDataSource: CreditCardRemoteDataSourceImpl(FirebaseFirestore.instance)));
+          remoteDataSource:
+              CreditCardRemoteDataSourceImpl(FirebaseFirestore.instance)));
   @override
   void initState() {
     super.initState();
@@ -96,6 +98,14 @@ class _CardPageState extends State<CardPage> {
   Widget build(BuildContext context) {
     final cardProviderRead = context.read<CreditCardProvider>();
     final userId = context.read<UserProvider>().user!.uid;
+    final Map<Color, String> colors = {
+      Colors.red: "red",
+      Colors.green: "green",
+      Colors.black: "black",
+      Colors.blue: "blue",
+      Colors.amber: "yellow",
+      AppColors.primaryColor: "primary",
+    };
 
     Future<void> registerCreditCard() async {
       setState(() {
@@ -108,13 +118,15 @@ class _CardPageState extends State<CardPage> {
             FirebaseDatabase.instance.ref('users/$userId/cards');
         String cardId = DateTime.now().millisecondsSinceEpoch.toString();
         Map<String, dynamic> cardData = {
+          'id' : cardId,
           'cardNumber': numberCreditCardController.text.trim(),
           'expiryDate':
               "${yearExpirationController.text.trim()}/${monthExpirationController.text.trim()}",
           'cvv': cvvCardController.text.trim(),
-          'cardName': nameController.text.trim(),
-          'mount': 300,
-          'type': selectedCardType
+          'cardHolderFullName': nameController.text.trim(),
+          'balance': 300,
+          'type': selectedCardType,
+          'color': colors[selectedColor] ?? "Sin color"
         };
         await cardRef.child(cardId).set(cardData);
         // ignore: use_build_context_synchronously
@@ -154,15 +166,6 @@ class _CardPageState extends State<CardPage> {
         });
       }
     }
-
-    final List<Color> colors = [
-      Colors.red,
-      Colors.green,
-      Colors.black,
-      Colors.blue,
-      const Color.fromARGB(255, 203, 159, 26),
-      AppColors.primaryColor,
-    ];
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -385,13 +388,13 @@ class _CardPageState extends State<CardPage> {
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: colors.map((color) {
+                        children: colors.keys.map((color) {
                           bool isSelected = color == selectedColor;
                           return GestureDetector(
                             onTap: () {
                               setState(() {
                                 selectedColor = color;
-                                debugPrint("Color selected: $color");
+                                debugPrint("Color selected: $color[color]");
                               });
                             },
                             child: Container(
@@ -455,7 +458,7 @@ class _CardPageState extends State<CardPage> {
                       if (confirmAddCreditCard == true) {
                         CreditCardEntity newCard = CreditCardEntity(
                           balance: 300,
-                          id: Random().nextInt(2000),
+                          id: Random.secure().nextInt(2000),
                           cvv: cvvNewCard,
                           color: selectedColor ?? AppColors.primaryColor,
                           cardHolderFullName: nameNewCard,

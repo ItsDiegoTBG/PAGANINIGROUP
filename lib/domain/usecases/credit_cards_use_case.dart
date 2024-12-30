@@ -12,11 +12,11 @@ class CreditCardsUseCase {
    Future<void> add(CreditCardEntity creditCard) async {
     await repository.addCreditCard(creditCard);
   }
-  Future<bool> delete(int idCreditCard) async {
-    return  await repository.deleteCreditCard(idCreditCard);
+  Future<bool> delete(String userId, int index) async {
+    return  await repository.deleteCreditCard(userId, index);
   }
 
-  Future<void> updateBalance(int idCreditCard, double newBalance) async {
-    await repository.updateBalance(idCreditCard, newBalance);
+  Future<void> updateBalance(String userId,int idCreditCard, double newBalance) async {
+    await repository.updateBalance(userId,idCreditCard, newBalance);
   }
 }
