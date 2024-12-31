@@ -16,7 +16,8 @@ class FloatingButtonPaganini extends StatelessWidget {
       onPressed: onPressed,
      // backgroundColor: AppColors.secondaryColor,
       child: Icon(
-        iconData,
+      
+        iconData,size: 30,
       ),
     );
   }
