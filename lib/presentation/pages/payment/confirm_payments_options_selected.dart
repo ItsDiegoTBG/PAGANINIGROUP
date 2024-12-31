@@ -5,6 +5,7 @@ import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/payment_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
+import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class ConfirmPaymentPage extends StatelessWidget {
@@ -24,6 +25,7 @@ class ConfirmPaymentPage extends StatelessWidget {
     final selectedCardAmounts = paymentProvider.selectedCardAmounts;
     final isSaldoSelected = paymentProvider.isSaldoSelected;
     final noteUserToPay = paymentProvider.noteUserToPay;
+    final userId = context.read<UserProvider>().user!.uid;
 
     final totalAmount = montoSaldo +
         selectedCardAmounts.values.fold(0.0, (sum, amount) => sum + amount);
@@ -241,7 +243,7 @@ class ConfirmPaymentPage extends StatelessWidget {
                     
                             //3 por cada tarjeta
                             for (int cardIndex in selectedCardAmounts.keys) {
-                              print("Tarjeta $cardIndex");
+                              debugPrint("Tarjeta $cardIndex");
                               // Verifica si el monto seleccionado es nulo
                               if (selectedCardAmounts[cardIndex] == null) continue;
                     
@@ -273,7 +275,7 @@ class ConfirmPaymentPage extends StatelessWidget {
                     
                               // Calcula el nuevo saldo
                               final newBalance =creditCards[cardIndex].balance - selectedAmount;
-                              creditCardProviderWatch.updateBalance(cardIndex+1, newBalance);
+                              creditCardProviderWatch.updateBalance(userId,cardIndex, newBalance);
                               debugPrint("El nuevo saldo de la tarjeta $cardIndex es: $newBalance");
                             }
                             //4

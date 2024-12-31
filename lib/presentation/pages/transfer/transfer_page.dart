@@ -7,6 +7,7 @@ import 'package:paganini/presentation/pages/transfer/confirm_transfer_page.dart'
 import 'package:paganini/presentation/pages/transfer/contacts_page.dart';
 import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
+import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
@@ -55,12 +56,11 @@ class _TransferPageState extends State<TransferPage> {
         context.watch<ContactProvider>().contactTransfered;
     final contactRead = context.read<ContactProvider>();
     final saldoActual = saldoProviderWatch.saldo;
-
+    final themeDark = Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.white,
         title: const ContentAppBar(),
       ),
       body: Column(
@@ -83,7 +83,7 @@ class _TransferPageState extends State<TransferPage> {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Ingrese el monto a tranferir",
-                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    style: TextStyle(fontSize: 18, color: themeDark ? Colors.white : Colors.grey[700]),
                   ),
                 ),
               ],
@@ -96,7 +96,7 @@ class _TransferPageState extends State<TransferPage> {
                 top: myHeight * 0.05),
             child: TextFormField(
               keyboardType: TextInputType.number,
-              style: const TextStyle(fontSize: 60, color: Colors.black),
+              style:  TextStyle(fontSize: 60, color: themeDark ? Colors.white : Colors.black ,fontWeight: FontWeight.w200),
               textAlign: TextAlign.end,
               inputFormatters: [
                 LengthLimitingTextInputFormatter(8),
@@ -334,8 +334,10 @@ class _TransferPageState extends State<TransferPage> {
                                           fontStyle: FontStyle.italic,
                                           fontSize: 24),
                                     ),
-                                    content: const Text(
-                                        "¿Quieres recargar saldo en la aplicación?"),
+                                    content:  Text(
+                                        "¿Quieres recargar saldo en la aplicación?",style: TextStyle(
+                                          color: themeDark ? Colors.black : Colors.white,
+                                        ),),
                                     actions: [
                                       TextButton(
                                         style: TextButton.styleFrom(

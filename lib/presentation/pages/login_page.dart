@@ -259,7 +259,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                           text: "Iniciar Sesion",
                           onPressed: () {
                             debugPrint("INICIANDO SESION");
-                            FocusScope.of(context).unfocus();
+                            //FocusScope.of(context).unfocus();
                             signUserIn();
                           },
                         ),

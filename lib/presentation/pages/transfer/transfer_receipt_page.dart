@@ -16,7 +16,6 @@ class TransferReceipt extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         title: const ContentAppBar(),
       ),

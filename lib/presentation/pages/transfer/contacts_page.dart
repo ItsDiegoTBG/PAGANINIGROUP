@@ -114,7 +114,7 @@ class _ContactsPageState extends State<ContactsPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const ContentAppBar(),
-        backgroundColor: Colors.white,
+        
       ),
       body: Column(
         children: [

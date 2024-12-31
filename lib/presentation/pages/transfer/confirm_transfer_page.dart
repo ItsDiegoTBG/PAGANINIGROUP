@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/pages/transfer/transfer_receipt_page.dart';
 import 'package:paganini/presentation/providers/contact_provider.dart';
@@ -25,7 +26,6 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         title: const ContentAppBar(),
       ),
@@ -57,6 +57,7 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
                         width: 105,
                         height: 110,
                         child: Image.asset("assets/image/img_transfer.png")),
+                   // const Icon(FontAwesomeIcons.handHoldingHeart),
                     const Text(
                       '\$100',
                       style: TextStyle(
@@ -188,7 +189,6 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
           ],
         ),
       ),
-     
     );
   }
 }

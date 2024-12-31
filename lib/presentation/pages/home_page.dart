@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,6 +8,7 @@ import 'package:paganini/presentation/pages/payment/payment_page.dart';
 import 'package:paganini/presentation/pages/recharge_page.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
+import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
@@ -32,7 +34,7 @@ class _HomePageState extends State<HomePage> {
 
     final creditCardProvider =
         Provider.of<CreditCardProvider>(context, listen: false);
-    creditCardProvider.fetchCreditCards();
+    creditCardProvider.fetchCreditCards(FirebaseAuth.instance.currentUser!.uid);
   }
 
   String? _result;
@@ -50,6 +52,8 @@ class _HomePageState extends State<HomePage> {
 
     // Obtenemos la lista de tarjetas actualizada directamente del provider
     final creditCards = creditCardProviderWatch.creditCards;
+    // theme
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
 
     return Scaffold(
         body: Column(
@@ -59,18 +63,18 @@ class _HomePageState extends State<HomePage> {
               width: 360,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: AppColors.primaryColor,
+                color: themeProvider.isDarkMode ? Colors.white : AppColors.primaryColor,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 20),
+                   Padding(
+                    padding: const EdgeInsets.only(left: 20),
                     child: Text(
                       "Saldo",
                       style: TextStyle(
-                          color: Colors.white,
+                          color: themeProvider.isDarkMode ? Colors.black :Colors.white,
                           fontSize: 33,
                           fontWeight: FontWeight.bold),
                     ),
@@ -83,8 +87,8 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.only(left: 20),
                           child: Text(
                             "\$${saldoProviderWatch.saldo}",
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style:TextStyle(
+                               color: themeProvider.isDarkMode ? Colors.black : Colors.white,
                               fontSize: 37,
                               fontWeight: FontWeight.bold,
                               fontStyle: FontStyle.italic,

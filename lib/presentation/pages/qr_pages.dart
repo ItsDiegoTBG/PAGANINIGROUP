@@ -5,7 +5,6 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
-
 import 'package:paganini/core/device/qr_code_scanner.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/widgets/qr_container.dart';

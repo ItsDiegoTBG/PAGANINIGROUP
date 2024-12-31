@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:animated_snack_bar/animated_snack_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,9 +44,11 @@ class _CardPageState extends State<CardPage> {
   String yearExpirationNewCard = "00";
   String cvvNewCard = "***";
 
+//FirebaseFirestore instance puede causar fallos.
   late CreditCardsUseCase addCreditCardUseCase = CreditCardsUseCase(
       repository: CreditCardRepositoryImpl(
-          remoteDataSource: CreditCardRemoteDataSourceImpl()));
+          remoteDataSource:
+              CreditCardRemoteDataSourceImpl(FirebaseFirestore.instance)));
   @override
   void initState() {
     super.initState();
@@ -108,6 +111,14 @@ class _CardPageState extends State<CardPage> {
   Widget build(BuildContext context) {
     final cardProviderRead = context.read<CreditCardProvider>();
     final userId = context.read<UserProvider>().user!.uid;
+    final Map<Color, String> colors = {
+      Colors.red: "red",
+      Colors.green: "green",
+      Colors.black: "black",
+      Colors.blue: "blue",
+      Colors.amber: "yellow",
+      AppColors.primaryColor: "primary",
+    };
 
     Future<void> registerCreditCard() async {
       setState(() {
@@ -117,17 +128,21 @@ class _CardPageState extends State<CardPage> {
 
       try {
         DatabaseReference cardRef =
-            FirebaseDatabase.instance.ref('cards/$userId');
+            FirebaseDatabase.instance.ref('users/$userId/cards');
         String cardId = DateTime.now().millisecondsSinceEpoch.toString();
         Map<String, dynamic> cardData = {
+          'id': cardId,
           'cardNumber': numberCreditCardController.text.trim(),
           'expiryDate':
               "${yearExpirationController.text.trim()}/${monthExpirationController.text.trim()}",
           'cvv': cvvCardController.text.trim(),
-          'cardName': nameController.text.trim(),
-          'mount': 300,
-          'type': selectedCardType
+          'cardHolderFullName': nameController.text.trim(),
+          'balance': 300,
+          'type': selectedCardType,
+          'color': colors[selectedColor] ?? "Sin color"
         };
+        await cardRef.child(cardId).set(cardData);
+        // ignore: use_build_context_synchronously
         AnimatedSnackBar(
           duration: const Duration(seconds: 3),
           builder: ((context) {
@@ -143,8 +158,8 @@ class _CardPageState extends State<CardPage> {
               ),
             );
           }),
+        // ignore: use_build_context_synchronously
         ).show(context);
-        await cardRef.child(cardId).set(cardData);
         // ignore: use_build_context_synchronously
         Future.delayed(const Duration(seconds: 1), () {
           cleanTextEditingControllers();
@@ -171,20 +186,10 @@ class _CardPageState extends State<CardPage> {
       }
     }
 
-    final List<Color> colors = [
-      Colors.red,
-      Colors.green,
-      Colors.black,
-      Colors.blue,
-      const Color.fromARGB(255, 203, 159, 26),
-      AppColors.primaryColor,
-    ];
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.white,
         title: const ContentAppBar(),
       ),
       body: SingleChildScrollView(
@@ -411,13 +416,13 @@ class _CardPageState extends State<CardPage> {
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: colors.map((color) {
+                        children: colors.keys.map((color) {
                           bool isSelected = color == selectedColor;
                           return GestureDetector(
                             onTap: () {
                               setState(() {
                                 selectedColor = color;
-                                debugPrint("Color selected: $color");
+                                debugPrint("Color selected: $color[color]");
                               });
                             },
                             child: Container(
@@ -475,7 +480,6 @@ class _CardPageState extends State<CardPage> {
                             ],
                           );
                         });
-
                     if (confirmAddCreditCard == true) {
                       CreditCardEntity newCard = CreditCardEntity(
                         balance: 300,
@@ -501,7 +505,7 @@ class _CardPageState extends State<CardPage> {
                           9. borrar los datos del registro anterior para otro registro
                         */
                       await registerCreditCard();
-                      await cardProviderRead.addCreditCard(newCard);
+                      await cardProviderRead.addCreditCard(userId);
                     }
                   } else {
                     AnimatedSnackBar(

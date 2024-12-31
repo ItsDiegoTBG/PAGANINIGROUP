@@ -9,50 +9,32 @@ class CreditCardProvider extends ChangeNotifier {
   CreditCardProvider({
     required this.creditCardsUseCase,
   });
-
   List<CreditCardEntity> _creditCards = [];
-
   List<CreditCardEntity> get creditCards => _creditCards;
 
-  int getNextId() {
-    if (_creditCards.isEmpty) return 1;
-    return _creditCards.map((card) => card.id).reduce((a, b) => a > b ? a : b) +
-        1;
-  }
-
-  Future<void> fetchCreditCards() async {
-    _creditCards = await creditCardsUseCase.call();
+  Future<void> fetchCreditCards(String userid) async {
+    _creditCards = await creditCardsUseCase.call(userid);
     notifyListeners(); // Notificar a los listeners para actualizar la UI
   }
 
-  Future<void> addCreditCard(CreditCardEntity creditCard) async {
-    try {
-      creditCard.id = getNextId();
-      await creditCardsUseCase.add(creditCard);
-      final exists = _creditCards.any((card) => card.id == creditCard.id);
-      if (exists) {
-        throw Exception('El ID de la tarjeta ya existe en la lista local');
-      }
-
-      _creditCards.add(creditCard);
-      notifyListeners();
-    } catch (e) {
-      throw Exception('Error al agregar la tarjeta: $e');
-    }
+  Future<void> addCreditCard(String userId) async {
+    fetchCreditCards(userId);
+    notifyListeners();
   }
 
-  Future<bool> deleteCreditCard(int idCreditCard) async {
-    final deleted = await creditCardsUseCase.delete(idCreditCard);
+  Future<bool> deleteCreditCard(String userId, int index) async {
+    final deleted = await creditCardsUseCase.delete(userId, index);
     if (deleted) {
-      _creditCards.removeWhere((card) => card.id == idCreditCard);
+      _creditCards.removeWhere((card) => card.id == index);
     }
+    fetchCreditCards(userId);
     notifyListeners();
     return deleted;
   }
 
-  Future<void> updateBalance(int idCreditCard, double newBalance) async {
+  Future<void> updateBalance(String userId,int idCreditCard, double newBalance) async {
     try {
-      await creditCardsUseCase.updateBalance(idCreditCard, newBalance);
+      await creditCardsUseCase.updateBalance(userId,idCreditCard, newBalance);
       notifyListeners();
     } catch (e) {
       throw Exception('Error al actualizar el saldo de la tarjeta: $e');
