@@ -4,16 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/data/datasources/userservice.dart';
-import 'package:paganini/presentation/pages/payment/confirm_payments_options_selected.dart';
-import 'package:paganini/presentation/pages/payment/payments_options.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
-import 'package:paganini/presentation/providers/payment_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
-import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/credit_card_ui.dart';
-
+import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
 import 'package:provider/provider.dart';
 
 class PaymentPage extends StatefulWidget {
@@ -26,8 +22,7 @@ class PaymentPage extends StatefulWidget {
 }
 
 class _PaymentPageState extends State<PaymentPage> {
-  TextEditingController pageToUserController = TextEditingController();
-  TextEditingController noteController = TextEditingController();
+  TextEditingController saldoController = TextEditingController();
   List<TextEditingController> saldoControllers = [];
   
   @override
@@ -60,13 +55,10 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   Widget build(BuildContext context) {
     final UserService userService = UserService();
-    final saldo = context.read<SaldoProvider>().saldo;
+    final saldo = context.watch<SaldoProvider>().saldo;
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
     final creditCards = creditCardProviderWatch.creditCards;
-    double myHeight = MediaQuery.of(context).size.height;
-    double myWidth = MediaQuery.of(context).size.width;
-    final paymentProviderWatch = context.watch<PaymentProvider>();
-    final userId = context.read<UserProvider>().user!.uid;
+final userId = context.read<UserProvider>().user!.uid;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -80,106 +72,223 @@ class _PaymentPageState extends State<PaymentPage> {
             height: 20,
           ),
           firstPart(userService, context,userId),
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 12,
-              right: 12,
-            ),
-            child: TextFormField(
-              keyboardType: TextInputType.number,
-              style: const TextStyle(fontSize: 60, color: Colors.black),
-              textAlign: TextAlign.end,
-              inputFormatters: const [
-                // LengthLimitingTextInputFormatter(8),
-              ],
-              controller: pageToUserController,
-              decoration: const InputDecoration(
-                prefixIconColor: AppColors.primaryColor,
-                prefixIcon: Icon(
-                  Icons.attach_money_outlined,
-                  size: 70,
-                ),
-                hintText: "0.00",
-                hintTextDirection: TextDirection.ltr,
-                hintStyle: TextStyle(fontSize: 60, color: Colors.grey),
-              ),
-              onChanged: (value) {
-                //algo
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingresa un monto';
-                }
-
-                // Convertir el valor ingresado a número y eliminar posibles comas
-                double? enteredValue =
-                    double.tryParse(value.replaceAll(",", ""));
-
-                if (enteredValue == null || enteredValue <= 0) {
-                  return 'Por favor ingresa un monto válido';
-                }
-
-                // Validación del valor máximo (15000)
-                if (enteredValue > 15000) {
-                  return 'El monto máximo a transferir es 15000';
-                }
-
-                return null;
-              },
-            ),
-          ),
           const SizedBox(
-            height: 45,
+            height: 10,
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 12, right: 12),
-            child: TextField(
-              controller: noteController,
-              decoration: const InputDecoration(
-                labelText: 'Añadir un mensaje',
-                hintText: 'E.j., Pago de la compra',
-                border: OutlineInputBorder(),
-              ),
-              maxLength: 100, // Límite de caracteres opcional
-            ),
-          ),
-          const SizedBox(
-            height: 4,
-          ),
-          pageToUserController.text.isNotEmpty
-              ? ButtonSecondVersion(
-                  text: "Siguiente",
-                  function: () {
-                    paymentProviderWatch.setTotalAmountPayUser(double.tryParse(pageToUserController.text)!);
-                    paymentProviderWatch.setNoteUserToPay(noteController.text);
-                    showModalBottomSheet(
-                      context: context,
-                      shape: const RoundedRectangleBorder(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 30,
+                    right: 10,
+                    top: 16,
+                    bottom: 16), // Espaciado horizontal adicional
+                child: SizedBox(
+                  width: 150, // Ancho fijo para el TextFormField
+                  child: TextFormField(
+                    controller: saldoController,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 12),
+                      enabledBorder: OutlineInputBorder(
                         borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(30)),
-                      ),
-                      isScrollControlled: true,
-                      builder: (context) => DraggableScrollableSheet(
-                        expand: false,
-                        initialChildSize: 0.7,
-                        minChildSize: 0.32,
-                        maxChildSize: 0.9,
-                        builder: (context, scrollController) => SingleChildScrollView(
-                          controller: scrollController,
-                          child: Consumer<PaymentProvider>(
-                            builder: (context, paymentProviderWatch, child) {
-                              return paymentProviderWatch
-                                  .isConfirmPaymetOrPaymentSelected
-                                  ? const ConfirmPaymentPage()
-                                  : const PaymentOptions();
-                            },
-                          ),
+                            BorderRadius.circular(20), // Borde circular
+                        borderSide: const BorderSide(
+                          color: Colors.black,
+                          width: 2,
                         ),
-                      ));
-                  })
-              : const Text("Asigna un monto para poder avanzar")
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.circular(20), // Borde circular
+                        borderSide: const BorderSide(
+                          color: AppColors.primaryColor,
+                          width: 2,
+                        ),
+                      ),
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            color: Colors.black), // Borde negro por defecto
+                        borderRadius:
+                            BorderRadius.circular(0), // Sin bordes circulares
+                      ),
+                      hintText: '', // Sin texto visible
+                    ),
+                    style: const TextStyle(
+                        color: Colors
+                            .black), // Asegura que el texto ingresado sea visible
+                    keyboardType: TextInputType.number, // Para números
+                    obscureText:
+                        false, // Si quieres ocultar datos como contraseñas
+                  ),
+                ),
+              ),
+              Container(
+                height: 100,
+                width: 180, // Controla el tamaño del contenedor
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: AppColors.primaryColor,
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Saldo",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 25,
+                            fontWeight: FontWeight.w800),
+                      ),
+                      Text(
+                        "\$$saldo",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            "Con tarjeta",
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                fontStyle: FontStyle.italic),
+          ),
+          if (saldoControllers.isNotEmpty)
+            Expanded(
+              child: CustomScrollView(
+                slivers: [
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      childCount: creditCards.length, // Número de tarjetas
+                      (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 30,
+                                    right: 10,
+                                    top: 16,
+                                    bottom:
+                                        16), // Espaciado horizontal adicional
+                                child: SizedBox(
+                                  width:
+                                      150, // Ancho fijo para el TextFormField
+                                  child: TextFormField(
+                                    controller: saldoControllers[index],
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 12),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            20), // Borde circular
+                                        borderSide: const BorderSide(
+                                          color: Colors.black,
+                                          width: 2,
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            20), // Borde circular
+                                        borderSide: const BorderSide(
+                                          color: AppColors.primaryColor,
+                                          width: 2,
+                                        ),
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: Colors
+                                                .black), // Borde negro por defecto
+                                        borderRadius: BorderRadius.circular(
+                                            0), // Sin bordes circulares
+                                      ),
+                                      hintText: '', // Sin texto visible
+                                    ),
+                                    style: const TextStyle(
+                                        color: Colors
+                                            .black), // Asegura que el texto ingresado sea visible
+                                    keyboardType:
+                                        TextInputType.number, // Para números
+                                    obscureText: false,
+                                  ),
+                                ),
+                              ),
+                              // Aquí reemplazamos el contenedor de saldo por el widget de tarjeta de crédito
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 50),
+                                  child: Transform.scale(
+                                    scale:
+                                        1.0, // Ajusta la escala si es necesario
+                                    child: Opacity(
+                                      opacity:
+                                          1, // Ajusta la opacidad si es necesario
+                                      child: SizedBox(
+                                        width:
+                                            300, // Establecemos un ancho fijo para que la tarjeta esté recortada
+                                        child: ClipRect(
+                                          child: Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Ajusta la alineación para mostrar solo la parte izquierda de la tarjeta
+                                            widthFactor:
+                                                0.5, // Esto hará que solo se vea la mitad de la tarjeta
+                                            child: CreditCardWidget(
+                                              balance:
+                                                  creditCards[index].balance,
+                                              cardHolderFullName:
+                                                  creditCards[index]
+                                                      .cardHolderFullName,
+                                              cardNumber:
+                                                  creditCards[index].cardNumber,
+                                              validThru:
+                                                  creditCards[index].validThru,
+                                              cardType:
+                                                  creditCards[index].cardType,
+                                              cvv: creditCards[index].cvv,
+                                              color: creditCards[index].color,
+                                              isFavorite:
+                                                  creditCards[index].isFavorite,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          const SizedBox(
+            height: 25,
+          )
         ],
       ),
+      floatingActionButton: FloatingButtonPaganini(iconData: Icons.arrow_back_rounded,onPressed: (){
+        Navigator.pop(context);
+      },),
 
     );
   }
@@ -210,7 +319,6 @@ class _PaymentPageState extends State<PaymentPage> {
                               'Error al cargar datos'); // Muestra un mensaje de error
                         } else if (snapshot.hasData) {
                           final userData = snapshot.data!;
-
                           return Text(
                             "Pagar a ${userData['firstname']}", // Muestra el nombre del usuario
                             style: const TextStyle(
@@ -249,7 +357,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
                 // Convierte el saldo ingresado a double
                 double valueSaldo =
-                    double.tryParse(pageToUserController.text) ?? 0.0;
+                    double.tryParse(saldoController.text) ?? 0.0;
 
                 if (valueSaldo >= 0.0) {
                   if (valueSaldo <= saldo) {
@@ -351,7 +459,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 minimumSize: const Size(133, 50),
               ),
               child: const Text(
-                'Agregar',
+                'Pagar',
                 style: TextStyle(color: Colors.black, fontSize: 20),
               ),
             ),

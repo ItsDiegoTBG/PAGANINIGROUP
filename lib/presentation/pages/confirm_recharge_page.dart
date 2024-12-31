@@ -1,10 +1,12 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/domain/entity/card_credit.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
+import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/credit_card_ui.dart';
 import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
@@ -29,7 +31,7 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
     _pageController = PageController(viewportFraction: 0.8, initialPage: 0);
     final creditCardProvider =
         Provider.of<CreditCardProvider>(context, listen: false);
-    creditCardProvider.fetchCreditCards();
+    creditCardProvider.fetchCreditCards(FirebaseAuth.instance.currentUser!.uid);
   }
 
   @override
@@ -46,7 +48,7 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
     final saldoProviderRead = context.read<SaldoProvider>();
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
     final creditCards = creditCardProviderWatch.creditCards;
-
+    final userId = context.read<UserProvider>().user!.uid;  
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -278,6 +280,8 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                       ),
                       ElevatedButton(
                         onPressed: () async {
+
+                          debugPrint("Recargar saldo");
                           var myRecharge = double.parse(widget.valueRecharge!);
                           int selectedIndex =
                               _pageController.page?.round() ?? 0;
@@ -294,7 +298,8 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                                 () {
                               // Resta el saldo de la tarjeta seleccionada
                               creditCardProviderWatch.updateBalance(
-                                  selectedCard.id,
+                                  userId,
+                                  selectedIndex,
                                   selectedCard.balance - myRecharge);
 
                               // Agrega la recarga al saldo general

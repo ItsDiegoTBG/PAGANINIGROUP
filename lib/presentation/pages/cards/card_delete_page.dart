@@ -3,6 +3,7 @@ import 'package:paganini/core/utils/colors.dart';
 
 import 'package:paganini/domain/entity/card_credit.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
+import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version_icon.dart';
@@ -24,9 +25,9 @@ class _CardDeletePageState extends State<CardDeletePage> {
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
     final creditCardProviderRead = context.read<CreditCardProvider>();
     final creditCards = creditCardProviderWatch.creditCards;
+    final userId = context.read<UserProvider>().user!.uid;
     return Scaffold(
       appBar: AppBar(
-
         automaticallyImplyLeading: false,
         title: const ContentAppBar(),
       ),
@@ -36,25 +37,13 @@ class _CardDeletePageState extends State<CardDeletePage> {
               child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  "No tiene tarjetas registradas",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold),
-                  overflow: TextOverflow.visible,
-                ),
-                ButtonSecondVersionIcon(
-                  text: "Regresar",
-                  function: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icons.arrow_back_ios_rounded,
-                  iconAlignment: IconAlignment.start,
-                ),
+                const Text("No tiene tarjetas registradas",style: TextStyle(color: Colors.black,fontSize: 25,fontWeight: FontWeight.bold),overflow: TextOverflow.visible,),
+                ButtonSecondVersionIcon(text: "Regresar", function: (){
+                  Navigator.pop(context);
+                },icon:Icons.arrow_back_ios_rounded, iconAlignment: IconAlignment.start,),
               ],
             ))
-          : creditCardListView(creditCards, creditCardProviderRead),
+          : creditCardListView(creditCards, creditCardProviderRead,userId),
       floatingActionButton: FloatingButtonPaganini(
         onPressed: () {
           Navigator.pop(context);
@@ -66,7 +55,8 @@ class _CardDeletePageState extends State<CardDeletePage> {
   }
 
   Padding creditCardListView(List<CreditCardEntity> creditCards,
-      CreditCardProvider creditCardProviderRead) {
+      CreditCardProvider creditCardProviderRead, String userId) {
+    
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8, top: 0, bottom: 30),
       child: CustomScrollView(
@@ -138,8 +128,7 @@ class _CardDeletePageState extends State<CardDeletePage> {
 
                           // Si el usuario confirma la eliminación
                           if (confirmDelete == true) {
-                            await creditCardProviderRead
-                                .deleteCreditCard(card.id);
+                            await creditCardProviderRead.deleteCreditCard(userId, index);
                             // Aquí puedes agregar código para actualizar la interfaz o mostrar un mensaje
                           }
                         },
