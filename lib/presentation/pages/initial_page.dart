@@ -8,6 +8,7 @@ class InitialPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -16,7 +17,7 @@ class InitialPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             SizedBox(
-                width: 300,
+                width:  size.width * 0.9,
                 height: 130,
                 child: Image.asset(
                     "assets/image/paganini_logo_horizontal_morado_lila.png")),
@@ -34,7 +35,7 @@ class InitialPage extends StatelessWidget {
                   )
                 ],
               ),
-              width: 270,
+              width: size.width * 0.70,
               height: 290,
               child: Padding(
                 padding: const EdgeInsets.only(right: 30),

@@ -57,8 +57,8 @@ class _WalletPageState extends State<WalletPage> {
             Padding(
                 padding: const EdgeInsets.only(top: 50),
                 child: Container(
-                  height: 130,
-                  width: 360,
+                  height: 120,
+                  width: 350,
                   decoration: BoxDecoration(
                       color: AppColors.primaryColor,
                       borderRadius: BorderRadius.circular(20)),
@@ -87,7 +87,7 @@ class _WalletPageState extends State<WalletPage> {
                             color: Colors.white, // Color del texto
                             fontSize: 37,
                             fontWeight: FontWeight.bold,
-                            fontStyle: FontStyle.italic),
+                            ),
                       ),
                     ],
                   ),

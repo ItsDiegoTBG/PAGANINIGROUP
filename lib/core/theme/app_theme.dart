@@ -2,17 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
 
 class AppTheme {
-  final List<Color> _colors = [
-    AppColors.primaryColor,
-    AppColors.secondaryColor,
-    Colors.black,
-    Colors.purple,
-  ];
 
   ThemeData themeLightMode() {
     return ThemeData(
+      primaryColor: AppColors.primaryColor,
       useMaterial3: true,
-      colorSchemeSeed: _colors[0],
+     // colorSchemeSeed: AppColors.primaryColor,
       scaffoldBackgroundColor: Colors.white,
       bottomAppBarTheme: const BottomAppBarTheme(color: AppColors.primaryColor),
       appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
@@ -26,9 +21,10 @@ class AppTheme {
 
   ThemeData themeDarkMode() {
     return ThemeData(
+        primaryColor: Colors.white,
         useMaterial3: true,
-        colorSchemeSeed: _colors[2],
-        scaffoldBackgroundColor: Colors.black,
+       // colorSchemeSeed: Colors.black,
+        scaffoldBackgroundColor: Colors.grey[900],
         bottomAppBarTheme:
             const BottomAppBarTheme(color: AppColors.primaryColor),
         appBarTheme:  const AppBarTheme(backgroundColor: Colors.black),
@@ -40,8 +36,3 @@ class AppTheme {
         ));
   }
 }
-
-/*
-theme: ThemeData(
-          appBarTheme: const AppBarTheme(color: Colors.white),
-          scaffoldBackgroundColor: Colors.white*/

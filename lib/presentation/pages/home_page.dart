@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:paganini/core/device/qr_code_scanner.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/presentation/pages/payment/payment_page.dart';
-import 'package:paganini/presentation/pages/recharge_page.dart';
+import 'package:paganini/presentation/pages/recharge/recharge_page.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
@@ -28,13 +28,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  
   @override
   void initState() {
     super.initState();
-
-    final creditCardProvider =
-        Provider.of<CreditCardProvider>(context, listen: false);
-    creditCardProvider.fetchCreditCards(FirebaseAuth.instance.currentUser!.uid);
+    final userProvider = Provider.of<UserProvider>(context, listen: false); 
+    final creditCardProvider =Provider.of<CreditCardProvider>(context, listen: false);
+    if(userProvider.user != null){
+      creditCardProvider.fetchCreditCards(userProvider.user!.uid);
+    }
   }
 
   String? _result;
@@ -55,6 +58,8 @@ class _HomePageState extends State<HomePage> {
     // theme
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
 
+    final color = Theme.of(context).primaryColor;
+
     return Scaffold(
         body: Column(
           children: [
@@ -63,14 +68,14 @@ class _HomePageState extends State<HomePage> {
               width: 360,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: themeProvider.isDarkMode ? Colors.white : AppColors.primaryColor,
+                color: color
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                    Padding(
-                    padding: const EdgeInsets.only(left: 20),
+                    padding: const EdgeInsets.only(left: 20,top: 5),
                     child: Text(
                       "Saldo",
                       style: TextStyle(
@@ -91,7 +96,7 @@ class _HomePageState extends State<HomePage> {
                                color: themeProvider.isDarkMode ? Colors.black : Colors.white,
                               fontSize: 37,
                               fontWeight: FontWeight.bold,
-                              fontStyle: FontStyle.italic,
+                            
                             ),
                           ),
                         ),
@@ -237,6 +242,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         floatingActionButton: FloatingButtonPaganini(
+          isQrPrincipal: false,
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(

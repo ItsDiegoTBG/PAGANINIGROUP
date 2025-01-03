@@ -257,6 +257,7 @@ class _ContactsPageState extends State<ContactsPage> {
                     ),
                   )
                 : CustomScrollView(
+                  physics: const BouncingScrollPhysics(),
                     slivers: [
                       SliverList(
                         delegate: SliverChildBuilderDelegate(

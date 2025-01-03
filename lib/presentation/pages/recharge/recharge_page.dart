@@ -3,7 +3,7 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
-import 'package:paganini/presentation/pages/confirm_recharge_page.dart';
+import 'package:paganini/presentation/pages/recharge/confirm_recharge_page.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
 
