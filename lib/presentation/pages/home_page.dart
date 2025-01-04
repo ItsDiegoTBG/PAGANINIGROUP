@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-   bool showAllMovements = false; // Estado para controlar la expansión.
+  bool showAllMovements = false; // Estado para controlar la expansión.
   List<String> movements = [
     'Compra en Supermercado',
     'Pago de Servicios',
@@ -26,11 +26,32 @@ class _HomePageState extends State<HomePage> {
     'Pago en Restaurante',
     'Suscripción mensual',
   ];
+  List<String> filteredMovements = []; // Lista filtrada.
+  String searchQuery = ""; // Consulta de búsqueda.
+
+  @override
+  void initState() {
+    super.initState();
+    filteredMovements = movements; // Inicializa con todos los movimientos.
+  }
+
+  void _filterMovements(String query) {
+    setState(() {
+      searchQuery = query;
+      if (query.isEmpty) {
+        filteredMovements = movements;
+      } else {
+        filteredMovements = movements
+            .where((movement) =>
+                movement.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final saldoProviderWatch = context.watch<SaldoProvider>();
-    final saldoProviderRead = context.read<SaldoProvider>();
-
     final userProviderWatch = context.watch<UserProvider>();
 
     return Scaffold(
@@ -42,9 +63,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           Container(
             height: 150,
             width: 360,
@@ -76,8 +95,6 @@ class _HomePageState extends State<HomePage> {
                     )
                   ],
                 ),
-
-                //boton de agregar
                 ButtonSecondVersion(
                   verticalPadding: 2.0,
                   horizontalPadding: 3.5,
@@ -85,33 +102,35 @@ class _HomePageState extends State<HomePage> {
                   function: () {
                     Navigator.pushReplacementNamed(context, Routes.RECHARGE);
                   },
-                )
+                ),
               ],
             ),
           ),
           const Padding(
             padding: EdgeInsets.only(top: 20, left: 22, right: 8, bottom: 8),
             child: Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  "Acciones Rápidas",
-                  style: TextStyle(
-                      fontStyle: FontStyle.italic,
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold),
-                )),
+              alignment: Alignment.topLeft,
+              child: Text(
+                "Últimos Movimientos",
+                style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
           ),
-          const Padding(
-              padding: EdgeInsets.only(top: 20, left: 22, right: 8, bottom: 8),
-              child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    "Últimos Movimientos",
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold),
-                  )),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: 'Buscar movimientos',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                suffixIcon: Icon(Icons.search),
+              ),
+              onChanged: _filterMovements, // Filtrar al escribir.
+            ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -136,19 +155,20 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: showAllMovements ? movements.length : 3,
+              itemCount: showAllMovements
+                  ? filteredMovements.length
+                  : (filteredMovements.length > 3 ? 3 : filteredMovements.length),
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(movements[index]),
+                  title: Text(filteredMovements[index]),
                   leading: Icon(Icons.check_circle, color: AppColors.primaryColor),
                 );
               },
             ),
           ),
-          //solo de prueba
           const Text("Para ejemplo didactico"),
           Text(
-              "Inicio de cuenta con ${userProviderWatch.user?.email ?? 'usuario no disponible'}")
+              "Inicio de cuenta con ${userProviderWatch.user?.email ?? 'usuario no disponible'}"),
         ],
       ),
       floatingActionButton: const FloatingButtonNavBarQr(),
