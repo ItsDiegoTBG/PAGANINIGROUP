@@ -301,8 +301,7 @@ class _PaymentPageState extends State<PaymentPage> {
                             messageText:
                                 'Saldo Insuficiente en ${creditCards[i].cardHolderFullName}',
                             type: AnimatedSnackBarType.info,
-                            borderRadius: const BorderRadius.all(
-                                const Radius.circular(20)),
+                            borderRadius: const BorderRadius.all(Radius.circular(20)),
                             backgroundColor:
                                 const Color.fromARGB(255, 59, 84, 244),
                             titleTextStyle: const TextStyle(

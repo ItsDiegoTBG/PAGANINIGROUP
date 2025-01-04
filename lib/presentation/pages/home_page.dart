@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:paganini/core/device/qr_code_scanner.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/presentation/pages/payment/payment_page.dart';
-import 'package:paganini/presentation/pages/recharge_page.dart';
+import 'package:paganini/presentation/pages/recharge/recharge_page.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
@@ -28,13 +28,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  
   @override
   void initState() {
     super.initState();
-
-    final creditCardProvider =
-        Provider.of<CreditCardProvider>(context, listen: false);
-    creditCardProvider.fetchCreditCards(FirebaseAuth.instance.currentUser!.uid);
+    final userProvider = Provider.of<UserProvider>(context, listen: false); 
+    final creditCardProvider =Provider.of<CreditCardProvider>(context, listen: false);
+    if(userProvider.user != null){
+      creditCardProvider.fetchCreditCards(userProvider.user!.uid);
+    }
   }
 
   String? _result;
@@ -53,8 +56,7 @@ class _HomePageState extends State<HomePage> {
     // Obtenemos la lista de tarjetas actualizada directamente del provider
     final creditCards = creditCardProviderWatch.creditCards;
     // theme
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-
+ 
     return Scaffold(
         body: Column(
           children: [
@@ -63,18 +65,18 @@ class _HomePageState extends State<HomePage> {
               width: 360,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: themeProvider.isDarkMode ? Colors.white : AppColors.primaryColor,
+                color: AppColors.primaryColor
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Padding(
-                    padding: const EdgeInsets.only(left: 20),
+                   const Padding(
+                    padding: EdgeInsets.only(left: 20,top: 5),
                     child: Text(
                       "Saldo",
                       style: TextStyle(
-                          color: themeProvider.isDarkMode ? Colors.black :Colors.white,
+                          color:Colors.white,
                           fontSize: 33,
                           fontWeight: FontWeight.bold),
                     ),
@@ -87,17 +89,17 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.only(left: 20),
                           child: Text(
                             "\$${saldoProviderWatch.saldo}",
-                            style:TextStyle(
-                               color: themeProvider.isDarkMode ? Colors.black : Colors.white,
+                            style:const TextStyle(
+                               color: Colors.white,
                               fontSize: 37,
                               fontWeight: FontWeight.bold,
-                              fontStyle: FontStyle.italic,
+                            
                             ),
                           ),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(right: 20),
+                        padding: const EdgeInsets.only(right: 20),   
                         child: Container(
                           decoration: BoxDecoration(
                             color: AppColors
@@ -120,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            Container(
+            SizedBox(
                 height: 200,
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(
@@ -237,6 +239,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         floatingActionButton: FloatingButtonPaganini(
+          isQrPrincipal: false,
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(

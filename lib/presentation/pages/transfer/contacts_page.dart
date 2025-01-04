@@ -80,7 +80,7 @@ class _ContactsPageState extends State<ContactsPage> {
       // Convierte los contactos obtenidos en una lista de ContactUser
       var decodedContacts = contacts.map((contact) {
         return ContactUser(
-          name: contact.displayName ?? "Sin nombre",
+          name: contact.displayName ,
           phone: contact.phones.isNotEmpty
               ? contact.phones[0].number
               : "Sin número",
@@ -257,6 +257,7 @@ class _ContactsPageState extends State<ContactsPage> {
                     ),
                   )
                 : CustomScrollView(
+                  physics: const BouncingScrollPhysics(),
                     slivers: [
                       SliverList(
                         delegate: SliverChildBuilderDelegate(

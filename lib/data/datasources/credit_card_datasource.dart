@@ -10,10 +10,10 @@ abstract class CreditCardRemoteDataSource {
 }
 
 class CreditCardRemoteDataSourceImpl implements CreditCardRemoteDataSource {
-  final FirebaseFirestore firestore;
+
   final db = FirebaseDatabase.instance.ref();
 
-  CreditCardRemoteDataSourceImpl(this.firestore);
+  CreditCardRemoteDataSourceImpl();
 
   final List<CreditCardModel> _creditCards = [];
 

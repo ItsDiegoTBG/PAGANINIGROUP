@@ -69,6 +69,7 @@ dependencies:
   device_preview: ^1.2.0
   introduction_screen: ^3.1.14
   shared_preferences: ^2.3.4
+  animate_do: ^3.3.4
 
 
 dev_dependencies:

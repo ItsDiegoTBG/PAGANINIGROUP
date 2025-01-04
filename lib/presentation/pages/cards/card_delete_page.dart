@@ -81,17 +81,20 @@ class _CardDeletePageState extends State<CardDeletePage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      SizedBox(
-                        height: 200,
-                        child: CreditCardWidget(
-                          balance: card.balance,
-                          cardHolderFullName: card.cardHolderFullName,
-                          cardNumber: card.cardNumber,
-                          validThru: card.validThru,
-                          cardType: card.cardType,
-                          cvv: card.cvv,
-                          color: card.color,
-                          isFavorite: card.isFavorite,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 2),
+                        child: SizedBox(
+                          height: 200,
+                          child: CreditCardWidget(
+                            balance: card.balance,
+                            cardHolderFullName: card.cardHolderFullName,
+                            cardNumber: card.cardNumber,
+                            validThru: card.validThru,
+                            cardType: card.cardType,
+                            cvv: card.cvv,
+                            color: card.color,
+                            isFavorite: card.isFavorite,
+                          ),
                         ),
                       ),
                       IconButton(

@@ -306,13 +306,13 @@ class _RegisterPageState extends State<RegisterPage> {
                 return 'La contraseña debe tener al menos 12 caracteres';
               }
               if (!RegExp(r'(?=.*[A-Z])').hasMatch(value)) {
-                return 'La contraseña debe incluir al menos una letra mayúscula';
+                return 'Incluya al menos una letra mayúscula';
               }
               if (!RegExp(r'(?=.*\d)').hasMatch(value)) {
-                return 'La contraseña debe incluir al menos un dígito';
+                return 'Incluya al menos un dígito';
               }
               if (!RegExp(r'(?=.*[@$!%*?&])').hasMatch(value)) {
-                return 'La contraseña debe incluir al menos un carácter especial (@, \$, !, %, *, ?, &)';
+                return 'Incluya al menos un carácter especial (@, \$, !, %, *, ?, &)';
               }
               return null;
             },
