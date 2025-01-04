@@ -5,7 +5,9 @@ import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/pages/home_page.dart';
 import 'package:paganini/presentation/pages/initial_page.dart';
 import 'package:paganini/presentation/pages/register_page.dart';
+import 'package:paganini/presentation/providers/introduction_provider.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version_icon.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OnBoardingPage extends StatefulWidget {
@@ -19,6 +21,8 @@ class OnBoardingPageState extends State<OnBoardingPage> {
   final introKey = GlobalKey<IntroductionScreenState>();
 
   void _onIntroEnd(context) {
+    final introductionProvider =Provider.of<IntroductionProvider>(context, listen: false);
+    introductionProvider.closeForEverything();
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (_) => const InitialPage()),
     );

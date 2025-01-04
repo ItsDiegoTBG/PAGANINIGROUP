@@ -25,9 +25,9 @@ class _PaymentOptionsState extends State<PaymentOptions> {
     final creditCards = creditCardProviderWatch.creditCards;
     final myHeight = MediaQuery.of(context).size.height;
     final paymentProviderWatch = context.watch<PaymentProvider>();
-    final montoSaldo = paymentProviderWatch.montoSaldo;
+    //final montoSaldo = paymentProviderWatch.montoSaldo;
     final isSaldoSelected = paymentProviderWatch.isSaldoSelected;
-    final selectedCardAmounts = paymentProviderWatch.selectedCardAmounts;
+    //final selectedCardAmounts = paymentProviderWatch.selectedCardAmounts;
 
     return Container(
       height: myHeight * 0.8,
@@ -76,7 +76,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
               children: [
                 Expanded(
                   child: Text(
-                    'Utilizar mi saldo de Paganini: \$$saldo\USD',
+                    'Utilizar mi saldo de Paganini: \$${saldo}USD',
                     style: const TextStyle(
                         fontSize: 14, fontWeight: FontWeight.w600),
                   ),

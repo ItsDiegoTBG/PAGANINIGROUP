@@ -23,6 +23,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _isPasswordVisible = false;
 
+
   void signUserIn() async {
     // Muestra el diálogo de carga
     showDialog(
@@ -91,6 +92,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
         );
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       Navigator.pop(context); // Cierra el diálogo de carga en caso de error
       debugPrint("Error aquí: $e");
       _showSnackBar(

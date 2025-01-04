@@ -64,20 +64,7 @@ class _NavigationPageState extends State<NavigationPage> {
           automaticallyImplyLeading: false,
           title: const ContentAppBar(),
         ),
-        body: GestureDetector(
-          onHorizontalDragEnd: (DragEndDetails details) {
-            if (details.primaryVelocity! > 0) {
-              if (_selectedIndex > _pages.length + 1) {
-                goToIndex(_selectedIndex - 1);
-              }
-            } else if (details.primaryVelocity! < 0) {
-              if (_selectedIndex < _pages.length - 1) {
-                goToIndex(_selectedIndex + 1);
-              }
-            }
-          },
-          child: _pages[_selectedIndex],
-        ),
+        body: _pages[_selectedIndex],
         bottomNavigationBar: Theme(
             data: Theme.of(context).copyWith(
               iconTheme: IconThemeData(

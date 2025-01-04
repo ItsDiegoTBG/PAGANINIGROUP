@@ -54,7 +54,6 @@ class _TransferPageState extends State<TransferPage> {
     final saldoProviderWatch = context.watch<SaldoProvider>();
     final contactTransfered =
         context.watch<ContactProvider>().contactTransfered;
-    final contactRead = context.read<ContactProvider>();
     final saldoActual = saldoProviderWatch.saldo;
     final themeDark = Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     return Scaffold(
@@ -336,7 +335,7 @@ class _TransferPageState extends State<TransferPage> {
                                     ),
                                     content:  Text(
                                         "¿Quieres recargar saldo en la aplicación?",style: TextStyle(
-                                          color: themeDark ? Colors.black : Colors.white,
+                                          color: themeDark ? Colors.black : Colors.black,
                                         ),),
                                     actions: [
                                       TextButton(

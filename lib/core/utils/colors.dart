@@ -4,6 +4,6 @@ import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 class AppColors {
 
-  static  const Color primaryColor = Color(0xFF6750A4);
+  static  const Color primaryColor = Color(0xFF9266fb);
   static const Color secondaryColor = Color(0xFFcfbcfd);
 }

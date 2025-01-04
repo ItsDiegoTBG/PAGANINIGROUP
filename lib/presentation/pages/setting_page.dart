@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
+import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/container_settings.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +19,7 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = context.watch<UserProvider>();
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -58,7 +61,13 @@ class _SettingPageState extends State<SettingPage> {
               iconData: Icons.people_outline,
             ),
             const SizedBox(height: 10),
-            const ContainerSettings(
+             ContainerSettings(
+              onPressed: () async {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, Routes.LOGIN, (Route<dynamic> route) => false);
+                await userProvider.signOut();
+              },
+              withoutIconArrowGo: true,
               text: "Cerrar Sesión",
               iconData: Icons.logout_outlined,
             ),

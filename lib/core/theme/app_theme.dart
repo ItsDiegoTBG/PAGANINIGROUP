@@ -3,7 +3,7 @@ import 'package:paganini/core/utils/colors.dart';
 
 class AppTheme {
 
-  ThemeData themeLightMode() {
+ ThemeData themeLightMode() {
     return ThemeData(
       primaryColor: AppColors.primaryColor,
       useMaterial3: true,
@@ -29,7 +29,7 @@ class AppTheme {
             const BottomAppBarTheme(color: AppColors.primaryColor),
         appBarTheme:  const AppBarTheme(backgroundColor: Colors.black),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
-            backgroundColor: Colors.white, foregroundColor: Colors.black),
+            backgroundColor:AppColors.secondaryColor, foregroundColor: Colors.black),
         brightness: Brightness.dark,
         iconTheme: const IconThemeData(
           color: Colors.white,

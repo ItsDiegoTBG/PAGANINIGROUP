@@ -56,10 +56,7 @@ class _HomePageState extends State<HomePage> {
     // Obtenemos la lista de tarjetas actualizada directamente del provider
     final creditCards = creditCardProviderWatch.creditCards;
     // theme
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-
-    final color = Theme.of(context).primaryColor;
-
+ 
     return Scaffold(
         body: Column(
           children: [
@@ -68,18 +65,18 @@ class _HomePageState extends State<HomePage> {
               width: 360,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: color
+                color: AppColors.primaryColor
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Padding(
-                    padding: const EdgeInsets.only(left: 20,top: 5),
+                   const Padding(
+                    padding: EdgeInsets.only(left: 20,top: 5),
                     child: Text(
                       "Saldo",
                       style: TextStyle(
-                          color: themeProvider.isDarkMode ? Colors.black :Colors.white,
+                          color:Colors.white,
                           fontSize: 33,
                           fontWeight: FontWeight.bold),
                     ),
@@ -92,8 +89,8 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.only(left: 20),
                           child: Text(
                             "\$${saldoProviderWatch.saldo}",
-                            style:TextStyle(
-                               color: themeProvider.isDarkMode ? Colors.black : Colors.white,
+                            style:const TextStyle(
+                               color: Colors.white,
                               fontSize: 37,
                               fontWeight: FontWeight.bold,
                             
@@ -102,7 +99,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(right: 20),
+                        padding: const EdgeInsets.only(right: 20),   
                         child: Container(
                           decoration: BoxDecoration(
                             color: AppColors
@@ -125,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            Container(
+            SizedBox(
                 height: 200,
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(

@@ -243,7 +243,7 @@ class RechargePageState extends State<RechargePage> {
         ),
       ),
       child: Text(
-        amount,
+        "\$$amount",
         style: const TextStyle(
             color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
       ),

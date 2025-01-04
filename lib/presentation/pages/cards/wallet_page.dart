@@ -46,7 +46,6 @@ class _WalletPageState extends State<WalletPage> {
   Widget build(BuildContext context) {
     
     final saldoProviderWatch = context.watch<SaldoProvider>();
-    final saldoProviderRead = context.read<SaldoProvider>();
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
 
     // Obtenemos la lista de tarjetas actualizada directamente del provider
