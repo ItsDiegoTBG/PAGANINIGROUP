@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/presentation/providers/theme_provider.dart';
+import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
 import 'package:paganini/presentation/widgets/text_form_field_widget.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,15 +20,16 @@ class LoginPage extends StatefulWidget {
 class _LoginRegisterScreenState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   bool _isPasswordVisible = false;
+
 
   void signUserIn() async {
     // Muestra el diálogo de carga
     showDialog(
       context: context,
+      barrierDismissible:
+          false, // Evita que el usuario cierre el diálogo manualmente
       builder: (context) {
         return const Center(
           child: CircularProgressIndicator(
@@ -36,9 +40,16 @@ class _LoginRegisterScreenState extends State<LoginPage> {
     );
 
     try {
+      // Intenta iniciar sesión
+      await _auth.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      // Una vez exitoso, cierra el diálogo
       Navigator.pop(context);
 
-      // Intenta iniciar sesión
+      // Muestra el snackbar de éxito
       AnimatedSnackBar(
         duration: const Duration(seconds: 3),
         builder: ((context) {
@@ -55,25 +66,20 @@ class _LoginRegisterScreenState extends State<LoginPage> {
           );
         }),
       ).show(context);
+
+      // Navega a la siguiente pantalla
       Navigator.pushNamedAndRemoveUntil(
         context,
         Routes.NAVIGATIONPAGE,
         (Route<dynamic> route) => false,
       );
-      await _auth.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
 
-      // Cierra el diálogo de carga
-
-      // Muestra un mensaje de éxito solo después de un inicio de sesión exitoso
-
-      // Navega a la pantalla principal después de un inicio de sesión exitoso
+      // Inicializa el usuario
+      final userProvider = context.read<UserProvider>();
+      userProvider.initializeUser();
     } on FirebaseAuthException catch (e) {
-      // ignore: use_build_context_synchronously
-      Navigator.pop(context); // Cierra el diálogo de carga
-      // Maneja errores específicos
+      Navigator.pop(context); // Cierra el diálogo de carga en caso de error
+
       if (e.code == 'user-not-found') {
         wrongEmailMessage();
       } else if (e.code == 'wrong-password') {
@@ -86,8 +92,9 @@ class _LoginRegisterScreenState extends State<LoginPage> {
         );
       }
     } catch (e) {
-      Navigator.pop(context); // Cierra el diálogo de carga
-      debugPrint("Error aquí");
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context); // Cierra el diálogo de carga en caso de error
+      debugPrint("Error aquí: $e");
       _showSnackBar(
         'Error en el inicio de sesión',
         const Color.fromARGB(255, 236, 45, 55),
@@ -139,9 +146,10 @@ class _LoginRegisterScreenState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     //double myHeight = MediaQuery.of(context).size.height;
+    final themeProvider = Provider .of<ThemeProvider>(context, listen: false);
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.white,
+     // backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding:
@@ -151,14 +159,15 @@ class _LoginRegisterScreenState extends State<LoginPage> {
               const SizedBox(
                 height: 50,
               ),
-              const Text(
+               Text(
                 'Bienvenido',
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold,color: themeProvider.isDarkMode ? Colors.white:Colors.black),
               ),
               SizedBox(
                   width: 300,
                   height: 100,
-                  child: Image.asset(
+                  child: themeProvider.isDarkMode ? Image.asset(
+                      "assets/image/paganini_logo_horizontal_morado.png"): Image.asset(
                       "assets/image/paganini_logo_horizontal_negro.png")),
               const SizedBox(
                 height: 60,
@@ -259,7 +268,6 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                           text: "Iniciar Sesion",
                           onPressed: () {
                             debugPrint("INICIANDO SESION");
-                            //FocusScope.of(context).unfocus();
                             signUserIn();
                           },
                         ),
@@ -299,12 +307,12 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text(
+                       Text(
                         "Nuevo en paganini?",
                         style: TextStyle(
-                            color: Colors.black,
+                            color: themeProvider.isDarkMode ? Colors.white:Colors.black,
                             fontSize: 15,
-                            fontWeight: FontWeight.w400),
+                            fontWeight: FontWeight.w400,),
                       ),
                       TextButton(
                         onPressed: () {

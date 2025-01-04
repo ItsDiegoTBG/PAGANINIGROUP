@@ -10,7 +10,7 @@ class CreditCardEntity  {
   final Color color;
   final bool isFavorite;
   final String cvv;
-   double balance;
+  double balance;
 
   CreditCardEntity({
     required this.id,

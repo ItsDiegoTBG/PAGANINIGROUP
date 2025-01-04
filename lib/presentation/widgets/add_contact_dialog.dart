@@ -5,6 +5,8 @@ class AddContactDialog extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
 
+  AddContactDialog({super.key});
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

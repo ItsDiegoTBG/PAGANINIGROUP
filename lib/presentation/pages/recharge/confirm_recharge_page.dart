@@ -127,7 +127,7 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                               //crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Padding(
-                                  padding: const EdgeInsets.only(left: 5),
+                                  padding: EdgeInsets.only(left: 5),
                                   child: Text(
                                     'Saldo Actual : ',
                                     style: TextStyle(

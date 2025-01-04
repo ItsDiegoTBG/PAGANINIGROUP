@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,23 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final  themeProvider = Provider.of<ThemeProvider>(context,listen: false);
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+
+    const itemsIcons = [
+      Icon(
+        Icons.home,
+        size: 30,
+      ),
+      Icon(
+        Icons.qr_code,
+        size: 30,
+      ),
+      Icon(
+        Icons.wallet,
+        size: 30,
+      ),
+      Icon(Icons.settings, size: 30),
+    ];
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -50,32 +67,39 @@ class _NavigationPageState extends State<NavigationPage> {
         body: _pages[_selectedIndex],
         bottomNavigationBar: Theme(
             data: Theme.of(context).copyWith(
-              iconTheme: IconThemeData(color: themeProvider.isDarkMode ? Colors.black : Colors.white),
+              iconTheme: IconThemeData(
+                  color:
+                      themeProvider.isDarkMode ? Colors.black : Colors.white),
             ),
             child: CurvedNavigationBar(
+                animationDuration: const Duration(milliseconds: 500),
                 backgroundColor: Colors.transparent,
-                color: themeProvider.isDarkMode ? Colors.white : AppColors.primaryColor,
-                buttonBackgroundColor: themeProvider.isDarkMode ? Colors.white : AppColors.primaryColor,
+                color: themeProvider.isDarkMode
+                    ? Colors.white
+                    : AppColors.primaryColor,
+                buttonBackgroundColor: themeProvider.isDarkMode
+                    ? Colors.white
+                    : AppColors.primaryColor,
                 index: _selectedIndex,
                 onTap: (index) {
+                  final icon = itemsIcons[index];
+                  SpinPerfect(
+                    infinite: true,
+                    duration: const Duration(seconds: 10),
+                    child: icon,
+                  );
                   setState(() {
                     _selectedIndex = index;
                   });
                 },
-                items: const [
-                  Icon(
-                    Icons.home,
-                    size: 30,
-                  ),
-                  Icon(
-                    Icons.qr_code,
-                    size: 30,
-                  ),
-                  Icon(
-                    Icons.wallet,
-                    size: 30,
-                  ),
-                  Icon(Icons.settings, size: 30),
-                ])));
+                items: List.generate(itemsIcons.length, (index) {
+                  return _selectedIndex == index
+                      ? Swing(
+                          infinite: true,
+                          duration: const Duration(seconds: 15),
+                          child: itemsIcons[index],
+                        )
+                      : itemsIcons[index];
+                }))));
   }
 }

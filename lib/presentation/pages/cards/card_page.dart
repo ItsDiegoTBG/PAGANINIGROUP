@@ -45,10 +45,7 @@ class _CardPageState extends State<CardPage> {
   String cvvNewCard = "***";
 
 //FirebaseFirestore instance puede causar fallos.
-  late CreditCardsUseCase addCreditCardUseCase = CreditCardsUseCase(
-      repository: CreditCardRepositoryImpl(
-          remoteDataSource:
-              CreditCardRemoteDataSourceImpl(FirebaseFirestore.instance)));
+  
   @override
   void initState() {
     super.initState();
