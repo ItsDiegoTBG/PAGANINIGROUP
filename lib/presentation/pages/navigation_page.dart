@@ -60,6 +60,7 @@ class _NavigationPageState extends State<NavigationPage> {
         Icons.wallet,
         size: 30,
       ),
+    
       Icon(Icons.person_pin_circle_sharp, size: 30),
     ];
     return Scaffold(

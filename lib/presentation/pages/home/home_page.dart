@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:paganini/core/device/qr_code_scanner.dart';
 import 'package:paganini/core/routes/app_routes.dart';
+import 'package:paganini/data/models/transaction_model.dart';
 import 'package:paganini/domain/entity/card_credit.dart';
 import 'package:paganini/domain/entity/user_entity.dart';
 import 'package:paganini/helpers/show_qr.dart';
@@ -19,6 +21,7 @@ import 'package:paganini/presentation/widgets/buttons/button_second_version.dart
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/widgets/container_action_button.dart';
 import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
+import 'package:paganini/presentation/widgets/list_title_transaction.dart';
 import 'package:paganini/presentation/widgets/qr_container.dart';
 import 'package:provider/provider.dart';
 
@@ -35,6 +38,84 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   UserEntity? userEntity;
   bool _isInitialized = false;
+  bool showAllMovements = false; // Estado para controlar la expansión.
+
+  List<TransactionModel> movements = [
+    TransactionModel(
+        name: 'Grocery Shopping',
+        originator: 'Walmart',
+        amount: -50.75,
+        date: '13/12/2022'),
+    TransactionModel(
+        name: 'Utility Payment',
+        originator: 'Electric Company',
+        amount: -30.00,
+        date: '15/12/2022'),
+    TransactionModel(
+        name: 'Received Transfer',
+        originator: 'John Doe',
+        amount: 100.00,
+        date: '14/12/2022'),
+    TransactionModel(
+        name: 'Balance Top-Up',
+        originator: 'XYZ Bank',
+        amount: 20.00,
+        date: '12/12/2022'),
+    TransactionModel(
+        name: 'Restaurant Payment',
+        originator: 'McDonald\'s',
+        amount: -15.50,
+        date: '16/12/2022'),
+    TransactionModel(
+        name: 'Monthly Subscription',
+        originator: 'Netflix',
+        amount: -10.00,
+        date: '10/12/2022'),
+    TransactionModel(
+        name: 'Movie Tickets',
+        originator: 'Cinema World',
+        amount: -25.00,
+        date: '11/12/2022'),
+    TransactionModel(
+        name: 'Book Purchase',
+        originator: 'Amazon',
+        amount: -35.99,
+        date: '18/12/2022'),
+    TransactionModel(
+        name: 'Received Bonus',
+        originator: 'Employer',
+        amount: 500.00,
+        date: '20/12/2022'),
+    TransactionModel(
+        name: 'Online Course',
+        originator: 'Udemy',
+        amount: -19.99,
+        date: '22/12/2022'),
+    TransactionModel(
+        name: 'Gym Membership',
+        originator: 'Fit Club',
+        amount: -45.00,
+        date: '23/12/2022'),
+    TransactionModel(
+        name: 'Concert Tickets',
+        originator: 'Live Nation',
+        amount: -120.00,
+        date: '24/12/2022'),
+    TransactionModel(
+        name: 'Gift Card Redemption',
+        originator: 'Google Play',
+        amount: 50.00,
+        date: '25/12/2022'),
+  ];
+
+  List<TransactionModel> filteredMovements = []; // Lista filtrada.
+  String searchQuery = ""; // Consulta de búsqueda.
+
+  @override
+  void initState() {
+    super.initState();
+    filteredMovements = movements; // Inicializa con todos los movimientos.
+  }
 
   @override
   void didChangeDependencies() {
@@ -66,115 +147,135 @@ class _HomePageState extends State<HomePage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 0, left: 30, bottom: 1),
-                child: Align(
-                    alignment: Alignment.topLeft,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 0, left: 30, bottom: 1),
+              child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "Bienvenido, $primerNombre!",
+                    style: const TextStyle(
+                        fontStyle: FontStyle.normal,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  )),
+            ),
+            Container(
+              height: 105,
+              width: 360,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: AppColors.primaryColor),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 20, top: 5),
                     child: Text(
-                      "Bienvenido, $primerNombre!",
-                      style: const TextStyle(
-                          fontStyle: FontStyle.normal,
-                          fontSize: 25,
+                      "Saldo",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
                           fontWeight: FontWeight.bold),
-                    )),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: Text(
+                            "\$${saldoProviderWatch.saldo}",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 33,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: AppColors
+                                .secondaryColor, // Cambia el color del fondo
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.add,
+                                color: AppColors
+                                    .primaryColor), // Cambia el color del icono
+                            onPressed: () {
+                              Navigator.pushNamed(context, Routes.RECHARGE);
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
               ),
-              Container(
-                height: 105,
-                width: 360,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: AppColors.primaryColor),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+            _CreditCardsView(creditCards: creditCards),
+            const Padding(
+              padding: EdgeInsets.only(top: 7, left: 30, bottom: 1),
+              child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "Acciones Rápidas",
+                    style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+                  )),
+            ),
+            _QuickAccessView(size: size),
+             Padding(
+                padding: const EdgeInsets.only(top: 20, left: 30, bottom: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 20, top: 5),
+                    const Align(
+                      alignment: Alignment.topLeft,
                       child: Text(
-                        "Saldo",
+                        "Últimos Movimientos",
                         style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 30,
+                            fontStyle: FontStyle.normal,
+                            fontSize: 23,
                             fontWeight: FontWeight.bold),
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 20),
-                            child: Text(
-                              "\$${saldoProviderWatch.saldo}",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 33,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 20),
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              color: AppColors
-                                  .secondaryColor, // Cambia el color del fondo
-                              shape: BoxShape.circle,
-                            ),
-                            child: IconButton(
-                              icon: const Icon(Icons.add,
-                                  color: AppColors
-                                      .primaryColor), // Cambia el color del icono
-                              onPressed: () {
-                                Navigator.pushNamed(context, Routes.RECHARGE);
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.only(right: 5),
+                      child: IconButton(onPressed: (){
+                        Navigator.pushNamed(context, Routes.HISTORYPAGE);
+                      }, icon: const Icon(Icons.search)),
                     )
                   ],
-                ),
+                )),
+            Padding(
+              padding: const EdgeInsets.only(left: 13),
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: showAllMovements
+                    ? filteredMovements.length
+                    : (filteredMovements.length > 3
+                        ? 3
+                        : filteredMovements.length),
+                itemBuilder: (context, index) {
+                  final TransactionModel transaction = filteredMovements[index];
+                  return ListTitleTransaction(transaction: transaction);
+                },
               ),
-              _CreditCardsView(creditCards: creditCards),
-              const Padding(
-                padding: EdgeInsets.only(top: 7, left: 30, bottom: 1),
-                child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "Acciones Rápidas",
-                      style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                    )),
-              ),
-              _QuickAccessView(size: size),
-              const Padding(
-                padding:
-                    EdgeInsets.only(top: 25, left: 22, right: 8, bottom: 0),
-                child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "Movimientos",
-                      style: TextStyle(
-                          fontStyle: FontStyle.italic,
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold),
-                    )),
-              ),
-              const Text(
-                  "Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator."),
-              const Text(
-                  "Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator."),
-              const Text(
-                  "Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator."),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
+      /*floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
         floatingActionButton: FloatingButtonPaganini(
           isQrPrincipal: false,
           onPressed: () {
@@ -185,7 +286,8 @@ class _HomePageState extends State<HomePage> {
             );
           },
           iconData: Icons.qr_code_scanner_rounded,
-        ));
+        )*/
+    );
   }
 }
 
@@ -198,6 +300,7 @@ class _QuickAccessView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void setResult(String result) {}
     final userProviderWatch = context.watch<UserProvider>();
     final qrContainer = QrContainer(data: userProviderWatch.currentUser?.id);
     final userName =
@@ -227,6 +330,22 @@ class _QuickAccessView extends StatelessWidget {
             height: size.height * 0.10,
             text: "QR",
             iconData: Icons.qr_code_2_outlined,
+            color: AppColors.primaryColor,
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => QrCodeScanner(setResult: setResult),
+              ),
+            );
+          },
+          child: ContainerActionButton(
+            width: size.width * 0.20,
+            height: size.height * 0.10,
+            text: "Escanear QR",
+            iconData: Icons.qr_code_scanner_rounded,
             color: AppColors.primaryColor,
           ),
         ),
