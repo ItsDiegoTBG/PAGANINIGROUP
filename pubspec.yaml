@@ -70,6 +70,7 @@ dependencies:
   introduction_screen: ^3.1.14
   shared_preferences: ^2.3.4
   animate_do: ^3.3.4
+  flutter_local_notifications: ^18.0.1
 
 
 dev_dependencies:

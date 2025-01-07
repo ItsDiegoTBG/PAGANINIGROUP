@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/data/local/notification_service.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/container_settings.dart';
@@ -20,6 +21,7 @@ class _SettingPageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
     final userProvider = context.watch<UserProvider>();
+    final notificationService  = Provider.of<NotificationService>(context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -65,6 +67,7 @@ class _SettingPageState extends State<SettingPage> {
               onPressed: () async {
                 Navigator.pushNamedAndRemoveUntil(
                     context, Routes.LOGIN, (Route<dynamic> route) => false);
+                notificationService.showNotification("Sesion Cerrada", "Haz cerrado sesion de manera exitosa");
                 await userProvider.signOut();
               },
               withoutIconArrowGo: true,

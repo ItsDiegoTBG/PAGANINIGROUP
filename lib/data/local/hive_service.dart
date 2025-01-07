@@ -1,31 +1,28 @@
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:hive/hive.dart';
-import 'package:paganini/data/models/contact_model.dart'; // Asegúrate de importar correctamente tu modelo
+import 'package:paganini/data/models/contact_model.dart'; 
 
 class HiveService {
   static const String contactsBoxName = 'contactsBox';
 
   Future<void> init() async {
-    Hive.registerAdapter(ContactUserAdapter()); // Registra el adaptador correctamente
+    Hive.registerAdapter(ContactUserAdapter()); // Registra el adaptador 
     await Hive.openBox<ContactUser>(contactsBoxName);
 
   }
 
   Future<List<ContactUser>> getContacts() async {
-    final box =
-        Hive.box<ContactUser>(contactsBoxName); // Usa ContactUser, no Contact
+    final box =Hive.box<ContactUser>(contactsBoxName); 
     return box.values.toList();
   }
 
   Future<void> saveContact(ContactUser contact) async {
-    final box =
-        Hive.box<ContactUser>(contactsBoxName); // Usa ContactUser, no Contact
+    final box = Hive.box<ContactUser>(contactsBoxName); 
     await box.add(contact);
   }
 
   Future<void> deleteContact(int index) async {
-    final box =
-        Hive.box<ContactUser>(contactsBoxName); // Usa ContactUser, no Contact
+    final box = Hive.box<ContactUser>(contactsBoxName); 
     await box.deleteAt(index);
   }
 

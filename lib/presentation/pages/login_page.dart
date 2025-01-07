@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/data/local/notification_service.dart';
+import 'package:paganini/helpers/request_notification_permission.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
@@ -24,7 +26,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
   bool _isPasswordVisible = false;
 
 
-  void signUserIn() async {
+  void signUserIn(NotificationService notificationService) async {
     // Muestra el diálogo de carga
     showDialog(
       context: context,
@@ -48,7 +50,8 @@ class _LoginRegisterScreenState extends State<LoginPage> {
 
       // Una vez exitoso, cierra el diálogo
       Navigator.pop(context);
-
+       await RequestNotificationPermission.requestNotificationPermission();
+       notificationService.showNotification("Inicio de Sesion", "Haz iniciado sesion de manera exitosa");
       // Muestra el snackbar de éxito
       AnimatedSnackBar(
         duration: const Duration(seconds: 3),
@@ -147,6 +150,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
   Widget build(BuildContext context) {
     //double myHeight = MediaQuery.of(context).size.height;
     final themeProvider = Provider .of<ThemeProvider>(context, listen: false);
+    final notificationService = Provider.of<NotificationService>(context, listen: false);
     return Scaffold(
       resizeToAvoidBottomInset: true,
      // backgroundColor: Colors.white,
@@ -266,9 +270,12 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                       Expanded(
                         child: ButtonWithoutIcon(
                           text: "Iniciar Sesion",
-                          onPressed: () {
+                          onPressed: () async {
                             debugPrint("INICIANDO SESION");
-                            signUserIn();
+                            signUserIn(notificationService);
+                            //await RequestNotificationPermission.requestNotificationPermission();
+                            //notificationService.showNotification("Inicio de Sesion", "Haz iniciado sesion de manera exitosa");
+                             
                           },
                         ),
                       ),

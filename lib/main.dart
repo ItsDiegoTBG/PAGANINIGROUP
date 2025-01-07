@@ -8,6 +8,7 @@ import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/theme/app_theme.dart';
 import 'package:paganini/data/datasources/credit_card_datasource.dart';
 import 'package:paganini/data/local/hive_service.dart';
+import 'package:paganini/data/local/notification_service.dart';
 import 'package:paganini/data/models/contact_model.dart';
 import 'package:paganini/data/repositories/credit_card_repository_impl.dart';
 import 'package:paganini/domain/usecases/credit_cards_use_case.dart';
@@ -49,16 +50,13 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-            create: (_) =>
-                CreditCardProvider(creditCardsUseCase: creditCardsUseCase)),
+        ChangeNotifierProvider(create: (_) => CreditCardProvider(creditCardsUseCase: creditCardsUseCase)),
         ChangeNotifierProvider(create: (_) => SaldoProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => ContactProvider()),
         Provider<HiveService>(create: (_) => hiveService),
-        Provider<ContactUseCase>(
-          create: (context) => ContactUseCase(context.read<HiveService>()),
-        ),
+        Provider<ContactUseCase>(create: (context) => ContactUseCase(context.read<HiveService>()),),
+        Provider<NotificationService>(create: (_) => NotificationService(),),
         ChangeNotifierProvider(create: (_) => PaymentProvider()),
         ChangeNotifierProvider(lazy: false, create: (_) => ThemeProvider()),
         ChangeNotifierProvider(lazy: false,create: (_) => IntroductionProvider()),

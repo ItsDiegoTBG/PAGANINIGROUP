@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/data/local/notification_service.dart';
 import 'package:paganini/presentation/pages/transfer/transfer_receipt_page.dart';
 import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
@@ -23,6 +24,7 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
   Widget build(BuildContext context) {
     final contactProviderRead = context.read<ContactProvider>();
     final saldoProviderRead = context.read<SaldoProvider>();
+    final notificationService = Provider.of<NotificationService>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -161,7 +163,7 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
                   function: () async {
                     saldoProviderRead.subRecharge(widget.valueTransfered);
                     contactProviderRead.resetContact();
-
+                    notificationService.showNotification("Transferencia Exitosa", "Haz transferido de manera exitosa");
                     Navigator.push(
                         context,
                         MaterialPageRoute(
