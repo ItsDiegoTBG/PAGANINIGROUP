@@ -45,7 +45,7 @@ class _CardPageState extends State<CardPage> {
   String cvvNewCard = "***";
 
 //FirebaseFirestore instance puede causar fallos.
-  
+
   @override
   void initState() {
     super.initState();
@@ -107,7 +107,7 @@ class _CardPageState extends State<CardPage> {
   @override
   Widget build(BuildContext context) {
     final cardProviderRead = context.read<CreditCardProvider>();
-    final userId = context.read<UserProvider>().user!.uid;
+    final userId = context.read<UserProvider>().currentUser?.id;
     final Map<Color, String> colors = {
       Colors.red: "red",
       Colors.green: "green",
@@ -131,11 +131,10 @@ class _CardPageState extends State<CardPage> {
           'id': cardId,
           'cardNumber': numberCreditCardController.text.trim(),
           'expiryDate':
-              "${yearExpirationController.text.trim()}/${monthExpirationController.text.trim()}",
+              "${monthExpirationController.text.trim()}/${yearExpirationController.text.trim()}",
           'cvv': cvvCardController.text.trim(),
           'cardHolderFullName': nameController.text.trim(),
           'balance': 300,
-          'type': selectedCardType,
           'color': colors[selectedColor] ?? "Sin color"
         };
         await cardRef.child(cardId).set(cardData);
@@ -155,7 +154,7 @@ class _CardPageState extends State<CardPage> {
               ),
             );
           }),
-        // ignore: use_build_context_synchronously
+          // ignore: use_build_context_synchronously
         ).show(context);
         // ignore: use_build_context_synchronously
         Future.delayed(const Duration(seconds: 1), () {
@@ -276,13 +275,11 @@ class _CardPageState extends State<CardPage> {
                                   });
                                 },
                                 validator: (value) {
-                                  if (value == null ||
-                                      value.isEmpty ||
-                                      value.length < 2) {
+                                  if (value == null || value.isEmpty) {
                                     setState(() {
                                       isDateValid = false;
                                     });
-                                    return "Ingresa el dia";
+                                    return "Ingresa el mes";
                                   }
                                   return null;
                                 },
@@ -310,7 +307,7 @@ class _CardPageState extends State<CardPage> {
                                 onChanged: (value) {},
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return "Ingresa el mes";
+                                    return "Ingresa el año";
                                   }
                                   return null;
                                 },
@@ -349,64 +346,6 @@ class _CardPageState extends State<CardPage> {
                       ),
                       const SizedBox(
                         height: 5,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Container(
-                              height: 50,
-                              // padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
-                              decoration: BoxDecoration(
-                                  color: AppColors.primaryColor,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Center(
-                                child: RadioListTile<String>(
-                                  activeColor:
-                                      const Color.fromARGB(255, 244, 244, 244),
-                                  value: "credit",
-                                  groupValue: selectedCardType,
-                                  onChanged: (val) {
-                                    setState(() {
-                                      selectedCardType = val!;
-                                    });
-                                  },
-                                  title: const Text(
-                                    "Credito",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: Container(
-                              height: 50,
-                              padding: const EdgeInsets.all(0),
-                              decoration: BoxDecoration(
-                                  color: AppColors.primaryColor,
-                                  borderRadius: BorderRadius.circular(
-                                      10)), // Color de fondo para todo el tile
-                              child: RadioListTile<String>(
-                                value: "debit",
-                                activeColor:
-                                    const Color.fromARGB(255, 255, 255, 255),
-                                groupValue: selectedCardType,
-                                onChanged: (val) {
-                                  setState(() {
-                                    selectedCardType = val!;
-                                  });
-                                },
-                                title: const Text(
-                                  "Debito",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
                       const SizedBox(
                         height: 20,
@@ -502,7 +441,7 @@ class _CardPageState extends State<CardPage> {
                           9. borrar los datos del registro anterior para otro registro
                         */
                       await registerCreditCard();
-                      await cardProviderRead.addCreditCard(userId);
+                      await cardProviderRead.addCreditCard(userId!);
                     }
                   } else {
                     AnimatedSnackBar(

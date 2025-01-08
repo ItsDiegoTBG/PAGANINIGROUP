@@ -71,6 +71,7 @@ dependencies:
   shared_preferences: ^2.3.4
   animate_do: ^3.3.4
   flutter_local_notifications: ^18.0.1
+  gap: ^3.0.1
 
 
 dev_dependencies:
@@ -106,6 +107,7 @@ flutter:
   assets:
       - assets/image/
       - assets/image/appstore.png
+      - assets/image/tutorial/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

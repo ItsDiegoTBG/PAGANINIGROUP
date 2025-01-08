@@ -4,6 +4,7 @@ import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:paganini/core/device/qr_code_scanner.dart';
 import 'package:paganini/core/routes/app_routes.dart';
+import 'package:paganini/domain/entity/user_entity.dart';
 import 'package:paganini/presentation/pages/payment/payment_page.dart';
 import 'package:paganini/presentation/pages/recharge/recharge_page.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
@@ -17,7 +18,7 @@ import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
 import 'package:provider/provider.dart';
 
-import '../widgets/credit_card_ui.dart';
+import '../../widgets/credit_card_ui.dart';
 //import 'package:paganini/core/routes/app_routes.dart';
 
 class HomePage extends StatefulWidget {
@@ -30,13 +31,20 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   
+   UserEntity? userEntity;
+  bool _isInitialized = false;
+
   @override
-  void initState() {
-    super.initState();
-    final userProvider = Provider.of<UserProvider>(context, listen: false); 
-    final creditCardProvider =Provider.of<CreditCardProvider>(context, listen: false);
-    if(userProvider.user != null){
-      creditCardProvider.fetchCreditCards(userProvider.user!.uid);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInitialized) {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final creditCardProvider = Provider.of<CreditCardProvider>(context, listen: false);
+      if (userProvider.currentUser != null) {
+        userEntity = userProvider.currentUser;
+        creditCardProvider.fetchCreditCards(userEntity!.id);
+      }
+      _isInitialized = true; // Asegura que esto se ejecute solo una vez.
     }
   }
 
@@ -48,18 +56,24 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final saldoProviderWatch = context.watch<SaldoProvider>();
-    //final saldoProviderRead = context.read<SaldoProvider>();
-
-    final userProviderWatch = context.watch<UserProvider>();
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
-
-    // Obtenemos la lista de tarjetas actualizada directamente del provider
     final creditCards = creditCardProviderWatch.creditCards;
-    // theme
- 
     return Scaffold(
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+             Padding(
+              padding: const EdgeInsets.only(top: 10, left: 30,  bottom: 5),
+              child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "Hola , ${userEntity?.firstname ?? 'usuario no disponible'}",
+                    style: const  TextStyle(
+                        fontStyle: FontStyle.normal,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500),
+                  )),
+            ),
             Container(
               height: 120,
               width: 360,
@@ -122,8 +136,10 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
+            
             SizedBox(
-                height: 200,
+                height: 190,
+                width: 500,
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(25),
@@ -141,6 +157,7 @@ class _HomePageState extends State<HomePage> {
                                 scrollDirection: Axis.horizontal,
                                 itemBuilder: (context, index) {
                                   final card = creditCards[index];
+                                  debugPrint("El card es: ${card.cardNumber}");
                                   return CreditCardWidget(
                                     balance: card.balance,
                                     cardHolderFullName: card.cardHolderFullName,
@@ -155,17 +172,20 @@ class _HomePageState extends State<HomePage> {
                                 itemCount: creditCards.length,
                                 layout: SwiperLayout.TINDER,
                               )
-                            : CreditCardWidget(
-                                balance: creditCards[0].balance,
-                                cardHolderFullName:
-                                    creditCards[0].cardHolderFullName,
-                                cardNumber: creditCards[0].cardNumber,
-                                validThru: creditCards[0].validThru,
-                                cardType: creditCards[0].cardType,
-                                cvv: creditCards[0].cvv,
-                                color: creditCards[0].color,
-                                isFavorite: creditCards[0].isFavorite,
-                              )
+                            : Padding(
+                              padding: const EdgeInsets.only(top: 5),
+                              child: CreditCardWidget(
+                                  balance: creditCards[0].balance,
+                                  cardHolderFullName:
+                                      creditCards[0].cardHolderFullName,
+                                  cardNumber: creditCards[0].cardNumber,
+                                  validThru: creditCards[0].validThru,
+                                  cardType: creditCards[0].cardType,
+                                  cvv: creditCards[0].cvv,
+                                  color: creditCards[0].color,
+                                  isFavorite: creditCards[0].isFavorite,
+                                ),
+                            )
                         : Center(
                             child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -196,14 +216,14 @@ class _HomePageState extends State<HomePage> {
                                       },
                                       icon: const Icon(
                                         FontAwesomeIcons.arrowRightFromBracket,
-                                        size: 30,
+                                        size: 20,
                                       )))
                             ],
                           )),
                   ),
                 )),
             const Padding(
-              padding: EdgeInsets.only(top: 20, left: 22, right: 8, bottom: 2),
+              padding: EdgeInsets.only(top: 10, left: 22, right: 8, bottom: 2),
               child: Align(
                   alignment: Alignment.topLeft,
                   child: Text(
@@ -214,8 +234,7 @@ class _HomePageState extends State<HomePage> {
                         fontWeight: FontWeight.bold),
                   )),
             ),
-            Text(
-                "Inicio de cuenta con ${userProviderWatch.user?.email ?? 'usuario no disponible'}"),
+      
             const Text(
                 "Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator."),
             const Padding(

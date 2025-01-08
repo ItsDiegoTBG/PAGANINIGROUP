@@ -29,17 +29,15 @@ class ContainerSettings extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final themeProvider = context.watch<ThemeProvider>();
-    return Padding(
-      padding: const EdgeInsets.only(left: 10),
-      child: Align(
+    return  Align(
         alignment: Alignment.centerLeft,
         child: GestureDetector(
           onTap: onPressed,
           child: Container(
-            width: size.width * 0.9,
+            //width: size.width * 0.9,
             decoration: BoxDecoration(
               color: AppColors.primaryColor,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -49,9 +47,9 @@ class ContainerSettings extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
                           color: AppColors.secondaryColor,
-                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: IconButton(
                             onPressed: () {},
@@ -92,7 +90,7 @@ class ContainerSettings extends StatelessWidget {
             ),
           ),
         ),
-      ),
+      
     );
   }
 }

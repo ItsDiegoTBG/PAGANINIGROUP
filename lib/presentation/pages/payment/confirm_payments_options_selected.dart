@@ -25,7 +25,7 @@ class ConfirmPaymentPage extends StatelessWidget {
     final selectedCardAmounts = paymentProvider.selectedCardAmounts;
     final isSaldoSelected = paymentProvider.isSaldoSelected;
     final noteUserToPay = paymentProvider.noteUserToPay;
-    final userId = context.read<UserProvider>().user!.uid;
+    final userId = context.read<UserProvider>().currentUser?.id;
 
     final totalAmount = montoSaldo +
         selectedCardAmounts.values.fold(0.0, (sum, amount) => sum + amount);
@@ -275,7 +275,7 @@ class ConfirmPaymentPage extends StatelessWidget {
                     
                               // Calcula el nuevo saldo
                               final newBalance =creditCards[cardIndex].balance - selectedAmount;
-                              creditCardProviderWatch.updateBalance(userId,cardIndex, newBalance);
+                              creditCardProviderWatch.updateBalance(userId!,cardIndex, newBalance);
                               debugPrint("El nuevo saldo de la tarjeta $cardIndex es: $newBalance");
                             }
                             //4

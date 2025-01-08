@@ -53,7 +53,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
        await RequestNotificationPermission.requestNotificationPermission();
        notificationService.showNotification("Inicio de Sesion", "Haz iniciado sesion de manera exitosa");
       // Muestra el snackbar de éxito
-      AnimatedSnackBar(
+      /*AnimatedSnackBar(
         duration: const Duration(seconds: 3),
         builder: ((context) {
           return MaterialAnimatedSnackBar(
@@ -68,7 +68,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
             ),
           );
         }),
-      ).show(context);
+      ).show(context);*/
 
       // Navega a la siguiente pantalla
       Navigator.pushNamedAndRemoveUntil(
@@ -206,6 +206,9 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                     height: 5,
                   ),
                   TextFormField(
+                    onFieldSubmitted: (value) {
+                      signUserIn(notificationService);
+                    },
                     obscureText: !_isPasswordVisible,
                     controller: passwordController,
                     decoration: InputDecoration(

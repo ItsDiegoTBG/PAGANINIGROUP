@@ -2,12 +2,14 @@ import 'package:animate_do/animate_do.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/data/local/notification_service.dart';
 import 'package:paganini/presentation/pages/cards/wallet_page.dart';
-import 'package:paganini/presentation/pages/home_page.dart';
+import 'package:paganini/presentation/pages/home/home_page.dart';
 import 'package:paganini/presentation/pages/qr_pages.dart';
-import 'package:paganini/presentation/pages/setting_page.dart';
+import 'package:paganini/presentation/pages/setting/setting_page.dart';
+
 import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:provider/provider.dart';
@@ -58,7 +60,7 @@ class _NavigationPageState extends State<NavigationPage> {
         Icons.wallet,
         size: 30,
       ),
-      Icon(Icons.settings, size: 30),
+      Icon(Icons.person_pin_circle_sharp, size: 30),
     ];
     return Scaffold(
         appBar: AppBar(

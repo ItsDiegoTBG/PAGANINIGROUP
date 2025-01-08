@@ -48,7 +48,8 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
     final saldoProviderRead = context.read<SaldoProvider>();
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
     final creditCards = creditCardProviderWatch.creditCards;
-    final userId = context.read<UserProvider>().user!.uid;  
+    final userId = context.read<UserProvider>().currentUser?.id;
+    final color = Theme.of(context).primaryColor;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -67,7 +68,7 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                       child: Image.asset(
                           "assets/image/paganini_logo_horizontal_negro.png")),
                   const Text(
-                    "Verificando",
+                    "Procesando",
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: 20,
@@ -76,9 +77,22 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  const CircularProgressIndicator(
-                    color: AppColors.primaryColor,
-                  ),
+                  StreamBuilder<double>(
+                      stream: Stream.periodic(const Duration(milliseconds: 200),
+                          (value) {
+                        return (value * 2) / 25;
+                      }).takeWhile((value) => value < 100),
+                      builder: (context, snapshot) {
+                        final progressValue = snapshot.data ?? 0.0;
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                              left: 20, right: 20, top: 8, bottom: 8),
+                          child: LinearProgressIndicator(
+                            value: progressValue,
+                            // minHeight: 100,
+                          ),
+                        );
+                      })
                 ],
               ),
             )
@@ -117,8 +131,8 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                                   style: const TextStyle(
                                       color: Colors.white, // Color del texto
                                       fontSize: 37,
-                                      fontWeight: FontWeight.bold,
-                                      fontStyle: FontStyle.italic),
+                                      fontWeight: FontWeight.w700,
+                                      ),
                                 ),
                               ],
                             ),
@@ -152,21 +166,9 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                       )),
 
                   //Text(creditCards.length.toString()),
-                  creditCards.isEmpty
-                      ? const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 25),
-                          child: Text(
-                            "No tiene tarjetas registradas",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.visible,
-                          ),
-                        )
-                      : const Text(""),
+
                   const Padding(
-                    padding: EdgeInsets.only(left: 20),
+                    padding: EdgeInsets.only(left: 20, top: 40),
                     child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -177,85 +179,78 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                               fontWeight: FontWeight.bold),
                         )),
                   ),
+                  if (creditCards.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Row(
+                        children: [
+                          const Text("Registrar una nueva tarjeta",
+                              style: TextStyle(
+                                fontSize: 18,
+                              )),
+                          IconButton(
+                              style: ButtonStyle(iconColor: WidgetStateProperty.all(color)),
+                              onPressed: () {
+                                Navigator.pushNamed(context, Routes.CARDPAGE);
+                              },
+                              icon: const Icon(Icons.app_registration_rounded,size: 30,))
+                        ],
+                      ),
+                    ),
                   const SizedBox(
-                    height: 40,
+                    height: 30,
                   ),
                   //tarjetas
                   Column(
                     children: [
-                      SizedBox(
-                        height: 190,
-                        child: PageView.builder(
-                            controller: _pageController,
-                            itemCount: creditCards.isEmpty
-                                ? 1
-                                : creditCards
-                                    .length, // Si está vacía, mostrar solo 1 tarjeta
-                            itemBuilder: (context, index) {
-                              final card = creditCards.isEmpty
-                                  ? CreditCardEntity(
-                                      balance: 0,
-                                      id: 4,
-                                      cardHolderFullName: 'Paganini',
-                                      cardNumber: '999999999999999999',
-                                      cardType: 'credit',
-                                      validThru: '99/99',
-                                      color: AppColors.primaryColor,
-                                      isFavorite: false,
-                                      cvv: '999',
-                                    ) // Si no hay tarjetas, mostrar la ficticia
-                                  : creditCards[index];
-                              return AnimatedBuilder(
-                                  animation: _pageController,
-                                  builder: (context, child) {
-                                    double value = 1.0;
-                                    if (_pageController
-                                        .position.haveDimensions) {
-                                      value = _pageController.page! - index;
-                                      value = (1 - (value.abs() * 0.3))
-                                          .clamp(0.7, 1.0); // Reduce la escala
-                                    } else {
-                                      value = index == 0 ? 1.0 : 0.7;
-                                    }
-                                    return Transform.scale(
-                                      scale: value,
-                                      child: Opacity(
-                                        opacity: 1,
-                                        child: CreditCardWidget(
-                                          balance: card.balance,
-                                          cardHolderFullName:
-                                              card.cardHolderFullName,
-                                          cardNumber: card.cardNumber,
-                                          validThru: card.validThru,
-                                          cardType: card.cardType,
-                                          cvv: card.cvv,
-                                          color: card.color,
-                                          isFavorite: card.isFavorite,
-                                        ),
-                                      ),
-                                    );
-                                  });
-                            }),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: SmoothPageIndicatorWidget(
-                          pageController: _pageController,
-                          totalCounts:
-                              creditCards.isEmpty ? 1 : creditCards.length,
-                          smoothPageEffect: const WormEffect(
-                            activeDotColor: AppColors.primaryColor,
-                            dotColor: AppColors.secondaryColor,
-                            dotHeight: 10,
-                            dotWidth: 10,
+                      if (creditCards.isEmpty)
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "No tienes tarjetas registradas",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 21,
+                                  fontWeight: FontWeight.bold),
+                              overflow: TextOverflow.visible,
+                            ),
+                            const SizedBox(height: 100,),
+                            const Text("Registrar una tarjeta ahora",style: TextStyle(fontSize: 20),),
+                            IconButton(
+                                style: ButtonStyle(iconColor: WidgetStateProperty.all(color)),
+                                onPressed: () {
+                                  Navigator.pushNamed(context, Routes.CARDPAGE);
+                                },
+                                icon:
+                                    const Icon(Icons.app_registration_rounded,size: 60,))
+                          ],
+                        ),
+                      if (creditCards.isNotEmpty)
+                        _CreditCardsView(
+                            creditCards: creditCards,
+                            pageController: _pageController),
+                      if (creditCards.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: SmoothPageIndicatorWidget(
+                            pageController: _pageController,
+                            totalCounts:
+                                creditCards.isEmpty ? 1 : creditCards.length,
+                            smoothPageEffect: const WormEffect(
+                              activeDotColor: AppColors.primaryColor,
+                              dotColor: AppColors.secondaryColor,
+                              dotHeight: 10,
+                              dotWidth: 10,
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                   const SizedBox(
                     height: 40,
                   ),
+                  if(creditCards.isNotEmpty)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -280,7 +275,6 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                       ),
                       ElevatedButton(
                         onPressed: () async {
-
                           debugPrint("Recargar saldo");
                           var myRecharge = double.parse(widget.valueRecharge!);
                           int selectedIndex =
@@ -298,7 +292,7 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                                 () {
                               // Resta el saldo de la tarjeta seleccionada
                               creditCardProviderWatch.updateBalance(
-                                  userId,
+                                  userId!,
                                   selectedIndex,
                                   selectedCard.balance - myRecharge);
 
@@ -358,16 +352,86 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
       floatingActionButton: FloatingButtonPaganini(
         onPressed: () {
-          Navigator.pop(context);
+          if (creditCards.isNotEmpty) {
+            Navigator.pop(context);
+          }
+          else {
+            Navigator.pushNamed(context, Routes.HOME);
+          }
         },
         iconData: Icons.arrow_back_rounded,
       ),
+    );
+  }
+}
+
+class _CreditCardsView extends StatelessWidget {
+  const _CreditCardsView({
+    super.key,
+    required PageController pageController,
+    required this.creditCards,
+  }) : _pageController = pageController;
+
+  final PageController _pageController;
+  final List<CreditCardEntity> creditCards;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 190,
+      child: PageView.builder(
+          controller: _pageController,
+          itemCount:
+              creditCards.length, // Si está vacía, mostrar solo 1 tarjeta
+          itemBuilder: (context, index) {
+            final card = creditCards.isEmpty
+                ? CreditCardEntity(
+                    balance: 0,
+                    id: 4,
+                    cardHolderFullName: 'Paganini',
+                    cardNumber: '999999999999999999',
+                    cardType: 'credit',
+                    validThru: '99/99',
+                    color: AppColors.primaryColor,
+                    isFavorite: false,
+                    cvv: '999',
+                  ) // Si no hay tarjetas, mostrar la ficticia
+                : creditCards[index];
+            return AnimatedBuilder(
+                animation: _pageController,
+                builder: (context, child) {
+                  double value = 1.0;
+                  if (_pageController.position.haveDimensions) {
+                    value = _pageController.page! - index;
+                    value = (1 - (value.abs() * 0.3))
+                        .clamp(0.7, 1.0); // Reduce la escala
+                  } else {
+                    value = index == 0 ? 1.0 : 0.7;
+                  }
+                  return Transform.scale(
+                    scale: value,
+                    child: Opacity(
+                      opacity: 1,
+                      child: CreditCardWidget(
+                        balance: card.balance,
+                        cardHolderFullName: card.cardHolderFullName,
+                        cardNumber: card.cardNumber,
+                        validThru: card.validThru,
+                        cardType: card.cardType,
+                        cvv: card.cvv,
+                        color: card.color,
+                        isFavorite: card.isFavorite,
+                      ),
+                    ),
+                  );
+                });
+          }),
     );
   }
 }

@@ -46,7 +46,7 @@ class ContentAppBar extends StatelessWidget {
               onPressed: () async {
                 notificationProvider.showNotification("Salir de Sesion", "Haz salido de sesion de manera exitosa");
                 Navigator.pushNamedAndRemoveUntil(
-                    context, Routes.LOGIN, (Route<dynamic> route) => false);
+                    context, Routes.INITIAL, (Route<dynamic> route) => false);
                 await userProvider.signOut();
               },
               icon: const Icon(Icons.logout_rounded)),

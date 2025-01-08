@@ -21,5 +21,7 @@ abstract class Routes {
   static const RECEIPTRANSFER = "/transfer_receipt_page";
   static const PRINCIPALNAVIGATIONPAGE = "/principal";
   static const INTRODUCTIONPAGE = "/introduction_page";
+  static const APPTUTORIALSCREEN = "/app_tutorial_screen";
   static const NAVIGATIONPAGE = "/navigation_page";
+  static const SETTINGSPAGE = "/settings_page";
 }

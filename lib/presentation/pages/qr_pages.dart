@@ -40,7 +40,7 @@ class _QrPageState extends State<QrPage> {
   Widget build(BuildContext context) {
     final userProviderWatch = context.watch<UserProvider>(); 
 
-    final qrContainer =  QrContainer(data: userProviderWatch.user?.uid);
+    final qrContainer =  QrContainer(data: userProviderWatch.currentUser?.id);
     return  Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

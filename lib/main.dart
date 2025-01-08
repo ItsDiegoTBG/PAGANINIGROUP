@@ -83,7 +83,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
         title: 'Paganini',
         debugShowCheckedModeBanner: false,
-        initialRoute: isIntroductionPage ? Routes.INTRODUCTIONPAGE : Routes.INITIAL,
+        initialRoute: isIntroductionPage ? Routes.APPTUTORIALSCREEN : Routes.INITIAL,
         routes: {
           Routes.INITIAL: (context) => const InitialPage(),
           Routes.HOME: (context) => const HomePage(),
@@ -97,7 +97,10 @@ class MainApp extends StatelessWidget {
           Routes.RECEIPTRANSFER: (context) => TransferReceipt(),
           Routes.TRANSFERPAGE: (context) => const TransferPage(),
           Routes.INTRODUCTIONPAGE: (context) => const OnBoardingPage(),
+          Routes.APPTUTORIALSCREEN : (context) => const AppTutorialScreen(),
           Routes.NAVIGATIONPAGE: (context) => const NavigationPage(),
+
+          Routes.SETTINGSPAGE: (context) => const SettingPage(),
         },
         theme: Provider.of<ThemeProvider>(context).isDarkMode
             ? AppTheme().themeDarkMode()
