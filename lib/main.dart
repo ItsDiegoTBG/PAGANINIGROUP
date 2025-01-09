@@ -28,6 +28,7 @@ import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
+import 'package:paganini/presentation/pages/forget_password_page.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -88,6 +89,7 @@ class MainApp extends StatelessWidget {
         Routes.CARDDELETEPAGE: (context) => const CardDeletePage(),
         //Routes.AUTHPAGE: (context) => const AuthPage(),
         Routes.REGISTER: (context) => const RegisterPage(),
+        Routes.FORGETPASSWORD: (context) => ForgetPasswordPage(),
         Routes.RECHARGE: (context) => const RechargePage(),
         // Routes.CONFRECHARGE: (context) => const ConfirmRechargePage() 
         Routes.RECEIPTRANSFER: (context) => TransferReceipt(),

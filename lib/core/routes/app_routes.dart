@@ -20,4 +20,5 @@ abstract class Routes {
   static const CONFTRANSFER = "/confirm_transfer_page";
   static const RECEIPTRANSFER = "/transfer_receipt_page";
   static const PRINCIPALNAVIGATIONPAGE = "/principal";
+  static const FORGETPASSWORD = "/forget_password_page";
 }

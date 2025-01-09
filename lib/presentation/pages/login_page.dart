@@ -273,7 +273,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () { Navigator.pushNamed(context, Routes.FORGETPASSWORD);},
                       child: const Text("Olvidaste la Clave?",
                           style: TextStyle(
                               color: Colors.grey,
