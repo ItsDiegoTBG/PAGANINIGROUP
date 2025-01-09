@@ -25,4 +25,5 @@ abstract class Routes {
   static const NAVIGATIONPAGE = "/navigation_page";
   static const SETTINGSPAGE = "/settings_page";
   static const RETURNAMOUNTPAGE = "/return_amount_page";
+  static const FORGETPASSWORD = "/forget_password_page";
 }

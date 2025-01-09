@@ -6,7 +6,7 @@ import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/data/local/notification_service.dart';
 import 'package:paganini/helpers/request_notification_permission.dart';
-import 'package:paganini/presentation/widgets/loading_screen1_widget.dart';
+import 'package:paganini/presentation/pages/login/loading_screen.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
@@ -283,7 +283,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () { Navigator.pushNamed(context, Routes.FORGETPASSWORD);},
                       child: const Text("Olvidaste la Clave?",
                           style: TextStyle(
                               color: Colors.grey,

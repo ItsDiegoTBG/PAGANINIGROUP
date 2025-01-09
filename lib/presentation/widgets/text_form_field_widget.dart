@@ -12,7 +12,7 @@ class TextFormFieldWidget extends StatelessWidget {
     super.key,
     required this.controller,
     required this.hintText,
-    required this.validator,
+    this.validator,
     required this.textInputType,
     this.enabled = true,
   });

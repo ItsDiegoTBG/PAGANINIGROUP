@@ -2,6 +2,7 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/presentation/pages/navigation_page.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/payment_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
@@ -26,7 +27,8 @@ class ConfirmPaymentPage extends StatelessWidget {
     final isSaldoSelected = paymentProvider.isSaldoSelected;
     final noteUserToPay = paymentProvider.noteUserToPay;
     final userId = context.read<UserProvider>().currentUser?.id;
-
+    final isOnlySaldoSelected = paymentProvider.isOnlySaldoSelected;
+    final totalPlayerAmount = paymentProvider.totalAmountPayUser;
     final totalAmount = montoSaldo +
         selectedCardAmounts.values.fold(0.0, (sum, amount) => sum + amount);
 
@@ -47,7 +49,6 @@ class ConfirmPaymentPage extends StatelessWidget {
           child: Stack(
             alignment: AlignmentDirectional.topCenter,
             clipBehavior: Clip.none,
-            
             children: [
               Positioned(
                 top: -10,
@@ -68,18 +69,21 @@ class ConfirmPaymentPage extends StatelessWidget {
                     children: [
                       IconButton(
                         onPressed: () {
-                          paymentProvider.toggleConfirmPaymetOrPaymentSelected();
+                          paymentProvider
+                              .toggleConfirmPaymetOrPaymentSelected();
                           paymentProvider.clearSelection();
                         },
                         icon: const Icon(Icons.arrow_back),
                       ),
                       const Text(
                         "Resumen del Pago",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       IconButton(
                           onPressed: () {
-                            paymentProvider.toggleConfirmPaymetOrPaymentSelected();
+                            paymentProvider
+                                .toggleConfirmPaymetOrPaymentSelected();
                             paymentProvider.clearSelection();
                             paymentProvider.clearTotalAmountPayUser();
                             Navigator.pop(context);
@@ -89,18 +93,27 @@ class ConfirmPaymentPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   if (isSaldoSelected)
-                    ListTile(
-                      title: const Text("Saldo de la cuenta"),
-                      subtitle: Text("Monto seleccionado: \$$montoSaldo"),
-                      leading: const Icon(
-                        Icons.account_balance_wallet,
-                        color: Colors.black,
-                      ),
-                    ),
+                     selectedCardAmounts.isNotEmpty
+                        ? ListTile(
+                            title: const Text("Saldo de la cuenta"),
+                            subtitle: Text("Monto seleccionado: \$$montoSaldo"),
+                            leading: const Icon(
+                              Icons.account_balance_wallet,
+                              color: Colors.black,
+                            ),
+                          )
+                        : const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                              "Se usara el saldo de la aplicacion",
+                              style: TextStyle(fontSize: 16, color: Colors.black),
+                            ),
+                        ),
                   ...selectedCardAmounts.entries.map((entry) {
                     final cardIndex = entry.key;
                     final cardAmount = entry.value;
                     final card = creditCards[cardIndex];
+
                     return ListTile(
                       title: Text(
                           "Tarjeta ${entry.key + 1} : ${card.cardHolderFullName}"),
@@ -123,7 +136,7 @@ class ConfirmPaymentPage extends StatelessWidget {
                       ),
                     );
                   }),
-                  const Divider(),
+                  if (isOnlySaldoSelected == false) const Divider(),
                   noteUserToPay.isNotEmpty
                       ? Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -136,25 +149,28 @@ class ConfirmPaymentPage extends StatelessWidget {
                           ),
                         )
                       : const SizedBox(),
-                  ListTile(
-                    title: const Text(
-                      "Suma total de tus opciones de pagos ",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    trailing: Text(
-                      "\$$totalAmount",
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primaryColor,
+                  if (isOnlySaldoSelected == false)
+                    ListTile(
+                      title: const Text(
+                        "Suma total de tus opciones de pagos ",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      trailing: Text(
+                        "\$$totalAmount",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryColor,
+                        ),
                       ),
                     ),
-                  ),
                   const Divider(),
                   ListTile(
                     title: const Text(
                       "Costo total a pagar :",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     trailing: Text(
                       "\$${paymentProvider.totalAmountPayUser}",
@@ -181,21 +197,77 @@ class ConfirmPaymentPage extends StatelessWidget {
                                 "El saldo es: $saldo, lo que el usuario escogio  es: $montoSaldo y es  verdadero o falso $isSaldoSelected");
                             debugPrint(
                                 "Los montos de las tarjetas son: $selectedCardAmounts");
-                            debugPrint("Todas las tarjetas: ${creditCards.length} $creditCards");
+                            debugPrint(
+                                "Todas las tarjetas: ${creditCards.length} $creditCards");
 
                             for (int i = 0; i < creditCards.length; i++) {
-                              debugPrint("Tarjeta $i: ${creditCards[i].balance} , y el id es: ${creditCards[i].id}");
+                              debugPrint(
+                                  "Tarjeta $i: ${creditCards[i].balance} , y el id es: ${creditCards[i].id}");
                             }
-                    
+
                             /*OK open youtube please
                             1.verificamos que la suma total de sus opcion de pago sea igual al total que paga el usuario
                             2.si elijio pagar con saldo, verificamos que el monto del saldo sea igual o menor al monto saldo que tiene en la cuenta y le restamos el monto que elijio del saldo al saldo de la cuenta                     
                             3.si elijio las tarjetas, verificamos que el motno de cada tarjeta sea igual o menor al monto de cada tarjeta y se la restamos 
                             4.dejar los atributos del provider limpio para realizar otro paog
                           */
-                    
+                            if (isSaldoSelected == true && saldo <= 0.0) {
+                              AnimatedSnackBar(
+                                duration: const Duration(seconds: 3),
+                                builder: ((context) {
+                                  return MaterialAnimatedSnackBar(
+                                    iconData: Icons.warning,
+                                    messageText: 'No tiene saldo en la cuenta',
+                                    type: AnimatedSnackBarType.error,
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(20)),
+                                    backgroundColor: Colors.amber[900]!,
+                                    titleTextStyle: const TextStyle(
+                                      color: Color.fromARGB(255, 255, 255, 255),
+                                      fontSize: 10,
+                                    ),
+                                  );
+                                }),
+                              ).show(context);
+                              return;
+                            }
+                            if (isOnlySaldoSelected == true && selectedCardAmounts.isEmpty) {
+                              debugPrint("Solo saldo seleccionado");
+                              debugPrint(" EL saldo es $saldo y el total a pagar es $totalAmount");
+                              debugPrint("EL tatal a pagat es   $paymentProvider.totalAmountPayUser");
+                              saldoProviderWatch.subRecharge(totalPlayerAmount);
+                              paymentProvider.clearSelection();
+                              paymentProvider.clearTotalAmountPayUser();
+                               Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const NavigationPage()),
+                                  (Route<dynamic> route) => false);
+                              AnimatedSnackBar(
+                                duration: const Duration(seconds: 3),
+                                builder: ((context) {
+                                  return MaterialAnimatedSnackBar(
+                                    iconData: Icons.check,
+                                    messageText: 'El pago se realizo con exito',
+                                    type: AnimatedSnackBarType.error,
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(20)),
+                                    backgroundColor: Colors.green[900]!,
+                                    titleTextStyle: const TextStyle(
+                                      color: Color.fromARGB(255, 255, 255, 255),
+                                      fontSize: 10,
+                                    ),
+                                  );
+                                }),
+                              ).show(context);
+                             
+                              return;
+                            }
+
                             //1
-                            if (totalAmount != paymentProvider.totalAmountPayUser) {
+                            if (totalAmount !=
+                                paymentProvider.totalAmountPayUser) {
                               AnimatedSnackBar(
                                 duration: const Duration(seconds: 3),
                                 builder: ((context) {
@@ -206,7 +278,8 @@ class ConfirmPaymentPage extends StatelessWidget {
                                     type: AnimatedSnackBarType.error,
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(20)),
-                                    backgroundColor: Color.fromARGB(255, 213, 55, 84),
+                                    backgroundColor:
+                                        Color.fromARGB(255, 213, 55, 84),
                                     titleTextStyle: TextStyle(
                                       color: Color.fromARGB(255, 255, 255, 255),
                                       fontSize: 10,
@@ -226,8 +299,8 @@ class ConfirmPaymentPage extends StatelessWidget {
                                     messageText:
                                         'El monto de Saldo es mayor al que tiene en la cuenta',
                                     type: AnimatedSnackBarType.error,
-                                    borderRadius:
-                                        const BorderRadius.all(Radius.circular(20)),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(20)),
                                     backgroundColor: Colors.blue[800]!,
                                     titleTextStyle: const TextStyle(
                                       color: Color.fromARGB(255, 255, 255, 255),
@@ -240,18 +313,22 @@ class ConfirmPaymentPage extends StatelessWidget {
                             } else {
                               saldoProviderWatch.subRecharge(montoSaldo);
                             }
-                    
+
                             //3 por cada tarjeta
                             for (int cardIndex in selectedCardAmounts.keys) {
                               debugPrint("Tarjeta $cardIndex");
                               // Verifica si el monto seleccionado es nulo
-                              if (selectedCardAmounts[cardIndex] == null) continue;
-                    
+                              if (selectedCardAmounts[cardIndex] == null)
+                                continue;
+
                               // Obtén el monto seleccionado
-                              double selectedAmount = selectedCardAmounts[cardIndex]!;
-                              debugPrint("El monto de la tarjeta $cardIndex es: $selectedAmount");
+                              double selectedAmount =
+                                  selectedCardAmounts[cardIndex]!;
+                              debugPrint(
+                                  "El monto de la tarjeta $cardIndex es: $selectedAmount");
                               // Verifica si el monto seleccionado es mayor que el saldo de la tarjeta
-                              if (selectedAmount > creditCards[cardIndex].balance) {    
+                              if (selectedAmount >
+                                  creditCards[cardIndex].balance) {
                                 AnimatedSnackBar(
                                   duration: const Duration(seconds: 3),
                                   builder: ((context) {
@@ -260,11 +337,12 @@ class ConfirmPaymentPage extends StatelessWidget {
                                       messageText:
                                           'El monto de la tarjeta ${creditCards[cardIndex].cardHolderFullName} es mayor al que tiene en la tarjeta',
                                       type: AnimatedSnackBarType.error,
-                                      borderRadius:
-                                          const BorderRadius.all(Radius.circular(20)),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(20)),
                                       backgroundColor: Colors.blue[800]!,
                                       titleTextStyle: const TextStyle(
-                                        color: Color.fromARGB(255, 255, 255, 255),
+                                        color:
+                                            Color.fromARGB(255, 255, 255, 255),
                                         fontSize: 10,
                                       ),
                                     );
@@ -272,26 +350,31 @@ class ConfirmPaymentPage extends StatelessWidget {
                                 ).show(context);
                                 return;
                               }
-                    
+
                               // Calcula el nuevo saldo
-                              final newBalance =creditCards[cardIndex].balance - selectedAmount;
-                              creditCardProviderWatch.updateBalance(userId!,cardIndex, newBalance);
-                              debugPrint("El nuevo saldo de la tarjeta $cardIndex es: $newBalance");
+                              final newBalance =
+                                  creditCards[cardIndex].balance -
+                                      selectedAmount;
+                              creditCardProviderWatch.updateBalance(
+                                  userId!, cardIndex, newBalance);
+                              debugPrint(
+                                  "El nuevo saldo de la tarjeta $cardIndex es: $newBalance");
                             }
                             //4
                             paymentProvider.clearSelection();
                             paymentProvider.clearTotalAmountPayUser();
-                    
+
                             //este mensaje es para indicar que se ha realizado un pago correcto
                             AnimatedSnackBar(
                               duration: const Duration(seconds: 3),
                               builder: ((context) {
                                 return MaterialAnimatedSnackBar(
                                   iconData: Icons.check,
-                                  messageText: 'El pago se ha realizado con exito!',
+                                  messageText:
+                                      'El pago se ha realizado con exito!',
                                   type: AnimatedSnackBarType.error,
-                                  borderRadius:
-                                      const BorderRadius.all(Radius.circular(20)),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(20)),
                                   backgroundColor: Colors.green[800],
                                   titleTextStyle: const TextStyle(
                                     color: Color.fromARGB(255, 255, 255, 255),
@@ -306,7 +389,8 @@ class ConfirmPaymentPage extends StatelessWidget {
                           child: const Center(
                             child: Text(
                               "Confirmar Pago",
-                              style: TextStyle(color: Colors.white, fontSize: 16),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
                             ),
                           )),
                     ),

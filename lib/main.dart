@@ -22,6 +22,7 @@ import 'package:paganini/presentation/providers/payment_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
+import 'package:paganini/presentation/pages/forget_password_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -100,7 +101,7 @@ class MainApp extends StatelessWidget {
           Routes.APPTUTORIALSCREEN : (context) => const AppTutorialScreen(),
           Routes.NAVIGATIONPAGE: (context) => const NavigationPage(),
           Routes.RETURNAMOUNTPAGE: (context) => const ReturnAmountPage(),
-
+          Routes.FORGETPASSWORD : (context) =>  ForgetPasswordPage(),
           Routes.SETTINGSPAGE: (context) => const SettingPage(),
         },
         theme: Provider.of<ThemeProvider>(context).isDarkMode
