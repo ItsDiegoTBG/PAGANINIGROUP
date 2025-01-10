@@ -24,4 +24,5 @@ abstract class Routes {
   static const APPTUTORIALSCREEN = "/app_tutorial_screen";
   static const NAVIGATIONPAGE = "/navigation_page";
   static const SETTINGSPAGE = "/settings_page";
+  static const RETURNAMOUNTPAGE = "/return_amount_page";
 }

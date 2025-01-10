@@ -9,9 +9,10 @@ import 'package:paganini/helpers/request_notification_permission.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
+import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
 import 'package:paganini/presentation/widgets/text_form_field_widget.dart';
 import 'package:provider/provider.dart';
-
+import 'dart:io';
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -91,7 +92,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
         _showSnackBar(
           'Error en el inicio de sesión',
           const Color.fromARGB(255, 236, 45, 55),
-          topPosition: true,
+
         );
       }
     } catch (e) {
@@ -101,7 +102,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
       _showSnackBar(
         'Error en el inicio de sesión',
         const Color.fromARGB(255, 236, 45, 55),
-        topPosition: true,
+
       );
     }
   }
@@ -109,7 +110,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
 // Método para mostrar un SnackBar en la parte superior
   void _showSnackBar(String message, Color color, {bool topPosition = false}) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 2),
       content: Text(
         message,
         style: const TextStyle(color: Colors.white),
@@ -117,12 +118,6 @@ class _LoginRegisterScreenState extends State<LoginPage> {
       backgroundColor: color,
       behavior:
           topPosition ? SnackBarBehavior.floating : SnackBarBehavior.fixed,
-      margin: topPosition
-          ? const EdgeInsets.only(top: 10, left: 10, right: 10)
-          : null,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-      ),
     ));
   }
 
@@ -152,7 +147,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
     final themeProvider = Provider .of<ThemeProvider>(context, listen: false);
     final notificationService = Provider.of<NotificationService>(context, listen: false);
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
      // backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
@@ -174,7 +169,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                       "assets/image/paganini_logo_horizontal_morado.png"): Image.asset(
                       "assets/image/paganini_logo_horizontal_negro.png")),
               const SizedBox(
-                height: 60,
+                height: 40,
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,6 +340,9 @@ class _LoginRegisterScreenState extends State<LoginPage> {
           ),
         ),
       ),
+      floatingActionButton: Platform.isIOS ? FloatingButtonPaganini(iconData: Icons.arrow_back,onPressed: (){
+        Navigator.pop(context);
+      },) : null,
     );
   }
 }

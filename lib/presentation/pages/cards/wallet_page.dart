@@ -93,7 +93,7 @@ class _WalletPageState extends State<WalletPage> {
                       ],
                     ),
                   )),
-              Container(
+              SizedBox(
                 width: 350,
                 child: Padding(
                   padding: const EdgeInsets.only(top: 5),
@@ -157,6 +157,7 @@ class _WalletPageState extends State<WalletPage> {
                               .length, // Si está vacía, mostrar solo 1 tarjeta
                       itemBuilder: (context, index) {
                         final card = creditCards[index];
+                        debugPrint("El card es: ${card.isFavorite}");
                         return AnimatedBuilder(
                             animation: _pageController,
                             builder: (context, child) {

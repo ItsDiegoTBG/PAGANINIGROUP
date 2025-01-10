@@ -7,7 +7,7 @@ import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/data/local/notification_service.dart';
 import 'package:paganini/presentation/pages/cards/wallet_page.dart';
 import 'package:paganini/presentation/pages/home/home_page.dart';
-import 'package:paganini/presentation/pages/qr_pages.dart';
+import 'package:paganini/presentation/pages/page_qr/qr_pages.dart';
 import 'package:paganini/presentation/pages/setting/setting_page.dart';
 
 import 'package:paganini/presentation/providers/theme_provider.dart';

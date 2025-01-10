@@ -18,22 +18,22 @@ final slides = <SlideInfo>[
       title: 'Paga sin complicaciones',
       caption:
           "Realiza tus pagos directamente y sin problemas utilizando códigos QR.",
-      imageUrl: 'assets/image/tutorial/1.jpg'),
+      imageUrl: 'assets/image/tutorial/7.png'),
   SlideInfo(
       title: "Tu billetera, tu estilo",
       caption:
           "Administra tu billetera digital y personalízala a tu gusto de forma fácil.",
-      imageUrl: 'assets/image/tutorial/2.jpg'),
+      imageUrl: 'assets/image/tutorial/4.png'),
   SlideInfo(
       title: 'Pagos a tu alcance',
       caption:
           "Utiliza diferentes métodos de pago y realiza transacciones en pocos pasos.",
-      imageUrl: 'assets/image/tutorial/3.jpg'),
+      imageUrl: 'assets/image/tutorial/5.png'),
   SlideInfo(
       title: 'Rapido y Sencillo',
       caption:
           "Una app sencilla, rápida y diseñada para que ahorres tiempo al pagar.",
-      imageUrl: 'assets/image/tutorial/4.jpg'),
+      imageUrl: 'assets/image/tutorial/1.png'),
 ];
 
 class AppTutorialScreen extends StatelessWidget {

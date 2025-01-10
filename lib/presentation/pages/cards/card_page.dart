@@ -108,12 +108,14 @@ class _CardPageState extends State<CardPage> {
   Widget build(BuildContext context) {
     final cardProviderRead = context.read<CreditCardProvider>();
     final userId = context.read<UserProvider>().currentUser?.id;
+    final isFirstCardCreditRegistererd = cardProviderRead.creditCards.isEmpty;
+    
     final Map<Color, String> colors = {
-      Colors.red: "red",
-      Colors.green: "green",
+     const Color.fromARGB(255, 151, 41, 41): "red",
+     const Color.fromARGB(255, 54, 125, 57): "green",
       Colors.black: "black",
-      Colors.blue: "blue",
-      Colors.amber: "yellow",
+     const Color.fromARGB(255, 49, 115, 168): "blue",
+     const Color.fromARGB(255, 207, 169, 54): "yellow",
       AppColors.primaryColor: "primary",
     };
 
@@ -135,7 +137,8 @@ class _CardPageState extends State<CardPage> {
           'cvv': cvvCardController.text.trim(),
           'cardHolderFullName': nameController.text.trim(),
           'balance': 300,
-          'color': colors[selectedColor] ?? "Sin color"
+          'color': colors[selectedColor] ?? "Sin color",
+          'isFavorite': isFirstCardCreditRegistererd ? true : false,
         };
         await cardRef.child(cardId).set(cardData);
         // ignore: use_build_context_synchronously

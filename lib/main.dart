@@ -99,6 +99,7 @@ class MainApp extends StatelessWidget {
           Routes.INTRODUCTIONPAGE: (context) => const OnBoardingPage(),
           Routes.APPTUTORIALSCREEN : (context) => const AppTutorialScreen(),
           Routes.NAVIGATIONPAGE: (context) => const NavigationPage(),
+          Routes.RETURNAMOUNTPAGE: (context) => const ReturnAmountPage(),
 
           Routes.SETTINGSPAGE: (context) => const SettingPage(),
         },
