@@ -191,7 +191,6 @@ class _HomePageState extends State<HomePage> {
 
 class _QuickAccessView extends StatelessWidget {
   const _QuickAccessView({
-    super.key,
     required this.size,
   });
 
@@ -239,7 +238,7 @@ class _QuickAccessView extends StatelessWidget {
           child: ContainerActionButton(
             width: size.width * 0.20,
             height: size.height * 0.10,
-            text: "Guardar Slado",
+            text: "Retornar saldo",
             iconData: Icons.swap_vert_rounded,
             color: AppColors.primaryColor,
           ),
@@ -285,139 +284,118 @@ class _CreditCardsView extends StatelessWidget {
           ),
           child: Align(
               alignment: Alignment.bottomCenter,
-              child: FutureBuilder<bool>(
-                  future: _simulateLoading(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                          child: StreamBuilder<double>(
-                              stream: Stream.periodic(
-                                  const Duration(milliseconds: 200), (value) {
-                                return (value * 2) / 10;
-                              }).takeWhile((value) => value < 100),
-                              builder: (context, snapshot) {
-                                final progressValue = snapshot.data ?? 0.0;
-                                return Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20, top: 8, bottom: 8),
-                                  child: LinearProgressIndicator(
-                                    value: progressValue,
-                                    // minHeight: 100,
-                                  ),
-                                );
-                              }));
-                    }
-                    return creditCards.isNotEmpty
-                        ? creditCards.length > 1
-                            ? Swiper(
-                                itemWidth: 400,
-                                itemHeight: 190,
-                                loop: true,
-                                duration: 500,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (context, index) {
-                                  final card = creditCards[index];
-                                  debugPrint("El card es: ${card.cardNumber}");
-                                  return Stack(
-                                    children: [
-                                      SizedBox(
-                                        width: 400,
-                                        child: CreditCardWidget(
-                                          balance: card.balance,
-                                          cardHolderFullName:
-                                              card.cardHolderFullName,
-                                          cardNumber: card.cardNumber,
-                                          validThru: card.validThru,
-                                          cardType: card.cardType,
-                                          cvv: card.cvv,
-                                          color: card.color,
-                                          isFavorite: false,
-                                        ),
-                                      ),
-                                      if (card.isFavorite) // Mostrar la estrella solo si la tarjeta es favorita
-                                        const Positioned(
-                                          top: 10,
-                                          right:10, // Coloca la estrella a la derecha
-                                          child: Icon(
-                                            Icons.star,
-                                            color: Colors.yellow,
-                                            size: 30,
-                                          ),
-                                        ),
-                                    ],
-                                  );
-                                },
-                                itemCount: creditCards.length,
-                                layout: SwiperLayout.TINDER,
-                              )
-                            : Padding(
-                                padding: const EdgeInsets.only(top: 5),
-                                child: SizedBox(
-                                  width: 360,
-                                  child: Stack(
-                                    children: [
-                                      SizedBox(
-                                        width: 360,
-                                        child: CreditCardWidget(
-                                          balance: creditCards[0].balance,
-                                          cardHolderFullName:creditCards[0].cardHolderFullName,
-                                          cardNumber: creditCards[0].cardNumber,
-                                          validThru: creditCards[0].validThru,
-                                          cardType: creditCards[0].cardType,
-                                          cvv: creditCards[0].cvv,
-                                          color: creditCards[0].color,
-                                          isFavorite: false
-                                        ),
-                                      ),
-                                       if (creditCards[0].isFavorite) // Mostrar la estrella solo si la tarjeta es favorita
-                                        const Positioned(
-                                          top: 10,
-                                          right:10, // Coloca la estrella a la derecha
-                                          child: Icon(
-                                            Icons.star,
-                                            color: Colors.yellow,
-                                            size: 30,
-                                          ),
-                                        ),
-                                    ],
+              child: creditCards.isNotEmpty
+                  ? creditCards.length > 1
+                      ? Swiper(
+                          itemWidth: 400,
+                          itemHeight: 190,
+                          loop: true,
+                          duration: 500,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            final card = creditCards[index];
+                            debugPrint("El card es: ${card.cardNumber}");
+                            return Stack(
+                              children: [
+                                SizedBox(
+                                  width: 400,
+                                  child: CreditCardWidget(
+                                    balance: card.balance,
+                                    cardHolderFullName: card.cardHolderFullName,
+                                    cardNumber: card.cardNumber,
+                                    validThru: card.validThru,
+                                    cardType: card.cardType,
+                                    cvv: card.cvv,
+                                    color: card.color,
+                                    isFavorite: false,
                                   ),
                                 ),
-                              )
-                        : Center(
-                            child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text("Aun no tienes una tarjeta registrada",
-                                  style: TextStyle(
-                                      fontSize: 18, color: Colors.black)),
-                              const Text("Registra una ahora",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                      color: AppColors.primaryColor)),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Container(
-                                  decoration: BoxDecoration(
-                                      color: AppColors
-                                          .primaryColor, // Cambia el color del fondo
-                                      borderRadius: BorderRadius.circular(
-                                          30)), // Agrega bordes redondeados
+                                if (card
+                                    .isFavorite) // Mostrar la estrella solo si la tarjeta es favorita
+                                  const Positioned(
+                                    top: 10,
+                                    right:
+                                        10, // Coloca la estrella a la derecha
+                                    child: Icon(
+                                      Icons.star,
+                                      color: Colors.yellow,
+                                      size: 30,
+                                    ),
+                                  ),
+                              ],
+                            );
+                          },
+                          itemCount: creditCards.length,
+                          layout: SwiperLayout.TINDER,
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: SizedBox(
+                            width: 360,
+                            child: Stack(
+                              children: [
+                                SizedBox(
+                                  width: 360,
+                                  child: CreditCardWidget(
+                                      balance: creditCards[0].balance,
+                                      cardHolderFullName:
+                                          creditCards[0].cardHolderFullName,
+                                      cardNumber: creditCards[0].cardNumber,
+                                      validThru: creditCards[0].validThru,
+                                      cardType: creditCards[0].cardType,
+                                      cvv: creditCards[0].cvv,
+                                      color: creditCards[0].color,
+                                      isFavorite: false),
+                                ),
+                                if (creditCards[0]
+                                    .isFavorite) // Mostrar la estrella solo si la tarjeta es favorita
+                                  const Positioned(
+                                    top: 10,
+                                    right:
+                                        10, // Coloca la estrella a la derecha
+                                    child: Icon(
+                                      Icons.star,
+                                      color: Colors.yellow,
+                                      size: 30,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        )
+                  : Center(
+                      child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Aun no tienes una tarjeta registrada",
+                            style:
+                                TextStyle(fontSize: 18, color: Colors.black)),
+                        const Text("Registra una ahora",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: AppColors.primaryColor)),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Container(
+                            decoration: BoxDecoration(
+                                color: AppColors
+                                    .primaryColor, // Cambia el color del fondo
+                                borderRadius: BorderRadius.circular(
+                                    30)), // Agrega bordes redondeados
 
-                                  child: IconButton(
-                                      color: Colors.white,
-                                      onPressed: () {
-                                        Navigator.pushNamed(
-                                            context, Routes.CARDPAGE);
-                                      },
-                                      icon: const Icon(
-                                        FontAwesomeIcons.arrowRightFromBracket,
-                                        size: 20,
-                                      )))
-                            ],
-                          ));
-                  })),
+                            child: IconButton(
+                                color: Colors.white,
+                                onPressed: () {
+                                  Navigator.pushNamed(context, Routes.CARDPAGE);
+                                },
+                                icon: const Icon(
+                                  FontAwesomeIcons.arrowRightFromBracket,
+                                  size: 20,
+                                )))
+                      ],
+                    ))),
         ));
   }
 }

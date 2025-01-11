@@ -55,15 +55,7 @@ class _QrPageState extends State<QrPage> {
                   "assets/image/paganini_logo_horizontal_morado.png"),
             ),
           ),
-          GestureDetector(
-            onTap: (){
-              ShowQr.showQrDialog(context, qrContainer, userName);
-            },
-              child: const Icon(
-            Icons.zoom_in,
-            size: 30,
-            color: AppColors.primaryColor,
-          )),
+          
           //Text(_result ?? 'No result'),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,

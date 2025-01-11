@@ -42,6 +42,7 @@ class _ReturnAmountPageState extends State<ReturnAmountPage> {
 
   bool _isLoading = false;
   String selectedType = "count";
+  bool _isEnabledTextFormField = true;
   @override
   Widget build(BuildContext context) {
     final saldoProviderWatch = context.watch<SaldoProvider>();
@@ -58,45 +59,7 @@ class _ReturnAmountPageState extends State<ReturnAmountPage> {
         title: const ContentAppBar(),
       ),
       body: _isLoading
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                      width: 300,
-                      height: 130,
-                      child: Image.asset(
-                          "assets/image/paganini_logo_horizontal_negro.png")),
-                  const Text(
-                    "Procesando",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  StreamBuilder<double>(
-                      stream: Stream.periodic(const Duration(milliseconds: 200),
-                          (value) {
-                        return (value * 2) / 25;
-                      }).takeWhile((value) => value < 100),
-                      builder: (context, snapshot) {
-                        final progressValue = snapshot.data ?? 0.0;
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              left: 20, right: 20, top: 8, bottom: 8),
-                          child: LinearProgressIndicator(
-                            value: progressValue,
-                            // minHeight: 100,
-                          ),
-                        );
-                      })
-                ],
-              ),
-            )
+          ? const _ProcessingStep()
           : Center(
               child: Column(
                 children: [
@@ -128,7 +91,7 @@ class _ReturnAmountPageState extends State<ReturnAmountPage> {
                                 height:
                                     5), // Espacio entre el texto de saldo y el valor
                             Text(
-                              "\$${saldoProviderWatch.saldo}", // Aquí pones el valor que quieres mostrar
+                              "\$${saldoProviderRead.saldo}", // Aquí pones el valor que quieres mostrar
                               style: const TextStyle(
                                 color: Colors.white, // Color del texto
                                 fontSize: 37,
@@ -142,19 +105,49 @@ class _ReturnAmountPageState extends State<ReturnAmountPage> {
                     height: 20,
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: TextFormFieldWidget(
-                        controller: returnAmountController,
-                        hintText: "Agrege la catidad de saldo a regresar",
-                        textInputType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'ingrese el monto';
-                          }
-                          return null;
-                        }),
+                      padding: const EdgeInsets.symmetric(horizontal: 26),
+                      child: Form(
+                        child: TextFormFieldWidget(
+                            enabled: _isEnabledTextFormField,
+                            controller: returnAmountController,
+                            hintText: "Asigne el valor a regresar",
+                            textInputType: TextInputType.number,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'ingrese el monto';
+                              }
+                              return null;
+                            }),
+                      )),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          const Text(
+                            "Todo",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          Checkbox(
+                            tristate: false,
+                            visualDensity: VisualDensity.compact,
+                            checkColor: Colors.white,
+                            //fillColor: const WidgetStatePropertyAll(Colors.red),
+                            activeColor: Colors.green,
+                            hoverColor: AppColors.primaryColor,
+                            value: !_isEnabledTextFormField,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _isEnabledTextFormField =
+                                    !_isEnabledTextFormField;
+                              });
+                            },
+                          )
+                        ]),
                   ),
-
                   const Padding(
                     padding: EdgeInsets.only(left: 20, top: 10),
                     child: Align(
@@ -235,8 +228,89 @@ class _ReturnAmountPageState extends State<ReturnAmountPage> {
                       children: [
                         ElevatedButton(
                           onPressed: () async {
-                            final amountReturn = double.parse(returnAmountController.text);
-                            int selectedIndex =_pageController.page?.round() ?? 0;
+                            if (saldoProviderRead.saldo == 0) {
+                              debugPrint("El saldo actual es 0");
+                              AnimatedSnackBar(
+                                duration: const Duration(seconds: 3),
+                                builder: ((context) {
+                                  return MaterialAnimatedSnackBar(
+                                    iconData: Icons.info,
+                                    messageText: 'No hay saldo en la cuenta',
+                                    type: AnimatedSnackBarType.error,
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(20)),
+                                    backgroundColor: Colors.blue[900]!,
+                                    titleTextStyle: const TextStyle(
+                                      color: Color.fromARGB(255, 255, 255, 255),
+                                      fontSize: 10,
+                                    ),
+                                  );
+                                }),
+                              ).show(context);
+                              return;
+                            }
+                            if (!_isEnabledTextFormField) {
+                              setState(() {
+                                _isLoading = true; // Mostrar indicador de carga
+                              });
+                              int selectedIndex = _pageController.page?.round() ?? 0;
+                              final selectedCard = creditCards[selectedIndex];
+                              final newBalance = selectedCard.balance + saldoProviderRead.saldo;
+                              // Operación asíncrona fuera de setState
+                              await Future.delayed(const Duration(seconds: 2));
+                              creditCardProviderWatch.updateBalance(userId!, selectedIndex, newBalance);
+                              saldoProviderWatch.setZero();
+                              if (context.mounted) {
+                                // Asegurarse de que el contexto siga montado antes de navegar
+                                Navigator.pop(context);
+                                AnimatedSnackBar(
+                                duration: const Duration(seconds: 3),
+                                builder: ((context) {
+                                  return MaterialAnimatedSnackBar(
+                                    iconData: Icons.check,
+                                    messageText: 'Accion exitosa',
+                                    type: AnimatedSnackBarType.error,
+                                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                                    backgroundColor: Colors.green[900]!,
+                                    titleTextStyle: const TextStyle(
+                                      color: Color.fromARGB(255, 255, 255, 255),
+                                      fontSize: 10,
+                                    ),
+                                  );
+                                }),
+                              ).show(context);
+                              }
+
+                              setState(() {
+                                _isLoading =false; // Ocultar indicador de carga
+                              });
+
+                              return;
+                            }
+
+                            if (returnAmountController.text.isEmpty) {
+                              AnimatedSnackBar(
+                                duration: const Duration(seconds: 3),
+                                builder: ((context) {
+                                  return MaterialAnimatedSnackBar(
+                                    iconData: Icons.info,
+                                    messageText: 'Asigne un monto',
+                                    type: AnimatedSnackBarType.error,
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(20)),
+                                    backgroundColor: Colors.blue[900]!,
+                                    titleTextStyle: const TextStyle(
+                                      color: Color.fromARGB(255, 255, 255, 255),
+                                      fontSize: 10,
+                                    ),
+                                  );
+                                }),
+                              ).show(context);
+                              return;
+                            }
+
+                            final double amountReturn = double.parse(returnAmountController.text);
+                            int selectedIndex = _pageController.page?.round() ?? 0;
                             final selectedCard = creditCards[selectedIndex];
                             debugPrint("El monto a regresar es: $amountReturn");
                             if (amountReturn < 0 || amountReturn == 0) {
@@ -281,23 +355,26 @@ class _ReturnAmountPageState extends State<ReturnAmountPage> {
                               return;
                             }
 
-                             setState(() {
+                            setState(() {
                               _isLoading = true; // Mostrar indicador de carga
                             });
-                            
-                            saldoProviderWatch.subRecharge(amountReturn);
-                            final newBalance = amountReturn +  creditCards[selectedIndex].balance;
-                            creditCardProviderWatch.updateBalance(userId!, selectedIndex, newBalance); 
+                            await Future.delayed(const Duration(seconds: 2));
 
-                            AnimatedSnackBar(
+                            saldoProviderWatch.subRecharge(amountReturn);
+                            final newBalance =amountReturn + selectedCard.balance;
+                            creditCardProviderWatch.updateBalance(userId!, selectedIndex, newBalance);
+
+                            if (context.mounted) {
+                              Navigator.pop(context);
+
+                              AnimatedSnackBar(
                                 duration: const Duration(seconds: 3),
                                 builder: ((context) {
                                   return MaterialAnimatedSnackBar(
                                     iconData: Icons.check,
-                                    messageText: 'Se ha agregado el monto correctamente',
+                                    messageText: 'Operacion realizada con exito',
                                     type: AnimatedSnackBarType.error,
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(20)),
+                                    borderRadius: const BorderRadius.all(Radius.circular(20)),
                                     backgroundColor: Colors.green[900]!,
                                     titleTextStyle: const TextStyle(
                                       color: Color.fromARGB(255, 255, 255, 255),
@@ -306,10 +383,10 @@ class _ReturnAmountPageState extends State<ReturnAmountPage> {
                                   );
                                 }),
                               ).show(context);
-
-                            Navigator.pushNamed(context, Routes.NAVIGATIONPAGE);
-                          
-                            
+                            }
+                             setState(() {
+                                _isLoading =false; // Ocultar indicador de carga
+                              });
                           },
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
@@ -334,6 +411,51 @@ class _ReturnAmountPageState extends State<ReturnAmountPage> {
           onPressed: () {
             Navigator.pop(context);
           }),
+    );
+  }
+}
+
+class _ProcessingStep extends StatelessWidget {
+  const _ProcessingStep();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+              width: 300,
+              height: 130,
+              child: Image.asset(
+                  "assets/image/paganini_logo_horizontal_negro.png")),
+          const Text(
+            "Procesando",
+            style: TextStyle(
+                color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          StreamBuilder<double>(
+              stream:
+                  Stream.periodic(const Duration(milliseconds: 200), (value) {
+                return (value * 2) / 25;
+              }).takeWhile((value) => value < 100),
+              builder: (context, snapshot) {
+                final progressValue = snapshot.data ?? 0.0;
+                return Padding(
+                  padding: const EdgeInsets.only(
+                      left: 20, right: 20, top: 8, bottom: 8),
+                  child: LinearProgressIndicator(
+                    value: progressValue,
+                    // minHeight: 100,
+                  ),
+                );
+              })
+        ],
+      ),
     );
   }
 }

@@ -166,7 +166,6 @@ class _ContainerIcon extends StatelessWidget {
   final Color color;
   final GestureTapCallback onTap;
   const _ContainerIcon({
-    super.key,
     required this.iconData,
     required this.color,
     required this.onTap,

@@ -6,6 +6,7 @@ import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/data/local/notification_service.dart';
 import 'package:paganini/helpers/request_notification_permission.dart';
+import 'package:paganini/presentation/widgets/loading_screen1_widget.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
@@ -13,6 +14,7 @@ import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
 import 'package:paganini/presentation/widgets/text_form_field_widget.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -26,19 +28,13 @@ class _LoginRegisterScreenState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _isPasswordVisible = false;
 
-
   void signUserIn(NotificationService notificationService) async {
     // Muestra el diálogo de carga
     showDialog(
       context: context,
-      barrierDismissible:
-          false, // Evita que el usuario cierre el diálogo manualmente
+      barrierDismissible:false, // Evita que el usuario cierre el diálogo manualmente
       builder: (context) {
-        return const Center(
-          child: CircularProgressIndicator(
-            backgroundColor: AppColors.primaryColor,
-          ),
-        );
+        return const Center(child: LoadingScreen());
       },
     );
 
@@ -49,27 +45,14 @@ class _LoginRegisterScreenState extends State<LoginPage> {
         password: passwordController.text.trim(),
       );
 
+      // Introduce un retraso antes de cerrar el diálogo
+      await Future.delayed(const Duration(seconds: 2));
+
       // Una vez exitoso, cierra el diálogo
       Navigator.pop(context);
-       await RequestNotificationPermission.requestNotificationPermission();
-       notificationService.showNotification("Inicio de Sesion", "Haz iniciado sesion de manera exitosa");
-      // Muestra el snackbar de éxito
-      /*AnimatedSnackBar(
-        duration: const Duration(seconds: 3),
-        builder: ((context) {
-          return MaterialAnimatedSnackBar(
-            iconData: Icons.check,
-            messageText: 'Inicio de sesión exitoso',
-            type: AnimatedSnackBarType.success,
-            borderRadius: const BorderRadius.all(Radius.circular(20)),
-            backgroundColor: Colors.green[400],
-            titleTextStyle: const TextStyle(
-              color: Color.fromARGB(255, 255, 255, 255),
-              fontSize: 16,
-            ),
-          );
-        }),
-      ).show(context);*/
+      await RequestNotificationPermission.requestNotificationPermission();
+      notificationService.showNotification(
+          "Inicio de Sesión", "Haz iniciado sesión de manera exitosa");
 
       // Navega a la siguiente pantalla
       Navigator.pushNamedAndRemoveUntil(
@@ -92,7 +75,6 @@ class _LoginRegisterScreenState extends State<LoginPage> {
         _showSnackBar(
           'Error en el inicio de sesión',
           const Color.fromARGB(255, 236, 45, 55),
-
         );
       }
     } catch (e) {
@@ -102,7 +84,6 @@ class _LoginRegisterScreenState extends State<LoginPage> {
       _showSnackBar(
         'Error en el inicio de sesión',
         const Color.fromARGB(255, 236, 45, 55),
-
       );
     }
   }
@@ -144,11 +125,12 @@ class _LoginRegisterScreenState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     //double myHeight = MediaQuery.of(context).size.height;
-    final themeProvider = Provider .of<ThemeProvider>(context, listen: false);
-    final notificationService = Provider.of<NotificationService>(context, listen: false);
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final notificationService =
+        Provider.of<NotificationService>(context, listen: false);
     return Scaffold(
       resizeToAvoidBottomInset: false,
-     // backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding:
@@ -158,16 +140,22 @@ class _LoginRegisterScreenState extends State<LoginPage> {
               const SizedBox(
                 height: 50,
               ),
-               Text(
+              Text(
                 'Bienvenido',
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold,color: themeProvider.isDarkMode ? Colors.white:Colors.black),
+                style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    color:
+                        themeProvider.isDarkMode ? Colors.white : Colors.black),
               ),
               SizedBox(
                   width: 300,
                   height: 100,
-                  child: themeProvider.isDarkMode ? Image.asset(
-                      "assets/image/paganini_logo_horizontal_morado.png"): Image.asset(
-                      "assets/image/paganini_logo_horizontal_negro.png")),
+                  child: themeProvider.isDarkMode
+                      ? Image.asset(
+                          "assets/image/paganini_logo_horizontal_morado.png")
+                      : Image.asset(
+                          "assets/image/paganini_logo_horizontal_negro.png")),
               const SizedBox(
                 height: 40,
               ),
@@ -271,9 +259,6 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                           onPressed: () async {
                             debugPrint("INICIANDO SESION");
                             signUserIn(notificationService);
-                            //await RequestNotificationPermission.requestNotificationPermission();
-                            //notificationService.showNotification("Inicio de Sesion", "Haz iniciado sesion de manera exitosa");
-                             
                           },
                         ),
                       ),
@@ -312,12 +297,15 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                       Text(
+                      Text(
                         "Nuevo en paganini?",
                         style: TextStyle(
-                            color: themeProvider.isDarkMode ? Colors.white:Colors.black,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,),
+                          color: themeProvider.isDarkMode
+                              ? Colors.white
+                              : Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                       TextButton(
                         onPressed: () {
@@ -340,9 +328,14 @@ class _LoginRegisterScreenState extends State<LoginPage> {
           ),
         ),
       ),
-      floatingActionButton: Platform.isIOS ? FloatingButtonPaganini(iconData: Icons.arrow_back,onPressed: (){
-        Navigator.pop(context);
-      },) : null,
+      floatingActionButton: Platform.isIOS
+          ? FloatingButtonPaganini(
+              iconData: Icons.arrow_back,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            )
+          : null,
     );
   }
 }

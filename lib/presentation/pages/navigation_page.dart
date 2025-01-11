@@ -46,7 +46,7 @@ class _NavigationPageState extends State<NavigationPage> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    final notificationService = Provider.of<NotificationService>(context);
+    //final notificationService = Provider.of<NotificationService>(context);
     const itemsIcons = [
       Icon(
         Icons.home,
