@@ -10,8 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:paganini/presentation/pages/screens.dart';
 
 class MainApp extends StatelessWidget {
-  final AppData appData;
-  const MainApp({super.key, required this.appData});
+  final AppData? appData;
+  const MainApp({super.key,  this.appData});
   @override
   Widget build(BuildContext context) {
     Provider.of<UserProvider>(context, listen: false).initializeUser();

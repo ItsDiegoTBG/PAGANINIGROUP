@@ -49,9 +49,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await Future.delayed(const Duration(seconds: 2));
+  await Future.delayed(const Duration(seconds: 1));
   FlutterNativeSplash.remove();
-  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  //await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   runApp(
     MultiProvider(
@@ -67,14 +67,8 @@ void main() async {
         ChangeNotifierProvider(lazy: false, create: (_) => ThemeProvider()),
         ChangeNotifierProvider(lazy: false,create: (_) => IntroductionProvider()),
       ],
-      child: const AppLoader(),
+      child: const MainApp(),
     ),
   );
-}
-
-void setup() async {
-  await Future.delayed(const Duration(seconds: 2));
-  FlutterNativeSplash.remove();
-  WidgetsFlutterBinding.ensureInitialized();
 }
 
