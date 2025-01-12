@@ -246,6 +246,7 @@ class _QuickAccessView extends StatelessWidget {
         GestureDetector(
           onTap: () {
             debugPrint("Muestra el historial");
+            Navigator.pushNamed(context, Routes.HISTORYPAGE);
           },
           child: ContainerActionButton(
             width: size.width * 0.20,

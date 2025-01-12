@@ -20,3 +20,5 @@ export 'payment/confirm_payments_options_selected.dart';
 export 'initial_page.dart';
 export 'introduction_tutorial/app_tutorial_screen.dart';
 export 'recharge/return_amount_page.dart';
+export 'forget_password_page.dart';
+export 'history/history_movement.dart';

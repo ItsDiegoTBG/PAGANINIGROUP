@@ -39,6 +39,7 @@ class MainApp extends StatelessWidget {
           Routes.RETURNAMOUNTPAGE: (context) => const ReturnAmountPage(),
           Routes.FORGETPASSWORD : (context) => const   ForgetPasswordPage(),
           Routes.SETTINGSPAGE: (context) => const SettingPage(),
+          Routes.HISTORYPAGE: (context) => const HistoryMovement(),
         },
         theme: Provider.of<ThemeProvider>(context).isDarkMode
             ? AppTheme().themeDarkMode()
