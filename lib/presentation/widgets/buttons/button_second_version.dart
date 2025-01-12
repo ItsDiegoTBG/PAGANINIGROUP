@@ -7,36 +7,51 @@ class ButtonSecondVersion extends StatelessWidget {
   final double verticalPadding;
   final double horizontalPadding;
   final Color backgroundColor;
+  final double? buttonWidth;
+  final double? buttonHeight;
+  final double? fontSize;
+  final Color? colorText;
+
   const ButtonSecondVersion({
     super.key,
     required this.text,
     required this.function,
     this.backgroundColor = AppColors.secondaryColor,
     this.verticalPadding = 5,
-    this.horizontalPadding = 30,
+    this.colorText = Colors.black,
+    this.horizontalPadding = 30, this.buttonWidth, this.buttonHeight, this.fontSize
+   
   });
 
   @override
   Widget build(BuildContext context) {
-
-    return TextButton(
-      onPressed: () {
-        function();
-      },
-      style: TextButton.styleFrom(
+    return SizedBox(
+      width: buttonWidth,
+      height: buttonHeight,
+      child: TextButton(
+        onPressed: () {
+          function();
+        },
+        style: TextButton.styleFrom(
           backgroundColor: backgroundColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
-          )),
-      child:  Padding(
-        padding:
-            EdgeInsets.symmetric(vertical: verticalPadding,horizontal:horizontalPadding),
-        child: Text(
-          text,
-          style: const TextStyle(
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: verticalPadding,
+            horizontal: horizontalPadding,
+          ),
+          child: Text(
+            text,
+            textAlign: TextAlign.center, // Centra el texto dentro del botón
+            style:  TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.black,
-              fontSize: 22),
+              color: colorText,
+              fontSize: fontSize ?? 22,
+            ),
+          ),
         ),
       ),
     );

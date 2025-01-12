@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:paganini/core/utils/colors.dart';
 
-
 class TextFormFieldSecondVersion extends StatelessWidget {
   final TextEditingController controller;
   final TextCapitalization textCapitalization;
@@ -31,24 +30,57 @@ class TextFormFieldSecondVersion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-        keyboardType: keyboardType,
-        textCapitalization: textCapitalization,
-        onChanged: onChanged,
-        textAlign: textAlign ?? TextAlign.center,
-        inputFormatters: inputFormatters,
-        controller: controller,
-        validator: validator,
-        decoration: InputDecoration(
-          prefixIconColor: AppColors.primaryColor,
-          prefixIcon: icon != null // Verifica si el icono es nulo
-              ? Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: Icon(icon),
-                )
-              : null, //
-          border: inputBorder,
-          hintText: hintext,
-          hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
-        ));
+      controller: controller,
+      keyboardType: keyboardType,
+      textCapitalization: textCapitalization,
+      onChanged: onChanged,
+      textAlign: textAlign ?? TextAlign.center,
+      inputFormatters: inputFormatters,
+      validator: validator,
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20), // Borde circular
+          borderSide: const BorderSide(
+            color: AppColors.primaryColor,
+            width: 2,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20), // Borde circular
+          borderSide: const BorderSide(
+            color: Colors.grey,
+            width: 1.5,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: const BorderSide(
+            color: Colors.red,
+            width: 1.5,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: const BorderSide(
+            color: Colors.red,
+            width: 2,
+          ),
+        ),
+        hintText: hintext,
+        hintStyle: const TextStyle(
+          fontWeight: FontWeight.w300,
+          fontSize: 18, // Tamaño de texto del hint
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 16, // Espaciado vertical
+          horizontal: 20, // Espaciado horizontal
+        ),
+      ),
+      style: const TextStyle(
+        fontSize: 18, // Tamaño del texto ingresado
+        height: 1.5, // Espaciado entre líneas
+      ),
+    );
   }
 }

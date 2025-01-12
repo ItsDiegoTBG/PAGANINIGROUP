@@ -1,13 +1,24 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_swiper_view/flutter_swiper_view.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:paganini/core/device/qr_code_scanner.dart';
+import 'package:paganini/core/routes/app_routes.dart';
+import 'package:paganini/presentation/pages/payment/payment_page.dart';
+import 'package:paganini/presentation/pages/recharge/recharge_page.dart';
+import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
+import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
-import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
-import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
+
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
 import 'package:provider/provider.dart';
-import 'package:paganini/core/routes/app_routes.dart';
+
+import '../widgets/credit_card_ui.dart';
+//import 'package:paganini/core/routes/app_routes.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,163 +28,226 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool showAllMovements = false; // Estado para controlar la expansión.
-  List<String> movements = [
-    'Compra en Supermercado',
-    'Pago de Servicios',
-    'Transferencia recibida',
-    'Recarga de saldo',
-    'Pago en Restaurante',
-    'Suscripción mensual',
-  ];
-  List<String> filteredMovements = []; // Lista filtrada.
-  String searchQuery = ""; // Consulta de búsqueda.
 
+  
   @override
   void initState() {
     super.initState();
-    filteredMovements = movements; // Inicializa con todos los movimientos.
+    final userProvider = Provider.of<UserProvider>(context, listen: false); 
+    final creditCardProvider =Provider.of<CreditCardProvider>(context, listen: false);
+    if(userProvider.user != null){
+      creditCardProvider.fetchCreditCards(userProvider.user!.uid);
+    }
   }
 
-  void _filterMovements(String query) {
-    setState(() {
-      searchQuery = query;
-      if (query.isEmpty) {
-        filteredMovements = movements;
-      } else {
-        filteredMovements = movements
-            .where((movement) =>
-                movement.toLowerCase().contains(query.toLowerCase()))
-            .toList();
-      }
-    });
+  String? _result;
+  void setResult(String result) {
+    setState(() => _result = result);
   }
 
   @override
   Widget build(BuildContext context) {
     final saldoProviderWatch = context.watch<SaldoProvider>();
-    final userProviderWatch = context.watch<UserProvider>();
+    //final saldoProviderRead = context.read<SaldoProvider>();
 
+    final userProviderWatch = context.watch<UserProvider>();
+    final creditCardProviderWatch = context.watch<CreditCardProvider>();
+
+    // Obtenemos la lista de tarjetas actualizada directamente del provider
+    final creditCards = creditCardProviderWatch.creditCards;
+    // theme
+ 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        title: const ContentAppBar(),
-      ),
-      backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          const SizedBox(height: 20),
-          Container(
-            height: 150,
-            width: 360,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: AppColors.primaryColor,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
+        body: Column(
+          children: [
+            Container(
+              height: 120,
+              width: 360,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: AppColors.primaryColor
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                   const Padding(
+                    padding: EdgeInsets.only(left: 20,top: 5),
+                    child: Text(
                       "Saldo",
                       style: TextStyle(
-                          color: Colors.white,
+                          color:Colors.white,
                           fontSize: 33,
                           fontWeight: FontWeight.bold),
                     ),
-                    Text(
-                      "\$${saldoProviderWatch.saldo}",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 37,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: Text(
+                            "\$${saldoProviderWatch.saldo}",
+                            style:const TextStyle(
+                               color: Colors.white,
+                              fontSize: 37,
+                              fontWeight: FontWeight.bold,
+                            
+                            ),
+                          ),
+                        ),
                       ),
-                    )
-                  ],
-                ),
-                ButtonSecondVersion(
-                  verticalPadding: 2.0,
-                  horizontalPadding: 3.5,
-                  text: "Agregar",
-                  function: () {
-                    Navigator.pushReplacementNamed(context, Routes.RECHARGE);
-                  },
-                ),
-              ],
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.only(top: 20, left: 22, right: 8, bottom: 8),
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                "Últimos Movimientos",
-                style: TextStyle(
-                    fontStyle: FontStyle.italic,
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20),   
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors
+                                .secondaryColor, // Cambia el color del fondo
+                            borderRadius: BorderRadius.circular(
+                                30), // Agrega bordes redondeados
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.add,
+                                color: AppColors
+                                    .primaryColor), // Cambia el color del icono
+                            onPressed: () {
+                              Navigator.pushNamed(context, Routes.RECHARGE);
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: TextField(
-              decoration: InputDecoration(
-                labelText: 'Buscar movimientos',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                suffixIcon: Icon(Icons.search),
-              ),
-              onChanged: _filterMovements, // Filtrar al escribir.
+            SizedBox(
+                height: 200,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(25),
+                    bottomRight: Radius.circular(25),
+                  ),
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: creditCards.isNotEmpty
+                        ? creditCards.length > 1
+                            ? Swiper(
+                                itemWidth: 400,
+                                itemHeight: 190,
+                                loop: true,
+                                duration: 500,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  final card = creditCards[index];
+                                  return CreditCardWidget(
+                                    balance: card.balance,
+                                    cardHolderFullName: card.cardHolderFullName,
+                                    cardNumber: card.cardNumber,
+                                    validThru: card.validThru,
+                                    cardType: card.cardType,
+                                    cvv: card.cvv,
+                                    color: card.color,
+                                    isFavorite: card.isFavorite,
+                                  );
+                                },
+                                itemCount: creditCards.length,
+                                layout: SwiperLayout.TINDER,
+                              )
+                            : CreditCardWidget(
+                                balance: creditCards[0].balance,
+                                cardHolderFullName:
+                                    creditCards[0].cardHolderFullName,
+                                cardNumber: creditCards[0].cardNumber,
+                                validThru: creditCards[0].validThru,
+                                cardType: creditCards[0].cardType,
+                                cvv: creditCards[0].cvv,
+                                color: creditCards[0].color,
+                                isFavorite: creditCards[0].isFavorite,
+                              )
+                        : Center(
+                            child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text("Aun no tienes una tarjeta registrada",
+                                  style: TextStyle(
+                                      fontSize: 18, color: Colors.black)),
+                              const Text("Registra una ahora",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: AppColors.primaryColor)),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                  decoration: BoxDecoration(
+                                      color: AppColors
+                                          .primaryColor, // Cambia el color del fondo
+                                      borderRadius: BorderRadius.circular(
+                                          30)), // Agrega bordes redondeados
+
+                                  child: IconButton(
+                                      color: Colors.white,
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                            context, Routes.CARDPAGE);
+                                      },
+                                      icon: const Icon(
+                                        FontAwesomeIcons.arrowRightFromBracket,
+                                        size: 30,
+                                      )))
+                            ],
+                          )),
+                  ),
+                )),
+            const Padding(
+              padding: EdgeInsets.only(top: 20, left: 22, right: 8, bottom: 2),
+              child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "Acciones Rápidas",
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  )),
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(left: 22),
-                child: Text(
-                  "Movimientos",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
-              IconButton(
-                icon: Icon(showAllMovements ? Icons.expand_less : Icons.expand_more),
-                onPressed: () {
-                  setState(() {
-                    showAllMovements = !showAllMovements;
-                  });
-                },
-              ),
-            ],
-          ),
-          Expanded(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: showAllMovements
-                  ? filteredMovements.length
-                  : (filteredMovements.length > 3 ? 3 : filteredMovements.length),
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(filteredMovements[index]),
-                  leading: Icon(Icons.check_circle, color: AppColors.primaryColor),
-                );
-              },
+            Text(
+                "Inicio de cuenta con ${userProviderWatch.user?.email ?? 'usuario no disponible'}"),
+            const Text(
+                "Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator."),
+            const Padding(
+              padding: EdgeInsets.only(top: 25, left: 22, right: 8, bottom: 0),
+              child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "Movimientos",
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  )),
             ),
-          ),
-          const Text("Para ejemplo didactico"),
-          Text(
-              "Inicio de cuenta con ${userProviderWatch.user?.email ?? 'usuario no disponible'}"),
-        ],
-      ),
-      floatingActionButton: const FloatingButtonNavBarQr(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: const BottomMainAppBar(),
-    );
+            const Text(
+                "Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator."),
+            const Text(
+                "Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator."),
+            const Text(
+                "Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator."),
+          ],
+        ),
+        floatingActionButton: FloatingButtonPaganini(
+          isQrPrincipal: false,
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => QrCodeScanner(setResult: setResult),
+              ),
+            );
+          },
+          iconData: Icons.qr_code_scanner_rounded,
+        ));
   }
 }

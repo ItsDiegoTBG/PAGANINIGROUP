@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
 import 'package:paganini/presentation/widgets/text_form_field_widget.dart';
@@ -20,13 +22,17 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController cedController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  //final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
   bool _isPasswordVisible = false;
-
   Future<void> registerUser() async {
+    setState(() {
+      _isLoading = true;
+    });
     debugPrint("Vamos a registerUser");
+
     try {
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
@@ -35,8 +41,11 @@ class _RegisterPageState extends State<RegisterPage> {
       );
       String uid = userCredential.user!.uid;
 
-      // Guardar el nombre y otros datos en Firestore
-      await _firestore.collection('users').doc(uid).set({
+      // Obtener la referencia a la base de datos en tiempo real
+      DatabaseReference userRef = FirebaseDatabase.instance.ref('users/$uid');
+
+      // Guardar los datos del usuario en Realtime Database
+      await userRef.set({
         'firstname': firstNameController.text.trim(),
         'lastname': lastNameController.text.trim(),
         'ced': cedController.text.trim(),
@@ -44,10 +53,11 @@ class _RegisterPageState extends State<RegisterPage> {
         'phone': phoneController.text.trim(),
         'password': passwordController.text.trim(),
         'saldo': 0.0,
+        'cards': [],
         // Puedes añadir más campos si lo necesitas
       });
 
-      clearFields();
+      await clearFields();
 
       // Mostrar mensaje de éxito
       // ignore: use_build_context_synchronously
@@ -58,6 +68,10 @@ class _RegisterPageState extends State<RegisterPage> {
           backgroundColor: Colors.green,
         ),
       );
+      await Future.delayed(const Duration(seconds: 1));
+
+      // ignore: use_build_context_synchronously
+      await Navigator.pushNamed(context, Routes.LOGIN);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         wrongWeakPasswordMessage();
@@ -72,6 +86,11 @@ class _RegisterPageState extends State<RegisterPage> {
           backgroundColor: Colors.red,
         ),
       );
+      debugPrint(e.toString());
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -95,7 +114,7 @@ class _RegisterPageState extends State<RegisterPage> {
         });
   }
 
-  void clearFields() {
+  Future<void> clearFields() async {
     firstNameController.clear();
     lastNameController.clear();
     emailController.clear();
@@ -109,39 +128,40 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding:
-              const EdgeInsets.only(right: 16, left: 16, bottom: 16, top: 0),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 50,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  right: 16, left: 16, bottom: 16, top: 0),
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  const Text(
+                    'Bienvenido',
+                    style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 20),
+                  form(context)
+                ],
               ),
-              const Text(
-                'Bienvenido',
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-              form(context)
-            ],
+            ),
           ),
-        ),
+          if (_isLoading) // Mostrar CircularProgressIndicator cuando está cargando
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primaryColor,
+                  strokeWidth: 5,
+                  semanticsLabel: "Espera un segundo",
+                ),
+              ),
+            ),
+        ],
       ),
-      /*floatingActionButton: FloatingActionButton(
-          //shape: RoundedRectangleBorder(
-          //  borderRadius: BorderRadius.circular(50)
-          //),
-          onPressed: () {
-            debugPrint("Pop to Initial Page Paganini");
-            Navigator.pop(context);
-          },
-          backgroundColor: AppColors.primaryColor,
-          hoverColor: AppColors.primaryColor,
-          foregroundColor: Colors.white,
-          focusColor: AppColors.secondaryColor,
-          child: const Icon(Icons.arrow_back_rounded),
-        )*/
     );
   }
 
@@ -183,9 +203,10 @@ class _RegisterPageState extends State<RegisterPage> {
               validator: (value) {
                 if (value == null ||
                     value.isEmpty ||
-                    value.length != 10 ||
                     !RegExp(r'^\d+$').hasMatch(value)) {
                   return 'Por favor ingresa tu cedula';
+                } else if (value.length != 10) {
+                  return 'Deben ser 10 digitos';
                 }
                 return null;
               }),
@@ -222,24 +243,61 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           const SizedBox(height: 10),
           const Text("Contraseña", style: TextStyle(fontSize: 16)),
+          
           TextFormField(
             obscureText: !_isPasswordVisible,
             controller: passwordController,
             decoration: InputDecoration(
-                focusedBorder: const UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.primaryColor, width: 2)),
-                border: const UnderlineInputBorder(),
-                hintText: 'Crea una contraseña',
-                hintStyle: const TextStyle(fontWeight: FontWeight.w300),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.visibility),
-                  onPressed: () {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
-                  },
-                )),
+              suffixIcon: IconButton(
+                icon: _isPasswordVisible ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off),
+                onPressed: () {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                },
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20), // Borde circular
+                borderSide: const BorderSide(
+                  color: AppColors.primaryColor,
+                  width: 2,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20), // Borde circular
+                borderSide: const BorderSide(
+                  color: Colors.grey,
+                  width: 1.5,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: const BorderSide(
+                  color: Colors.red,
+                  width: 1.5,
+                ),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: const BorderSide(
+                  color: Colors.red,
+                  width: 2,
+                ),
+              ),
+              hintText: 'Ingresa tu contraseña',
+              hintStyle: const TextStyle(
+                fontWeight: FontWeight.w300,
+                fontSize: 18, // Tamaño de texto del hint
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 16, // Espaciado vertical
+                horizontal: 20, // Espaciado horizontal
+              ),
+            ),
+            style: const TextStyle(
+              fontSize: 18, // Tamaño del texto ingresado
+              height: 1.5, // Espaciado entre líneas
+            ),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Por favor ingresa una contraseña';
@@ -248,13 +306,13 @@ class _RegisterPageState extends State<RegisterPage> {
                 return 'La contraseña debe tener al menos 12 caracteres';
               }
               if (!RegExp(r'(?=.*[A-Z])').hasMatch(value)) {
-                return 'La contraseña debe incluir al menos una letra mayúscula';
+                return 'Incluya al menos una letra mayúscula';
               }
               if (!RegExp(r'(?=.*\d)').hasMatch(value)) {
-                return 'La contraseña debe incluir al menos un dígito';
+                return 'Incluya al menos un dígito';
               }
               if (!RegExp(r'(?=.*[@$!%*?&])').hasMatch(value)) {
-                return 'La contraseña debe incluir al menos un carácter especial (@, \$, !, %, *, ?, &)';
+                return 'Incluya al menos un carácter especial (@, \$, !, %, *, ?, &)';
               }
               return null;
             },
@@ -265,10 +323,10 @@ class _RegisterPageState extends State<RegisterPage> {
               Expanded(
                   child: ButtonWithoutIcon(
                       text: "Crear Usuario",
-                      onPressed: () {
+                      onPressed: () async {
                         FocusScope.of(context).unfocus();
                         if (_formKey.currentState!.validate()) {
-                          registerUser();
+                          await registerUser();
                         }
                       })),
               const SizedBox(width: 10),

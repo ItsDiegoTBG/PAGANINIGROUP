@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/domain/entity/card_credit.dart';
@@ -5,11 +6,9 @@ import 'package:paganini/domain/usecases/credit_cards_use_case.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
-import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version_icon.dart';
 import 'package:paganini/presentation/widgets/credit_card_ui.dart';
-import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
 import 'package:paganini/presentation/widgets/smooth_page_indicator.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +33,7 @@ class _WalletPageState extends State<WalletPage> {
     _pageController = PageController(viewportFraction: 0.8, initialPage: 0);
     final creditCardProvider =
         Provider.of<CreditCardProvider>(context, listen: false);
-    creditCardProvider.fetchCreditCards();
+    creditCardProvider.fetchCreditCards(FirebaseAuth.instance.currentUser!.uid);
   }
 
   @override
@@ -45,34 +44,27 @@ class _WalletPageState extends State<WalletPage> {
 
   @override
   Widget build(BuildContext context) {
+    
     final saldoProviderWatch = context.watch<SaldoProvider>();
-    final saldoProviderRead = context.read<SaldoProvider>();
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
 
     // Obtenemos la lista de tarjetas actualizada directamente del provider
     final creditCards = creditCardProviderWatch.creditCards;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.white,
-        title: const ContentAppBar(),
-      ),
-      body: Center(
+    return Center(
         child: Column(
           children: [
             Padding(
                 padding: const EdgeInsets.only(top: 50),
                 child: Container(
-                  height: 130,
-                  width: 360,
+                  height: 120,
+                  width: 350,
                   decoration: BoxDecoration(
                       color: AppColors.primaryColor,
                       borderRadius: BorderRadius.circular(20)),
                   child: Column(
                     children: [
                       const Padding(
-                        padding:  EdgeInsets.only(left: 40, top: 8),
+                        padding: EdgeInsets.only(left: 40, top: 8),
                         child: Align(
                           alignment: Alignment.topLeft,
                           child: Text(
@@ -94,7 +86,7 @@ class _WalletPageState extends State<WalletPage> {
                             color: Colors.white, // Color del texto
                             fontSize: 37,
                             fontWeight: FontWeight.bold,
-                            fontStyle: FontStyle.italic),
+                            ),
                       ),
                     ],
                   ),
@@ -105,6 +97,7 @@ class _WalletPageState extends State<WalletPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ButtonSecondVersion(
+                      horizontalPadding: 28,
                       text: "Agregar",
                       function: () {
                         Navigator.pushNamed(context, Routes.RECHARGE);
@@ -113,17 +106,29 @@ class _WalletPageState extends State<WalletPage> {
                     width: 10,
                   ),
                   ButtonSecondVersion(
+                    horizontalPadding: 26,
                     text: "Transferir",
-                    function: () {},
+                    function: () {
+                      Navigator.pushNamed(context, Routes.TRANSFERPAGE);
+                    },
                   )
                 ],
               ),
             ),
             //Text(creditCards.length.toString()),
-            creditCards.isEmpty ? const Padding(
-              padding:  EdgeInsets.symmetric(vertical: 25),
-              child: Text("No tiene tarjetas registradas",style: TextStyle(color: Colors.black,fontSize: 25,fontWeight: FontWeight.bold),overflow: TextOverflow.visible,),
-            ) : const Text(""),
+            creditCards.isEmpty
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 25),
+                    child: Text(
+                      "No tiene tarjetas registradas",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.visible,
+                    ),
+                  )
+                : const Text(""),
 
             //tarjatas
             Column(
@@ -139,7 +144,7 @@ class _WalletPageState extends State<WalletPage> {
                       itemBuilder: (context, index) {
                         final card = creditCards.isEmpty
                             ? CreditCardEntity(
-                              balance: 0,
+                                balance: 0,
                                 id: 4,
                                 cardHolderFullName: 'Paganini',
                                 cardNumber: '999999999999999999',
@@ -166,6 +171,8 @@ class _WalletPageState extends State<WalletPage> {
                                 child: Opacity(
                                   opacity: 1,
                                   child: CreditCardWidget(
+                                    supportNfc: true,
+                                    width: 400,
                                     balance: card.balance,
                                     cardHolderFullName: card.cardHolderFullName,
                                     cardNumber: card.cardNumber,
@@ -179,6 +186,9 @@ class _WalletPageState extends State<WalletPage> {
                               );
                             });
                       }),
+                ),
+                const SizedBox(
+                  height: 10,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 5),
@@ -202,6 +212,7 @@ class _WalletPageState extends State<WalletPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ButtonSecondVersionIcon(
+                    horizontalPadding: 12,
                     function: () {
                       Navigator.pushNamed(context, Routes.CARDDELETEPAGE);
                     },
@@ -209,6 +220,7 @@ class _WalletPageState extends State<WalletPage> {
                     icon: Icons.delete_rounded,
                     iconAlignment: IconAlignment.end),
                 ButtonSecondVersionIcon(
+                  horizontalPadding: 12,
                     function: () {
                       Navigator.pushNamed(context, Routes.CARDPAGE);
                     },
@@ -219,10 +231,8 @@ class _WalletPageState extends State<WalletPage> {
             )
           ],
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: const FloatingButtonNavBarQr(),
-      bottomNavigationBar: const BottomMainAppBar(),
-    );
+      );
+    
+    
   }
 }

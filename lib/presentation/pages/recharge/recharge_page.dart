@@ -1,11 +1,11 @@
 // ignore_for_file: avoid_print
 
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
-import 'package:paganini/presentation/pages/confirm_recharge_page.dart';
+import 'package:paganini/presentation/pages/recharge/confirm_recharge_page.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
-import 'package:paganini/presentation/widgets/bottom_main_app.dart';
-import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
+import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
 
 class RechargePage extends StatefulWidget {
   const RechargePage({super.key});
@@ -20,7 +20,6 @@ class RechargePageState extends State<RechargePage> {
 
   void _selectAmount(String amount) {
     setState(() {
-      // _selectedAmount = amount;
       controllerAmount.text = amount;
     });
   }
@@ -37,7 +36,6 @@ class RechargePageState extends State<RechargePage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         title: const ContentAppBar(),
       ),
@@ -47,20 +45,26 @@ class RechargePageState extends State<RechargePage> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppColors.primaryColor)),
-                child: const Text(
-                  'Recarga',
-                  style: TextStyle(color: AppColors.primaryColor, fontSize: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 24),
+                    decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: AppColors.primaryColor)),
+                    child: const Text(
+                      'Recarga',
+                      style: TextStyle(
+                          color: AppColors.primaryColor, fontSize: 24),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
             const SizedBox(height: 60),
             const Text(
@@ -114,7 +118,15 @@ class RechargePageState extends State<RechargePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                _buildAmountButton('10'),
                 _buildAmountButton('20'),
+                _buildAmountButton('30'),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
                 _buildAmountButton('50'),
                 _buildAmountButton('100'),
               ],
@@ -140,13 +152,57 @@ class RechargePageState extends State<RechargePage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    debugPrint('Monto seleccionado: $_selectedAmount');
+                    debugPrint('Monto seleccionado: $controllerAmount');
+                    final monto = controllerAmount.text.isNotEmpty
+                        ? double.tryParse(controllerAmount.text)
+                        : 0.0;
+                    if (controllerAmount.text.isEmpty) {
+                      AnimatedSnackBar(
+                        duration: const Duration(seconds: 3),
+                        builder: ((context) {
+                          return MaterialAnimatedSnackBar(
+                            iconData: Icons.check,
+                            messageText: 'Por favor ingrese un monto',
+                            type: AnimatedSnackBarType.info,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
+                            backgroundColor: Colors.blue[800]!,
+                            titleTextStyle: const TextStyle(
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 10,
+                            ),
+                          );
+                        }),
+                      ).show(context);
+                      return;
+                    }
+
+                    if (monto == null || monto <= 0) {
+                      AnimatedSnackBar(
+                        duration: const Duration(seconds: 3),
+                        builder: ((context) {
+                          return MaterialAnimatedSnackBar(
+                            iconData: Icons.check,
+                            messageText: 'Por favor ingrese un monto válido',
+                            type: AnimatedSnackBarType.info,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
+                            backgroundColor: Colors.blue[800]!,
+                            titleTextStyle: const TextStyle(
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 10,
+                            ),
+                          );
+                        }),
+                      ).show(context);
+                      return;
+                    }
+
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => ConfirmRechargePage(
-                                valueRecharge:
-                                  controllerAmount.text)));
+                                valueRecharge: controllerAmount.text)));
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
@@ -166,9 +222,12 @@ class RechargePageState extends State<RechargePage> {
           ],
         ),
       ),
-      floatingActionButton: const FloatingButtonNavBarQr(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: const BottomMainAppBar(),
+      floatingActionButton: FloatingButtonPaganini(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        iconData: Icons.arrow_back_rounded,
+      ),
     );
   }
 
@@ -184,7 +243,7 @@ class RechargePageState extends State<RechargePage> {
         ),
       ),
       child: Text(
-        amount,
+        "\$$amount",
         style: const TextStyle(
             color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
       ),

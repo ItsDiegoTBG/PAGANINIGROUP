@@ -3,12 +3,13 @@ import 'package:paganini/core/utils/colors.dart';
 
 import 'package:paganini/domain/entity/card_credit.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
+import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
-import 'package:paganini/presentation/widgets/bottom_main_app.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version_icon.dart';
 import 'package:paganini/presentation/widgets/credit_card_ui.dart';
-import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
+import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
+
 import 'package:provider/provider.dart';
 
 class CardDeletePage extends StatefulWidget {
@@ -24,16 +25,16 @@ class _CardDeletePageState extends State<CardDeletePage> {
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
     final creditCardProviderRead = context.read<CreditCardProvider>();
     final creditCards = creditCardProviderWatch.creditCards;
+    final userId = context.read<UserProvider>().user!.uid;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         title: const ContentAppBar(),
       ),
       backgroundColor: Colors.white,
       body: creditCards.isEmpty
-          ?  Center(
-            child: Column(
+          ? Center(
+              child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text("No tiene tarjetas registradas",style: TextStyle(color: Colors.black,fontSize: 25,fontWeight: FontWeight.bold),overflow: TextOverflow.visible,),
@@ -41,17 +42,21 @@ class _CardDeletePageState extends State<CardDeletePage> {
                   Navigator.pop(context);
                 },icon:Icons.arrow_back_ios_rounded, iconAlignment: IconAlignment.start,),
               ],
-            )
-          )
-          : creditCardListView(creditCards, creditCardProviderRead),
-      floatingActionButton: const FloatingButtonNavBarQr(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: const BottomMainAppBar(),
+            ))
+          : creditCardListView(creditCards, creditCardProviderRead,userId),
+      floatingActionButton: FloatingButtonPaganini(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        iconData: Icons.arrow_back_rounded,
+      ),
+      //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
   Padding creditCardListView(List<CreditCardEntity> creditCards,
-      CreditCardProvider creditCardProviderRead) {
+      CreditCardProvider creditCardProviderRead, String userId) {
+    
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8, top: 0, bottom: 30),
       child: CustomScrollView(
@@ -76,17 +81,20 @@ class _CardDeletePageState extends State<CardDeletePage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      SizedBox(
-                        height: 200,
-                        child: CreditCardWidget(
-                          balance: card.balance,
-                          cardHolderFullName: card.cardHolderFullName,
-                          cardNumber: card.cardNumber,
-                          validThru: card.validThru,
-                          cardType: card.cardType,
-                          cvv: card.cvv,
-                          color: card.color,
-                          isFavorite: card.isFavorite,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 2),
+                        child: SizedBox(
+                          height: 200,
+                          child: CreditCardWidget(
+                            balance: card.balance,
+                            cardHolderFullName: card.cardHolderFullName,
+                            cardNumber: card.cardNumber,
+                            validThru: card.validThru,
+                            cardType: card.cardType,
+                            cvv: card.cvv,
+                            color: card.color,
+                            isFavorite: card.isFavorite,
+                          ),
                         ),
                       ),
                       IconButton(
@@ -123,8 +131,7 @@ class _CardDeletePageState extends State<CardDeletePage> {
 
                           // Si el usuario confirma la eliminación
                           if (confirmDelete == true) {
-                            await creditCardProviderRead
-                                .deleteCreditCard(card.id);
+                            await creditCardProviderRead.deleteCreditCard(userId, index);
                             // Aquí puedes agregar código para actualizar la interfaz o mostrar un mensaje
                           }
                         },

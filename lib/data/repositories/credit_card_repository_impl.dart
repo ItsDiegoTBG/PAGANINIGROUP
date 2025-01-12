@@ -9,8 +9,8 @@ class CreditCardRepositoryImpl implements CreditCardRepository {
   CreditCardRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<List<CreditCardEntity>> getCreditCards() async {
-    final creditCardModels = await remoteDataSource.fetchCreditCards();
+  Future<List<CreditCardEntity>> getCreditCards(String userid) async {
+    final creditCardModels = await remoteDataSource.fetchCreditCards(userid);
 
     // Convertimos los modelos a entidades de dominio
     return creditCardModels
@@ -27,7 +27,7 @@ class CreditCardRepositoryImpl implements CreditCardRepository {
         .toList();
   }
 
-  @override
+ /* @override
   Future<void> addCreditCard(CreditCardEntity creditCard) async {
     // Convertir CreditCardEntity a CreditCardModel
     final creditCardModel = CreditCardModel(
@@ -47,12 +47,12 @@ class CreditCardRepositoryImpl implements CreditCardRepository {
     } catch (e) {
       throw Exception('Error al agregar la tarjeta: $e');
     }
-  }
+  }*/
 
   @override
-  Future<bool> deleteCreditCard(int idCreditCard) async {
+  Future<bool> deleteCreditCard(String userId, int index) async {
     try {
-      await remoteDataSource.deleteCreditCardById(idCreditCard);
+      await remoteDataSource.deleteCreditCardById(userId,index);
       return true;
     } catch (e) {
       return false;
@@ -60,10 +60,9 @@ class CreditCardRepositoryImpl implements CreditCardRepository {
   }
 
   @override
-  Future<void> updateBalance(int idCreditCard, double newBalance) async {
-    // TODO: implement updateBalance
+  Future<void> updateBalance(String userId, int idCreditCard, double newBalance) async {
     try {
-      await remoteDataSource.updateBalance(idCreditCard, newBalance);
+      await remoteDataSource.updateBalance(userId,idCreditCard, newBalance);
     } catch (e) {
       throw Exception('Error al agregar la tarjeta: $e');
     }

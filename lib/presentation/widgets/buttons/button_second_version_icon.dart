@@ -7,6 +7,7 @@ class ButtonSecondVersionIcon extends StatelessWidget {
   final IconData icon;
   final IconAlignment iconAlignment;
   final Color color;
+  final double horizontalPadding;
   const ButtonSecondVersionIcon({
     super.key,
     required this.function,
@@ -14,13 +15,14 @@ class ButtonSecondVersionIcon extends StatelessWidget {
     required this.icon,
     required this.iconAlignment,
     this.color = AppColors.secondaryColor,
+    this.horizontalPadding = 8,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextButton.icon(
         label: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+          padding:  EdgeInsets.symmetric(vertical: 2, horizontal: horizontalPadding),
           child: Text(
             text,
             style: const TextStyle(

@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 class CreditCardEntity  {
-  final int id;
+  int id;
   final String cardHolderFullName;
   final String cardNumber;
   final String cardType; 
@@ -10,7 +10,7 @@ class CreditCardEntity  {
   final Color color;
   final bool isFavorite;
   final String cvv;
-  final double balance;
+  double balance;
 
   CreditCardEntity({
     required this.id,

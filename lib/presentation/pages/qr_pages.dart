@@ -5,8 +5,6 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
-import 'package:paganini/presentation/widgets/bottom_main_app.dart';
-import 'package:paganini/presentation/widgets/floating_button_navbar_qr.dart';
 import 'package:paganini/core/device/qr_code_scanner.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/widgets/qr_container.dart';
@@ -43,9 +41,7 @@ class _QrPageState extends State<QrPage> {
     final userProviderWatch = context.watch<UserProvider>(); 
 
     final qrContainer =  QrContainer(data: userProviderWatch.user?.uid);
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
+    return  Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -112,11 +108,8 @@ class _QrPageState extends State<QrPage> {
             )
           ],
         ),
-      ),
-      floatingActionButton: const FloatingButtonNavBarQr(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: const BottomMainAppBar(),
-    );
+      );
+     
   }
 }
 
