@@ -5,6 +5,7 @@ abstract class Routes {
   static const HOME = "/home";
   static const INITIAL = "/initial_page";
   static const LOGIN = "/login";
+  static const BIOLOGIN = "/biometric_login_page";
   static const REGISTER = "/register";
   static const QRPAGE = "/qr_page";
   static const WALLETPAGE = "/wallet_page";
@@ -21,5 +22,10 @@ abstract class Routes {
   static const RECEIPTRANSFER = "/transfer_receipt_page";
   static const PRINCIPALNAVIGATIONPAGE = "/principal";
   static const INTRODUCTIONPAGE = "/introduction_page";
+  static const APPTUTORIALSCREEN = "/app_tutorial_screen";
   static const NAVIGATIONPAGE = "/navigation_page";
+  static const SETTINGSPAGE = "/settings_page";
+  static const RETURNAMOUNTPAGE = "/return_amount_page";
+  static const FORGETPASSWORD = "/forget_password_page";
+  static const HISTORYPAGE = "/history_page";
 }

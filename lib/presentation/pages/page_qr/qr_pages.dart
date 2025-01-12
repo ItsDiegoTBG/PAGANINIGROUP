@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:paganini/helpers/show_qr.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/core/device/qr_code_scanner.dart';
 import 'package:paganini/core/utils/colors.dart';
@@ -35,85 +36,88 @@ class _QrPageState extends State<QrPage> {
     setState(() => _result = result);
   }
 
-
+  
   @override
   Widget build(BuildContext context) {
-    final userProviderWatch = context.watch<UserProvider>(); 
-
-    final qrContainer =  QrContainer(data: userProviderWatch.user?.uid);
-    return  Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 30, right: 10),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.6,
-                child: Image.asset(
-                    "assets/image/paganini_logo_horizontal_morado.png"),
-              ),
+    final userProviderWatch = context.watch<UserProvider>();
+    final qrContainer = QrContainer(data: userProviderWatch.currentUser?.id);
+    final userName = userProviderWatch.currentUser?.firstname ?? "Usuario no disponible";
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 30, right: 10),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.6,
+              child: Image.asset(
+                  "assets/image/paganini_logo_horizontal_morado.png"),
             ),
-            //Text(_result ?? 'No result'),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
+          ),
+          
+          //Text(_result ?? 'No result'),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  debugPrint("QR TAP");
+                  debugPrint("Se dio click en el Qr");
+                   ShowQr.showQrDialog(context, qrContainer, userName);
+                },
+                child: Center(
                   child: Screenshot(
-                    controller: screenshotController,
-                    child: qrContainer
-                  ),
+                      controller: screenshotController, child: qrContainer),
                 ),
-                const SizedBox(height: 50),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    IconButton(
+              ),
+              const SizedBox(height: 50),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.save_rounded,
+                      size: 40,
+                    ),
+                    onPressed: () async {
+                      final image = await screenshotController
+                          .captureFromWidget(qrContainer);
+                      // ignore: use_build_context_synchronously
+                      await saveImage(image, context);
+                    },
+                  ),
+                  IconButton(
+                      onPressed: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  QrCodeScanner(setResult: setResult),
+                            ),
+                          ),
                       icon: const Icon(
-                        Icons.save_rounded,
-                        size: 40,
-                      ),
+                        Icons.qr_code_scanner_rounded,
+                        size: 60,
+                        color: AppColors.primaryColor,
+                      )),
+                  IconButton(
                       onPressed: () async {
                         final image = await screenshotController
                             .captureFromWidget(qrContainer);
-                        // ignore: use_build_context_synchronously
-                        await saveImage(image, context);
+                        await shareImage(image);
                       },
-                    ),
-                    IconButton(
-                        onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    QrCodeScanner(setResult: setResult),
-                              ),
-                            ),
-                        icon: const Icon(
-                          Icons.qr_code_scanner_rounded,
-                          size: 60,
-                          color: AppColors.primaryColor,
-                        )),
-                    IconButton(
-                        onPressed: () async {
-                          final image = await screenshotController
-                              .captureFromWidget(qrContainer);
-                          await shareImage(image);
-                        },
-                        icon: const Icon(
-                          Icons.share_rounded,
-                          size: 40,
-                        )),
-                  ],
-                )
-              ],
-            )
-          ],
-        ),
-      );
-     
+                      icon: const Icon(
+                        Icons.share_rounded,
+                        size: 40,
+                      )),
+                ],
+              )
+            ],
+          )
+        ],
+      ),
+    );
   }
 }
-
-
 
 Future<String> saveImage(Uint8List bytes, context) async {
   await [Permission.storage].request();

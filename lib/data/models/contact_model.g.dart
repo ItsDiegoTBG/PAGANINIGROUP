@@ -19,17 +19,20 @@ class ContactUserAdapter extends TypeAdapter<ContactUser> {
     return ContactUser(
       name: fields[0] as String,
       phone: fields[1] as String,
+      isRegistered: fields[2] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, ContactUser obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
-      ..write(obj.phone);
+      ..write(obj.phone)
+      ..writeByte(2)
+      ..write(obj.isRegistered);
   }
 
   @override

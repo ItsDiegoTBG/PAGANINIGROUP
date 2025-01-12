@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
+import 'package:paganini/data/local/notification_service.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,7 @@ class ContentAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final notificationProvider = Provider.of<NotificationService>(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -42,8 +44,9 @@ class ContentAppBar extends StatelessWidget {
           padding: const EdgeInsets.only(right: 1),
           child: IconButton(
               onPressed: () async {
+                notificationProvider.showNotification("Salir de Sesion", "Haz salido de sesion de manera exitosa");
                 Navigator.pushNamedAndRemoveUntil(
-                    context, Routes.LOGIN, (Route<dynamic> route) => false);
+                    context, Routes.INITIAL, (Route<dynamic> route) => false);
                 await userProvider.signOut();
               },
               icon: const Icon(Icons.logout_rounded)),

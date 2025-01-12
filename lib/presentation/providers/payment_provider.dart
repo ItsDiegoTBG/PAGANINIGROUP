@@ -11,7 +11,10 @@ class PaymentProvider with ChangeNotifier {
   bool _isConfirmPaymetOrPaymentSelected = false;
   String _noteUserToPay = "";
 
+   bool _isOnlySaldoSelected = false;
+
   bool get isSaldoSelected => _isSaldoSelected;
+  bool get isOnlySaldoSelected =>  _isOnlySaldoSelected;
   double get montoSaldo => _montoSaldo;
   Map<int, double> get selectedCardAmounts => _selectedCardAmounts;
   double get totalAmountPayUser => _totalAmountPayUser;
@@ -21,6 +24,11 @@ class PaymentProvider with ChangeNotifier {
 
   void setNoteUserToPay(String value) {
     _noteUserToPay = value;
+    notifyListeners();
+  }
+
+  void setOnlySaldoSelected() {
+    _isOnlySaldoSelected = true;
     notifyListeners();
   }
 

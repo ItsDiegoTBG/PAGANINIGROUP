@@ -7,18 +7,20 @@ class TextFormFieldWidget extends StatelessWidget {
   final String hintText;
   final FormFieldValidator<String>? validator;
   final TextInputType textInputType;
-
+  final bool? enabled;
   const TextFormFieldWidget({
     super.key,
     required this.controller,
     required this.hintText,
-    required this.validator,
+    this.validator,
     required this.textInputType,
+    this.enabled = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      enabled: enabled,
       controller: controller,
       decoration: InputDecoration(
          

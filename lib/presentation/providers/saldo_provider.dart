@@ -11,9 +11,10 @@ class SaldoProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  
-
-
+  void setZero() {
+    _saldo = 0.0;
+    notifyListeners();
+  }
   void addRecharge(double recharge) {
     _saldo = _saldo + recharge;
     notifyListeners();

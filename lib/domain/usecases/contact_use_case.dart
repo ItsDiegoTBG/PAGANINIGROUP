@@ -7,7 +7,7 @@ class ContactUseCase {
   ContactUseCase(this.hiveService);
 
   Future<void> callDelete(int index) {
-    return hiveService.deleteContact(index); // Llama al método de HiveService
+    return hiveService.deleteContact(index); 
   }
 
   Future<List<ContactUser>> callFetch() {

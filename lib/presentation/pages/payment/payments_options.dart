@@ -28,7 +28,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
     //final montoSaldo = paymentProviderWatch.montoSaldo;
     final isSaldoSelected = paymentProviderWatch.isSaldoSelected;
     //final selectedCardAmounts = paymentProviderWatch.selectedCardAmounts;
-
+    bool isSaldoAndCardSelected = isSaldoSelected && selectedCards.values.any((selected) => selected);
     return Container(
       height: myHeight * 0.8,
       padding: const EdgeInsets.all(16),
@@ -88,12 +88,13 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                     value: isSaldoSelected,
                     onChanged: (value) {
                       paymentProviderWatch.toggleSaldoSelection();
+
                     },
                   ),
                 ),
               ],
             ),
-            if (isSaldoSelected)
+            if (isSaldoSelected && isSaldoAndCardSelected)
               Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child: Column(
@@ -248,6 +249,9 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               onPressed: () {
+                if(!isSaldoAndCardSelected && isSaldoSelected ) {
+                  paymentProviderWatch.setOnlySaldoSelected();
+                }
                 paymentProviderWatch.toggleConfirmPaymetOrPaymentSelected();
               },
               child: const Center(

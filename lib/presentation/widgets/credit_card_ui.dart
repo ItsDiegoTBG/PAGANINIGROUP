@@ -54,14 +54,8 @@ class CreditCardWidget extends StatelessWidget {
         cardType: whatCardTypeIs(cardType),
         topLeftColor: color,
         bottomRightColor: color,
-        cvvNumber: cvv,
-        cardProviderLogo: isFavorite == true
-            ? const Icon(
-                Icons.star,
-                color: Colors.yellow,
-                size: 30,
-              )
-            : const SizedBox(),
-        cardProviderLogoPosition: CardProviderLogoPosition.right);
+        cardProviderLogo: isFavorite== true ?  const Icon(Icons.star,color: Colors.yellow,size: 30,) : const SizedBox(),
+        cardProviderLogoPosition: CardProviderLogoPosition.right,                                       
+      );
   }
 }
