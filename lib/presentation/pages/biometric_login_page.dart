@@ -7,7 +7,8 @@ class BiometricAuthPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bioProvider = Provider.of<BiometricAuthProvider>(context, listen: false);
+    final bioProvider =
+        Provider.of<BiometricAuthProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Biometric Login')),
@@ -18,6 +19,7 @@ class BiometricAuthPage extends StatelessWidget {
               await bioProvider.authenticateWithBiometrics();
               Navigator.pushReplacementNamed(context, '/home');
             } catch (e) {
+              debugPrint(e.toString());
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(e.toString())),
               );
@@ -29,4 +31,3 @@ class BiometricAuthPage extends StatelessWidget {
     );
   }
 }
-

@@ -8,5 +8,8 @@ class AuthenticateWithBiometrics {
   Future<void> call() async {
     return repository.authenticateWithBiometrics();
   }
+  Future<void> saveCredentials(String email, String password) async {
+    await repository.saveCredentials(email, password);
+  }
 }
 

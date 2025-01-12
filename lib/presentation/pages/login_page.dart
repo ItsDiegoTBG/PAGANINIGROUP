@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/domain/usecases/authenticate_with_biometrics.dart';
+import 'package:paganini/presentation/providers/biometric_auth_provider.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
 import 'package:paganini/presentation/widgets/text_form_field_widget.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -18,11 +21,11 @@ class _LoginRegisterScreenState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   bool _isPasswordVisible = false;
 
   void signUserIn() async {
     // Muestra el diálogo de carga
+    final biometricProvider = context.read<BiometricAuthProvider>();
     showDialog(
       context: context,
       builder: (context) {
@@ -50,6 +53,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
         AppColors.primaryColor,
         topPosition: true,
       );
+      await biometricProvider.saveCredentials(emailController.text.trim(), passwordController.text.trim(),);
 
       // Navega a la pantalla principal
       Navigator.pushNamedAndRemoveUntil(
@@ -315,6 +319,12 @@ class _LoginRegisterScreenState extends State<LoginPage> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, Routes.INITIAL);
+        },
+        child: const Icon(Icons.arrow_back),
+      )
     );
   }
 }

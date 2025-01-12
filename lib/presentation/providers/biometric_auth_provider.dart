@@ -13,16 +13,20 @@ class BiometricAuthProvider extends ChangeNotifier {
   bool get isAuthenticating => _isAuthenticating;
 
   Future<void> authenticateWithBiometrics() async {
-    _isAuthenticating = true;
-    notifyListeners(); // Notify UI that authentication has started
-
-    try {
-      await _authenticateWithBiometrics.call();
-    } catch (e) {
-      throw Exception('Biometric login failed: $e');
-    } finally {
-      _isAuthenticating = false;
-      notifyListeners(); // Notify UI that authentication is complete
+  try {
+    await _authenticateWithBiometrics.call();
+  } catch (e) {
+    if (e.toString().contains('No stored credentials')) {
+      // Muestra un mensaje al usuario
+      print('Por favor, inicia sesión manualmente primero.');
     }
+    throw Exception('Biometric login failed: $e');
   }
+}
+
+Future<void> saveCredentials(String email, String password) async {
+  await _authenticateWithBiometrics.saveCredentials(email, password);
+  notifyListeners();
+}
+
 }

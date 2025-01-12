@@ -453,7 +453,7 @@ class _CardPageState extends State<CardPage> {
                       if (confirmAddCreditCard == true) {
                         CreditCardEntity newCard = CreditCardEntity(
                           balance: 300,
-                          id: Random().nextInt(2000),
+                          id: Random.secure().nextInt(1000),
                           cvv: cvvNewCard,
                           color: selectedColor ?? AppColors.primaryColor,
                           cardHolderFullName: nameNewCard,
