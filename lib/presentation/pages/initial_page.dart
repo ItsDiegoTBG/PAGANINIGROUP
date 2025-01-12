@@ -8,15 +8,15 @@ import 'package:provider/provider.dart';
 import '../../domain/usecases/authenticate_with_biometrics.dart';
 import '../providers/biometric_auth_provider.dart';
 
-
 class InitialPage extends StatelessWidget {
   const InitialPage({super.key});
-  
-  
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = context.read<ThemeProvider>();
     final size = MediaQuery.of(context).size;
+    final bioProvider =
+        Provider.of<BiometricAuthProvider>(context, listen: false);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Center(
@@ -31,7 +31,7 @@ class InitialPage extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 color: themeProvider.isDarkMode
-                    ?  Colors.grey[900] // Color de fondo
+                    ? Colors.grey[900] // Color de fondo
                     : Colors.white, // Color de fondo
                 border: Border.all(color: AppColors.primaryColor),
                 borderRadius: BorderRadius.circular(10),
@@ -94,10 +94,18 @@ class InitialPage extends StatelessWidget {
                     textButton: "6 Digitos",
                   ),
                   ButtonWithIcon(
-                    function: () => {
-                        debugPrint("Hola desde auth page "),        
-                        Navigator.pushNamed(context, Routes.BIOLOGIN)
-                      },
+                    function: () async {
+                      try {
+                        await bioProvider.authenticateWithBiometrics();
+                        Navigator.pushNamed(context, Routes.NAVIGATIONPAGE);
+                      } catch (e) {
+                        debugPrint(e.toString());
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(e.toString())),
+                        );
+                      }
+                      
+                    },
                     icon: Icons.fingerprint_rounded,
                     textButton: "Biométrico",
                   ),

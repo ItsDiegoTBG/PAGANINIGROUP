@@ -59,7 +59,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-    final authenticateWithBiometrics = AuthenticateWithBiometrics(authRepository);
+  final authenticateWithBiometrics = AuthenticateWithBiometrics(authRepository);
   final bioProvider = BiometricAuthProvider(authenticateWithBiometrics);
 
 

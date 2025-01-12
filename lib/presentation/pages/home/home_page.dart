@@ -56,56 +56,7 @@ class _HomePageState extends State<HomePage> {
         originator: 'John Doe',
         amount: 100.00,
         date: '14/12/2022'),
-    TransactionModel(
-        name: 'Balance Top-Up',
-        originator: 'XYZ Bank',
-        amount: 20.00,
-        date: '12/12/2022'),
-    TransactionModel(
-        name: 'Restaurant Payment',
-        originator: 'McDonald\'s',
-        amount: -15.50,
-        date: '16/12/2022'),
-    TransactionModel(
-        name: 'Monthly Subscription',
-        originator: 'Netflix',
-        amount: -10.00,
-        date: '10/12/2022'),
-    TransactionModel(
-        name: 'Movie Tickets',
-        originator: 'Cinema World',
-        amount: -25.00,
-        date: '11/12/2022'),
-    TransactionModel(
-        name: 'Book Purchase',
-        originator: 'Amazon',
-        amount: -35.99,
-        date: '18/12/2022'),
-    TransactionModel(
-        name: 'Received Bonus',
-        originator: 'Employer',
-        amount: 500.00,
-        date: '20/12/2022'),
-    TransactionModel(
-        name: 'Online Course',
-        originator: 'Udemy',
-        amount: -19.99,
-        date: '22/12/2022'),
-    TransactionModel(
-        name: 'Gym Membership',
-        originator: 'Fit Club',
-        amount: -45.00,
-        date: '23/12/2022'),
-    TransactionModel(
-        name: 'Concert Tickets',
-        originator: 'Live Nation',
-        amount: -120.00,
-        date: '24/12/2022'),
-    TransactionModel(
-        name: 'Gift Card Redemption',
-        originator: 'Google Play',
-        amount: 50.00,
-        date: '25/12/2022'),
+   
   ];
 
   List<TransactionModel> filteredMovements = []; // Lista filtrada.
@@ -268,7 +219,7 @@ class _HomePageState extends State<HomePage> {
                         : filteredMovements.length),
                 itemBuilder: (context, index) {
                   final TransactionModel transaction = filteredMovements[index];
-                  return ListTitleTransaction(transaction: transaction);
+                  return ListTitleTransaction(transaction: transaction,paddingRight: 0);
                 },
               ),
             ),

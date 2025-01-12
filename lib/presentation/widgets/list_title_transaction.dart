@@ -4,13 +4,14 @@ import 'package:paganini/data/models/transaction_model.dart';
 
 class ListTitleTransaction extends StatefulWidget {
   final bool? withDescription;
-  const ListTitleTransaction({
+  final TransactionModel transaction;
+  final double? paddingRight ;
+    const ListTitleTransaction({
     super.key,
     required this.transaction,
     this.withDescription = false,
+    this.paddingRight = 15,
   });
-
-  final TransactionModel transaction;
 
   @override
   State<ListTitleTransaction> createState() => _ListTitleTransactionState();
@@ -48,7 +49,7 @@ class _ListTitleTransactionState extends State<ListTitleTransaction> {
               children: [
                 widget.transaction.isIncome()
                     ? Padding(
-                      padding: const EdgeInsets.only(right: 15),
+                      padding:  EdgeInsets.only(right: widget.paddingRight!),
                       child: Text(
                           "+\$${widget.transaction.amount}",
                           style: const TextStyle(
