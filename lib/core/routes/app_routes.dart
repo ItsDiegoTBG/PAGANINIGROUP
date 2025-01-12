@@ -5,6 +5,7 @@ abstract class Routes {
   static const HOME = "/home";
   static const INITIAL = "/initial_page";
   static const LOGIN = "/login";
+  static const BIOLOGIN = "/biometric_login_page";
   static const REGISTER = "/register";
   static const QRPAGE = "/qr_page";
   static const WALLETPAGE = "/wallet_page";

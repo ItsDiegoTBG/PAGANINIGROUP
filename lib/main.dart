@@ -1,13 +1,19 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/data/datasources/credit_card_datasource.dart';
+import 'package:paganini/data/repositories/auth_respository_impl.dart';
 import 'package:paganini/data/repositories/credit_card_repository_impl.dart';
+import 'package:paganini/domain/usecases/authenticate_with_biometrics.dart';
 import 'package:paganini/domain/usecases/credit_cards_use_case.dart';
 import 'package:paganini/firebase_options.dart';
 import 'package:paganini/presentation/pages/auth_page.dart';
+import 'package:paganini/presentation/pages/biometric_login_page.dart';
 import 'package:paganini/presentation/pages/cards/card_delete_page.dart';
 import 'package:paganini/presentation/pages/cards/card_page.dart';
 import 'package:paganini/presentation/pages/transfer/contacts_page.dart';
@@ -23,6 +29,7 @@ import 'package:paganini/presentation/pages/transfer/recharge_receipt.dart';
 import 'package:paganini/presentation/pages/register_page.dart';
 import 'package:paganini/presentation/pages/transfer/transfer_page.dart';
 import 'package:paganini/presentation/pages/transfer/transfer_receipt_page.dart';
+import 'package:paganini/presentation/providers/biometric_auth_provider.dart';
 import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
@@ -37,12 +44,21 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+   final authRepository = AuthRepositoryImpl(
+    FirebaseAuth.instance,
+    LocalAuthentication(),
+    FlutterSecureStorage(),
+  );
   final remoteDataSource = CreditCardRemoteDataSourceImpl();
   final creditCardRepository =
       CreditCardRepositoryImpl(remoteDataSource: remoteDataSource);
   final creditCardsUseCase =
       CreditCardsUseCase(repository: creditCardRepository);
+    final authenticateWithBiometrics = AuthenticateWithBiometrics(authRepository);
+  final bioProvider = BiometricAuthProvider(authenticateWithBiometrics);
 
+
+  
   await Future.delayed(const Duration(seconds: 2));
   FlutterNativeSplash.remove();
   runApp(
@@ -54,7 +70,8 @@ void main() async {
                 )),
         ChangeNotifierProvider(create: (_) => SaldoProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => ContactProvider())
+        ChangeNotifierProvider(create: (_) => ContactProvider()),
+        ChangeNotifierProvider(create: (_) => bioProvider),
       ],
       child: const MainApp(),
     ),
@@ -81,6 +98,7 @@ class MainApp extends StatelessWidget {
         Routes.INITIAL: (context) => const InitialPage(),
         Routes.HOME: (context) => const HomePage(),
         Routes.LOGIN: (context) => const LoginPage(),
+        Routes.BIOLOGIN: (context) => const BiometricAuthPage(),
         Routes.QRPAGE: (context) => const QrPage(),
         Routes.WALLETPAGE: (context) => const WalletPage(),
         Routes.CARDPAGE: (context) => const CardPage(),

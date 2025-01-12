@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/widgets/buttons/button_with_icon.dart';
+import '../../domain/usecases/authenticate_with_biometrics.dart';
+import '../providers/biometric_auth_provider.dart';
+
+
 class InitialPage extends StatelessWidget {
   const InitialPage({super.key});
-
+  
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,7 +81,10 @@ class InitialPage extends StatelessWidget {
                       textButton: "6 Digitos",
                     ),
                     ButtonWithIcon(
-                      function: () {},
+                      function: () => {
+                        debugPrint("Hola desde auth page "),        
+                        Navigator.pushNamed(context, Routes.BIOLOGIN)
+                      },
                       icon: Icons.fingerprint_rounded,
                       textButton: "Biométrico",
                     ),
