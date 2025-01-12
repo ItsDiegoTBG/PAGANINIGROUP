@@ -9,65 +9,83 @@ class ContactUserWidget extends StatelessWidget {
   final Color color;
   final String nameUser;
   final String phoneUser;
+  final bool isRegistered;
 
   const ContactUserWidget({
     super.key,
     this.width = 200,
     this.height = 100,
-    this.color = AppColors.secondaryColor,
+    this.color = AppColors.primaryColor,
     required this.nameUser,
     required this.phoneUser,
+    this.isRegistered = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final dynamicColor = isRegistered
+        ? (themeProvider.isDarkMode
+            ? Colors.white
+            : color) // Color para registrados
+        : AppColors.secondaryColor; // Color para no registrados
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: themeProvider.isDarkMode ? Colors.white : color,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
+          borderRadius: BorderRadius.circular(10), color: dynamicColor),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(nameUser,
-                    style: TextStyle(
-                        color: themeProvider.isDarkMode
-                            ? Colors.black
-                            : Colors.black,
+                Text(
+                  nameUser,
+                  style: TextStyle(
+                    color: isRegistered
+                        ? (themeProvider.isDarkMode
+                            ? Colors.white
+                            : Colors.white)
+                        : Colors.black,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w400,
+                    overflow: TextOverflow.visible,
+                  ),
+                ),
+                
+                if (isRegistered)
+                  const Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child: Text(
+                      "Paganini",
+                      style: TextStyle(
+                        color: Colors.white,
                         fontSize: 17,
                         fontWeight: FontWeight.w400,
-                        overflow: TextOverflow.visible)),
-                Text(
-                  "📱$phoneUser",
-                  style: TextStyle(
-                      color: themeProvider.isDarkMode
-                          ? Colors.black
-                          : Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      overflow: TextOverflow.visible),
-                ),
+                        overflow: TextOverflow.visible,
+                      ),
+                    ),
+                  ),
               ],
             ),
-          )
-          /*const Padding(
-            padding:EdgeInsets.only(top: 7, right: 10),
-            child: Align(
-                alignment: Alignment.topRight,
-                child: Text("Paganini Mobile",
-                    style:  TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.w400,overflow: TextOverflow.visible))),
-          )*/
-        ],
+            Text(
+              "📱$phoneUser",
+              style: TextStyle(
+                  color: isRegistered
+                      ? (themeProvider.isDarkMode
+                          ? Colors.white
+                          : Colors.white) // Color para registrados
+                      : Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  overflow: TextOverflow.visible),
+            ),
+          ],
+        ),
       ),
     );
   }

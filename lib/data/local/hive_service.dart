@@ -1,6 +1,9 @@
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:hive/hive.dart';
-import 'package:paganini/data/models/contact_model.dart'; 
+import 'package:paganini/data/models/contact_model.dart';
+
+
+
 
 class HiveService {
   static const String contactsBoxName = 'contactsBox';
