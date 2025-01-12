@@ -27,15 +27,14 @@ class CreditCardProvider extends ChangeNotifier {
     if (deleted) {
       _creditCards.removeWhere((card) => card.id == index);
     }
-    fetchCreditCards(userId);
-    notifyListeners();
     return deleted;
   }
 
   Future<void> updateBalance(String userId,int idCreditCard, double newBalance) async {
     try {
       await creditCardsUseCase.updateBalance(userId,idCreditCard, newBalance);
-      notifyListeners();
+      fetchCreditCards(userId);
+
     } catch (e) {
       throw Exception('Error al actualizar el saldo de la tarjeta: $e');
     }

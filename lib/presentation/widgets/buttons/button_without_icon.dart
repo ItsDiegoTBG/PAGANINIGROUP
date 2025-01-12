@@ -27,7 +27,7 @@ class ButtonWithoutIcon extends StatelessWidget {
         style: TextStyle(
             color: Colors.white,
             fontSize: 20,
-            fontStyle: fontStyle ?? FontStyle.italic),
+            fontStyle: fontStyle ?? FontStyle.normal),
       ),
     );
   }

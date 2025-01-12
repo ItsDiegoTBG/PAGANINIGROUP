@@ -25,7 +25,7 @@ class _CardDeletePageState extends State<CardDeletePage> {
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
     final creditCardProviderRead = context.read<CreditCardProvider>();
     final creditCards = creditCardProviderWatch.creditCards;
-    final userId = context.read<UserProvider>().user!.uid;
+    final userId = context.read<UserProvider>().currentUser!.id;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -37,13 +37,26 @@ class _CardDeletePageState extends State<CardDeletePage> {
               child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("No tiene tarjetas registradas",style: TextStyle(color: Colors.black,fontSize: 25,fontWeight: FontWeight.bold),overflow: TextOverflow.visible,),
-                ButtonSecondVersionIcon(text: "Regresar", function: (){
-                  Navigator.pop(context);
-                },icon:Icons.arrow_back_ios_rounded, iconAlignment: IconAlignment.start,),
+                const Text(
+                  "No tiene tarjetas registradas",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w500),
+                  overflow: TextOverflow.visible,
+                ),
+                const SizedBox(height: 20,),
+                ButtonSecondVersionIcon(
+                  text: "Regresar",
+                  function: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icons.arrow_back_ios_rounded,
+                  iconAlignment: IconAlignment.start,
+                ),
               ],
             ))
-          : creditCardListView(creditCards, creditCardProviderRead,userId),
+          : creditCardListView(creditCards, creditCardProviderRead, userId),
       floatingActionButton: FloatingButtonPaganini(
         onPressed: () {
           Navigator.pop(context);
@@ -56,7 +69,6 @@ class _CardDeletePageState extends State<CardDeletePage> {
 
   Padding creditCardListView(List<CreditCardEntity> creditCards,
       CreditCardProvider creditCardProviderRead, String userId) {
-    
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8, top: 0, bottom: 30),
       child: CustomScrollView(
@@ -131,7 +143,8 @@ class _CardDeletePageState extends State<CardDeletePage> {
 
                           // Si el usuario confirma la eliminación
                           if (confirmDelete == true) {
-                            await creditCardProviderRead.deleteCreditCard(userId, index);
+                            await creditCardProviderRead.deleteCreditCard(
+                                userId, index);
                             // Aquí puedes agregar código para actualizar la interfaz o mostrar un mensaje
                           }
                         },

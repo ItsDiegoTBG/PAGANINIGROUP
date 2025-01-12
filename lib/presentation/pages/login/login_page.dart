@@ -4,10 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/data/local/notification_service.dart';
+import 'package:paganini/helpers/request_notification_permission.dart';
+import 'package:paganini/presentation/pages/login/loading_screen.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
+import 'package:paganini/domain/usecases/authenticate_with_biometrics.dart';
+import 'package:paganini/presentation/providers/biometric_auth_provider.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
+import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
 import 'package:paganini/presentation/widgets/text_form_field_widget.dart';
+import 'package:provider/provider.dart';
+import 'dart:io';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -23,19 +31,14 @@ class _LoginRegisterScreenState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _isPasswordVisible = false;
 
-
-  void signUserIn() async {
+  void signUserIn(NotificationService notificationService) async {
     // Muestra el diálogo de carga
+    final biometricProvider = context.read<BiometricAuthProvider>();
     showDialog(
       context: context,
-      barrierDismissible:
-          false, // Evita que el usuario cierre el diálogo manualmente
+      barrierDismissible:false, // Evita que el usuario cierre el diálogo manualmente
       builder: (context) {
-        return const Center(
-          child: CircularProgressIndicator(
-            backgroundColor: AppColors.primaryColor,
-          ),
-        );
+        return const Center(child: LoadingScreen());
       },
     );
 
@@ -46,26 +49,14 @@ class _LoginRegisterScreenState extends State<LoginPage> {
         password: passwordController.text.trim(),
       );
 
-      // Una vez exitoso, cierra el diálogo
-      Navigator.pop(context);
+      await biometricProvider.saveCredentials(emailController.text.trim(), passwordController.text.trim(),);
 
-      // Muestra el snackbar de éxito
-      AnimatedSnackBar(
-        duration: const Duration(seconds: 3),
-        builder: ((context) {
-          return MaterialAnimatedSnackBar(
-            iconData: Icons.check,
-            messageText: 'Inicio de sesión exitoso',
-            type: AnimatedSnackBarType.success,
-            borderRadius: const BorderRadius.all(Radius.circular(20)),
-            backgroundColor: Colors.green[400],
-            titleTextStyle: const TextStyle(
-              color: Color.fromARGB(255, 255, 255, 255),
-              fontSize: 16,
-            ),
-          );
-        }),
-      ).show(context);
+      await Future.delayed(const Duration(seconds: 2));
+
+      Navigator.pop(context);
+      await RequestNotificationPermission.requestNotificationPermission();
+      notificationService.showNotification(
+          "Inicio de Sesión", "Haz iniciado sesión de manera exitosa");
 
       // Navega a la siguiente pantalla
       Navigator.pushNamedAndRemoveUntil(
@@ -88,7 +79,6 @@ class _LoginRegisterScreenState extends State<LoginPage> {
         _showSnackBar(
           'Error en el inicio de sesión',
           const Color.fromARGB(255, 236, 45, 55),
-          topPosition: true,
         );
       }
     } catch (e) {
@@ -98,7 +88,6 @@ class _LoginRegisterScreenState extends State<LoginPage> {
       _showSnackBar(
         'Error en el inicio de sesión',
         const Color.fromARGB(255, 236, 45, 55),
-        topPosition: true,
       );
     }
   }
@@ -106,7 +95,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
 // Método para mostrar un SnackBar en la parte superior
   void _showSnackBar(String message, Color color, {bool topPosition = false}) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 2),
       content: Text(
         message,
         style: const TextStyle(color: Colors.white),
@@ -114,12 +103,6 @@ class _LoginRegisterScreenState extends State<LoginPage> {
       backgroundColor: color,
       behavior:
           topPosition ? SnackBarBehavior.floating : SnackBarBehavior.fixed,
-      margin: topPosition
-          ? const EdgeInsets.only(top: 10, left: 10, right: 10)
-          : null,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-      ),
     ));
   }
 
@@ -146,10 +129,12 @@ class _LoginRegisterScreenState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     //double myHeight = MediaQuery.of(context).size.height;
-    final themeProvider = Provider .of<ThemeProvider>(context, listen: false);
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final notificationService =
+        Provider.of<NotificationService>(context, listen: false);
     return Scaffold(
-      resizeToAvoidBottomInset: true,
-     // backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
+      // backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding:
@@ -159,18 +144,24 @@ class _LoginRegisterScreenState extends State<LoginPage> {
               const SizedBox(
                 height: 50,
               ),
-               Text(
+              Text(
                 'Bienvenido',
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold,color: themeProvider.isDarkMode ? Colors.white:Colors.black),
+                style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    color:
+                        themeProvider.isDarkMode ? Colors.white : Colors.black),
               ),
               SizedBox(
                   width: 300,
                   height: 100,
-                  child: themeProvider.isDarkMode ? Image.asset(
-                      "assets/image/paganini_logo_horizontal_morado.png"): Image.asset(
-                      "assets/image/paganini_logo_horizontal_negro.png")),
+                  child: themeProvider.isDarkMode
+                      ? Image.asset(
+                          "assets/image/paganini_logo_horizontal_morado.png")
+                      : Image.asset(
+                          "assets/image/paganini_logo_horizontal_negro.png")),
               const SizedBox(
-                height: 60,
+                height: 40,
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,6 +193,9 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                     height: 5,
                   ),
                   TextFormField(
+                    onFieldSubmitted: (value) {
+                      signUserIn(notificationService);
+                    },
                     obscureText: !_isPasswordVisible,
                     controller: passwordController,
                     decoration: InputDecoration(
@@ -266,9 +260,9 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                       Expanded(
                         child: ButtonWithoutIcon(
                           text: "Iniciar Sesion",
-                          onPressed: () {
+                          onPressed: () async {
                             debugPrint("INICIANDO SESION");
-                            signUserIn();
+                            signUserIn(notificationService);
                           },
                         ),
                       ),
@@ -293,7 +287,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () { Navigator.pushNamed(context, Routes.FORGETPASSWORD);},
                       child: const Text("Olvidaste la Clave?",
                           style: TextStyle(
                               color: Colors.grey,
@@ -307,12 +301,15 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                       Text(
+                      Text(
                         "Nuevo en paganini?",
                         style: TextStyle(
-                            color: themeProvider.isDarkMode ? Colors.white:Colors.black,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,),
+                          color: themeProvider.isDarkMode
+                              ? Colors.white
+                              : Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                       TextButton(
                         onPressed: () {
@@ -335,6 +332,13 @@ class _LoginRegisterScreenState extends State<LoginPage> {
           ),
         ),
       ),
+      
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, Routes.INITIAL);
+        },
+        child: const Icon(Icons.arrow_back),
+      )
     );
   }
 }

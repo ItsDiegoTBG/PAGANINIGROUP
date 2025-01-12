@@ -26,7 +26,7 @@ class ButtonSecondVersionIcon extends StatelessWidget {
           child: Text(
             text,
             style: const TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.black, fontSize: 22),
+                fontWeight: FontWeight.w600, color: Colors.black, fontSize: 21),
           ),
         ),
         onPressed: () => {function()},

@@ -1,21 +1,44 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:paganini/domain/entity/user_entity.dart';
 
-class UserProvider with ChangeNotifier{
-  User? _user;
+class UserProvider with ChangeNotifier {
 
-  User? get user => _user;
+  UserEntity? _currentUser;
+  UserEntity? get currentUser => _currentUser;
 
-  void initializeUser(){
-    FirebaseAuth.instance.authStateChanges().listen((User? user){
-      _user = user;
-      notifyListeners();
-    });
-  }
+
+
+ void initializeUser() {
+  FirebaseAuth.instance.authStateChanges().listen((User? firebaseUser) async {
+    if (firebaseUser != null) {
+      final userRef = FirebaseDatabase.instance.ref('users/${firebaseUser.uid}');
+      final snapshot = await userRef.get();
+
+      if (snapshot.exists) {
+        final data = snapshot.value as Map<dynamic, dynamic>;
+        _currentUser = UserEntity.fromMapEntity(
+          firebaseUser.uid,
+          data.map((key, value) => MapEntry(key.toString(), value)),
+        );
+      } else {
+        _currentUser = null;
+      }
+    } else {
+      _currentUser = null;
+    }
+    notifyListeners();
+  });
+}
 
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
-    _user = null; // Limpiar la información del usuario
-    notifyListeners();
+    setUserCurrent();
   }
+  
+ void setUserCurrent(){
+  _currentUser = null;
+  notifyListeners();
+ } 
 }

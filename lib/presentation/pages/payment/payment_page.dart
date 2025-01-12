@@ -66,7 +66,7 @@ class _PaymentPageState extends State<PaymentPage> {
     double myHeight = MediaQuery.of(context).size.height;
     double myWidth = MediaQuery.of(context).size.width;
     final paymentProviderWatch = context.watch<PaymentProvider>();
-    final userId = context.read<UserProvider>().user!.uid;
+    final userId = context.read<UserProvider>().currentUser?.id;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -79,7 +79,7 @@ class _PaymentPageState extends State<PaymentPage> {
           const SizedBox(
             height: 20,
           ),
-          firstPart(userService, context,userId),
+          firstPart(userService, context,userId ?? "No hay usuario"),
           Padding(
             padding: const EdgeInsets.only(
               left: 12,

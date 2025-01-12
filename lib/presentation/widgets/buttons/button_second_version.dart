@@ -49,7 +49,7 @@ class ButtonSecondVersion extends StatelessWidget {
             style:  TextStyle(
               fontWeight: FontWeight.bold,
               color: colorText,
-              fontSize: fontSize ?? 22,
+              fontSize: fontSize ?? 19,
             ),
           ),
         ),

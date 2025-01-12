@@ -43,7 +43,7 @@ class CreditCardModel {
       cardHolderFullName: map['cardHolderFullName'] ?? '',
       cardNumber: map['cardNumber'].toString(),
       cardType: map['cardType'] ?? '',
-      validThru: map['validThru'] ?? '',
+      validThru: map['expiryDate'] ?? '',
       isFavorite: map['isFavorite'] ?? false,
       cvv: map['cvv'].toString(),
       balance: map['balance']?.toDouble() ?? 0.0,
@@ -57,15 +57,15 @@ class CreditCardModel {
 Color getColorFromString(String color) {
   switch (color) {
     case 'red':
-      return Colors.red;
+      return const Color.fromARGB(255, 151, 41, 41);
     case 'green':
-      return Colors.green;
+      return const Color.fromARGB(255, 54, 125, 57);
     case 'black':
       return Colors.black;
     case 'blue':
-      return Colors.blue;
+      return const Color.fromARGB(255, 49, 115, 168);
     case 'yellow':
-      return Colors.amber;
+      return const Color.fromARGB(255, 207, 169, 54);
     case 'primary':
       return AppColors.primaryColor;
     default:

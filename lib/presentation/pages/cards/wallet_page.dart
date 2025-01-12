@@ -44,93 +44,107 @@ class _WalletPageState extends State<WalletPage> {
 
   @override
   Widget build(BuildContext context) {
-    
     final saldoProviderWatch = context.watch<SaldoProvider>();
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
 
     // Obtenemos la lista de tarjetas actualizada directamente del provider
     final creditCards = creditCardProviderWatch.creditCards;
     return Center(
-        child: Column(
-          children: [
-            Padding(
-                padding: const EdgeInsets.only(top: 50),
-                child: Container(
-                  height: 120,
-                  width: 350,
-                  decoration: BoxDecoration(
-                      color: AppColors.primaryColor,
-                      borderRadius: BorderRadius.circular(20)),
-                  child: Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(left: 40, top: 8),
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            'Saldo',
-                            style: TextStyle(
-                              color: Colors.white, // Color del texto
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Column(
+            children: [
+              Padding(
+                  padding: const EdgeInsets.only(top: 50),
+                  child: Container(
+                    height: 120,
+                    width: 350,
+                    decoration: BoxDecoration(
+                        color: AppColors.primaryColor,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Column(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 40, top: 8),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              'Saldo',
+                              style: TextStyle(
+                                color: Colors.white, // Color del texto
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                          height:
-                              5), // Espacio entre el texto de saldo y el valor
-                      Text(
-                        "\$${saldoProviderWatch.saldo}", // Aquí pones el valor que quieres mostrar
-                        style: const TextStyle(
+                        const SizedBox(
+                            height:
+                                5), // Espacio entre el texto de saldo y el valor
+                        Text(
+                          "\$${saldoProviderWatch.saldo}", // Aquí pones el valor que quieres mostrar
+                          style: const TextStyle(
                             color: Colors.white, // Color del texto
                             fontSize: 37,
                             fontWeight: FontWeight.bold,
-                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
+              SizedBox(
+                width: 350,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: ButtonSecondVersion(
+                            horizontalPadding: 20,
+                            text: "Agregar",
+                            function: () {
+                              Navigator.pushNamed(context, Routes.RECHARGE);
+                            }),
                       ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: ButtonSecondVersion(
+                          horizontalPadding: 20,
+                          text: "Transferir",
+                          function: () {
+                            Navigator.pushNamed(context, Routes.TRANSFERPAGE);
+                          },
+                        ),
+                      )
                     ],
                   ),
-                )),
-            Padding(
-              padding: const EdgeInsets.only(top: 5, bottom: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ButtonSecondVersion(
-                      horizontalPadding: 28,
-                      text: "Agregar",
-                      function: () {
-                        Navigator.pushNamed(context, Routes.RECHARGE);
-                      }),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  ButtonSecondVersion(
-                    horizontalPadding: 26,
-                    text: "Transferir",
-                    function: () {
-                      Navigator.pushNamed(context, Routes.TRANSFERPAGE);
-                    },
-                  )
-                ],
+                ),
               ),
-            ),
-            //Text(creditCards.length.toString()),
-            creditCards.isEmpty
-                ? const Padding(
+            ],
+          ),
+          //Text(creditCards.length.toString()),
+          creditCards.isEmpty
+              ? const Center(
+                  child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 25),
                     child: Text(
                       "No tiene tarjetas registradas",
                       style: TextStyle(
                           color: Colors.black,
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold),
+                          fontSize: 19,
+                          fontWeight: FontWeight.w600),
                       overflow: TextOverflow.visible,
                     ),
-                  )
-                : const Text(""),
+                  ),
+                )
+              : const Text(""),
 
-            //tarjatas
+          //tarjatas
+          if (creditCards.isNotEmpty)
             Column(
               children: [
                 SizedBox(
@@ -142,19 +156,8 @@ class _WalletPageState extends State<WalletPage> {
                           : creditCards
                               .length, // Si está vacía, mostrar solo 1 tarjeta
                       itemBuilder: (context, index) {
-                        final card = creditCards.isEmpty
-                            ? CreditCardEntity(
-                                balance: 0,
-                                id: 4,
-                                cardHolderFullName: 'Paganini',
-                                cardNumber: '999999999999999999',
-                                cardType: 'credit',
-                                validThru: '99/99',
-                                color: AppColors.primaryColor,
-                                isFavorite: false,
-                                cvv: '999',
-                              ) // Si no hay tarjetas, mostrar la ficticia
-                            : creditCards[index];
+                        final card = creditCards[index];
+                        debugPrint("El card es: ${card.isFavorite}");
                         return AnimatedBuilder(
                             animation: _pageController,
                             builder: (context, child) {
@@ -205,10 +208,12 @@ class _WalletPageState extends State<WalletPage> {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
+          const SizedBox(
+            height: 10,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 30),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ButtonSecondVersionIcon(
@@ -220,19 +225,18 @@ class _WalletPageState extends State<WalletPage> {
                     icon: Icons.delete_rounded,
                     iconAlignment: IconAlignment.end),
                 ButtonSecondVersionIcon(
-                  horizontalPadding: 12,
+                    horizontalPadding: 12,
                     function: () {
                       Navigator.pushNamed(context, Routes.CARDPAGE);
                     },
-                    text: "Nueva",
+                    text: "Agregar",
                     icon: Icons.add_card_rounded,
                     iconAlignment: IconAlignment.start),
               ],
-            )
-          ],
-        ),
-      );
-    
-    
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
