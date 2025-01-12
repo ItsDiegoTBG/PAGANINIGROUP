@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:paganini/app_data.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/theme/app_theme.dart';
+import 'package:paganini/presentation/pages/biometric_login_page.dart';
 import 'package:paganini/presentation/pages/forget_password_page.dart';
 import 'package:paganini/presentation/providers/introduction_provider.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
@@ -40,6 +41,7 @@ class MainApp extends StatelessWidget {
           Routes.FORGETPASSWORD : (context) => const   ForgetPasswordPage(),
           Routes.SETTINGSPAGE: (context) => const SettingPage(),
           Routes.HISTORYPAGE: (context) => const HistoryMovement(),
+          Routes.BIOLOGIN : (context) => const BiometricAuthPage()
         },
         theme: Provider.of<ThemeProvider>(context).isDarkMode
             ? AppTheme().themeDarkMode()

@@ -5,9 +5,14 @@ import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/widgets/buttons/button_with_icon.dart';
 import 'package:provider/provider.dart';
 
+import '../../domain/usecases/authenticate_with_biometrics.dart';
+import '../providers/biometric_auth_provider.dart';
+
+
 class InitialPage extends StatelessWidget {
   const InitialPage({super.key});
-
+  
+  
   @override
   Widget build(BuildContext context) {
     final themeProvider = context.read<ThemeProvider>();
@@ -89,7 +94,10 @@ class InitialPage extends StatelessWidget {
                     textButton: "6 Digitos",
                   ),
                   ButtonWithIcon(
-                    function: () {},
+                    function: () => {
+                        debugPrint("Hola desde auth page "),        
+                        Navigator.pushNamed(context, Routes.BIOLOGIN)
+                      },
                     icon: Icons.fingerprint_rounded,
                     textButton: "Biométrico",
                   ),

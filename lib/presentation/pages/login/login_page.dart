@@ -9,11 +9,14 @@ import 'package:paganini/helpers/request_notification_permission.dart';
 import 'package:paganini/presentation/pages/login/loading_screen.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
+import 'package:paganini/domain/usecases/authenticate_with_biometrics.dart';
+import 'package:paganini/presentation/providers/biometric_auth_provider.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
 import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
 import 'package:paganini/presentation/widgets/text_form_field_widget.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -30,6 +33,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
 
   void signUserIn(NotificationService notificationService) async {
     // Muestra el diálogo de carga
+    final biometricProvider = context.read<BiometricAuthProvider>();
     showDialog(
       context: context,
       barrierDismissible:false, // Evita que el usuario cierre el diálogo manualmente
@@ -45,10 +49,10 @@ class _LoginRegisterScreenState extends State<LoginPage> {
         password: passwordController.text.trim(),
       );
 
-      // Introduce un retraso antes de cerrar el diálogo
+      await biometricProvider.saveCredentials(emailController.text.trim(), passwordController.text.trim(),);
+
       await Future.delayed(const Duration(seconds: 2));
 
-      // Una vez exitoso, cierra el diálogo
       Navigator.pop(context);
       await RequestNotificationPermission.requestNotificationPermission();
       notificationService.showNotification(
@@ -328,14 +332,13 @@ class _LoginRegisterScreenState extends State<LoginPage> {
           ),
         ),
       ),
-      floatingActionButton: Platform.isIOS
-          ? FloatingButtonPaganini(
-              iconData: Icons.arrow_back,
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            )
-          : null,
+      
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, Routes.INITIAL);
+        },
+        child: const Icon(Icons.arrow_back),
+      )
     );
   }
 }
