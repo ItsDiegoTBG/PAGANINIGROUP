@@ -3,7 +3,6 @@ import 'package:paganini/app_data.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/theme/app_theme.dart';
 import 'package:paganini/presentation/pages/biometric_login_page.dart';
-import 'package:paganini/presentation/pages/forget_password_page.dart';
 import 'package:paganini/presentation/providers/introduction_provider.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
@@ -32,7 +31,7 @@ class MainApp extends StatelessWidget {
           Routes.CARDDELETEPAGE: (context) => const CardDeletePage(),
           Routes.REGISTER: (context) => const RegisterPage(),
           Routes.RECHARGE: (context) => const RechargePage(),
-          Routes.RECEIPTRANSFER: (context) => TransferReceipt(),
+         // Routes.RECEIPTRANSFER: (context) => TransferReceipt(),
           Routes.TRANSFERPAGE: (context) => const TransferPage(),
           Routes.INTRODUCTIONPAGE: (context) => const OnBoardingPage(),
           Routes.APPTUTORIALSCREEN : (context) => const AppTutorialScreen(),

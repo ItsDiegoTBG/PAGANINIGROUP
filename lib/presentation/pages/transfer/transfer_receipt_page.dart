@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/domain/entity/user_entity.dart';
 import 'package:paganini/presentation/providers/contact_provider.dart';
+import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
-
+import 'package:intl/intl.dart';
 import 'package:paganini/presentation/widgets/buttons/button_second_version.dart';
 
 import 'package:provider/provider.dart';
 
 // ignore: use_key_in_widget_constructors
 class TransferReceipt extends StatelessWidget {
+  final double valueTransfered;
+  final UserEntity userByTransfered;
+
+  const TransferReceipt(
+      {super.key,
+      required this.valueTransfered,
+      required this.userByTransfered});
+
   @override
   Widget build(BuildContext context) {
-    final contactTransferedRead = context.read<ContactProvider>();
+    final contactProvider = context.read<ContactProvider>();
+    final contactProviderWacth = context.watch<ContactProvider>();
+    final userProvider = context.read<UserProvider>();
+    final UserEntity? contactUserTransfered = contactProviderWacth.contactUser;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -41,11 +54,11 @@ class TransferReceipt extends StatelessWidget {
                         width: 105,
                         height: 110,
                         child: Image.asset("assets/image/img_transfer.png")),
-                    const Padding(
-                      padding: EdgeInsets.only(right: 10),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10),
                       child: Text(
-                        '\$100',
-                        style: TextStyle(
+                        '\$$valueTransfered',
+                        style: const TextStyle(
                           fontSize: 40,
                           color: Colors.grey,
                         ),
@@ -58,20 +71,23 @@ class TransferReceipt extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const InfoRow(label: 'De propietario:', value: 'Nombre'),
+                  InfoRow(
+                      label: 'De propietario:',
+                      value: userProvider.currentUser?.firstname ?? 'N/A'),
                   const InfoRow(label: 'A la cuenta:', value: '220323****'),
-                  const InfoRow(
-                      label: 'Beneficiario:', value: 'Diego Contreras'),
-                  const InfoRow(
+                  InfoRow(
+                      label: 'Beneficiario:',
+                      value: userByTransfered.firstname),
+                  InfoRow(
                     label: 'Email:',
-                    value: 'diegocontreras@gmail.com',
+                    value: userByTransfered.email,
                   ),
-                  const InfoRow(label: 'Fecha:', value: '8/11/2024 15:15pm'),
+                  InfoRow(label: 'Fecha:', value: getCurrentFormattedDate()),
                   const SizedBox(
                     height: 30,
                   ),
                   Center(
-                    child: ButtonSecondVersion(
+                      child: ButtonSecondVersion(
                     backgroundColor: AppColors.primaryColor,
                     colorText: Colors.white,
                     text: "Guardar comprobante",
@@ -89,7 +105,7 @@ class TransferReceipt extends StatelessWidget {
               ButtonSecondVersion(
                 text: "Realiza otra transferencia",
                 function: () {
-                  contactTransferedRead.resetContact();
+                  contactProviderWacth.resetContact();
                   Navigator.pushNamed(context, Routes.TRANSFERPAGE);
                 },
                 buttonWidth: 300,
@@ -108,6 +124,8 @@ class TransferReceipt extends StatelessWidget {
                     Routes.NAVIGATIONPAGE,
                     (Route<dynamic> route) => false,
                   );
+
+                  contactProviderWacth.resetContact();
                 },
                 buttonWidth: 300,
                 buttonHeight: 60,
@@ -118,8 +136,6 @@ class TransferReceipt extends StatelessWidget {
           ),
         ),
       ),
-     
-     
     );
   }
 }
@@ -149,4 +165,15 @@ class InfoRow extends StatelessWidget {
       ),
     );
   }
+}
+
+String getCurrentFormattedDate() {
+  // Obtiene la fecha y hora actual
+  DateTime now = DateTime.now();
+
+  // Formatea la fecha en el formato deseado
+  String formattedDate = DateFormat('d/M/yyyy hh:mm a').format(now);
+
+  // Devuelve la fecha formateada
+  return formattedDate;
 }

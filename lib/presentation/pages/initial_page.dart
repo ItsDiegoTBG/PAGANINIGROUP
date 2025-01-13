@@ -89,11 +89,7 @@ class InitialPage extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 20),
               child: Column(
                 children: [
-                  ButtonWithIcon(
-                    function: () {},
-                    icon: Icons.pin_rounded,
-                    textButton: "6 Digitos",
-                  ),
+                  
                   ButtonWithIcon(
                     function: () async {
                       try {
