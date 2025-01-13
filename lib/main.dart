@@ -83,7 +83,7 @@ void main() async {
         ChangeNotifierProvider(lazy: false, create: (_) => ThemeProvider()),
         ChangeNotifierProvider(lazy: false,create: (_) => IntroductionProvider()),
       ],
-      child: const MainApp(),
+      child: const AppLoader(),
     ),
   );
 }
