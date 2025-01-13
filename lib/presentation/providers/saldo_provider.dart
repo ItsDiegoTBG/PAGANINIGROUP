@@ -1,27 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class SaldoProvider with ChangeNotifier {
+  final DatabaseReference _saldoRef =
+      FirebaseDatabase.instance.ref().child('saldo');
+  
   double _saldo = 0.0;
  
   double get saldo => _saldo;
 
-
-  void agregar() {
-    _saldo = _saldo + 1000;
-    notifyListeners();
+    SaldoProvider() {
+    _saldoRef.onValue.listen((event) {
+      final newSaldo = event.snapshot.value as double?;
+      if (newSaldo != null) {
+        _saldo = newSaldo;
+        notifyListeners();
+      }
+    });
   }
 
-  void setZero() {
+  Future<void> agregar() async {
+    _saldo += 1000;
+    await _updateSaldoInFirebase();
+  }
+
+  Future<void> addRecharge(double recharge) async {
+    _saldo += recharge;
+    await _updateSaldoInFirebase();
+  }
+
+  Future<void> subRecharge(double value) async {
+    _saldo -= value;
+    await _updateSaldoInFirebase();
+  }
+
+  Future<void> _updateSaldoInFirebase() async {
+    try {
+      await _saldoRef.set(_saldo);
+    } catch (e) {
+      debugPrint("Error updating saldo in Firebase: $e");
+    }
+  }
+  Future<void> setZero() async {
     _saldo = 0.0;
-    notifyListeners();
-  }
-  void addRecharge(double recharge) {
-    _saldo = _saldo + recharge;
-    notifyListeners();
-  }
-
-  void subRecharge(double value) {
-    _saldo = _saldo - value;
-    notifyListeners();
+    await _updateSaldoInFirebase();
   }
 }
