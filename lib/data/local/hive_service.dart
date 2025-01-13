@@ -8,10 +8,13 @@ import 'package:paganini/data/models/contact_model.dart';
 class HiveService {
   static const String contactsBoxName = 'contactsBox';
 
-  Future<void> init() async {
-    Hive.registerAdapter(ContactUserAdapter()); // Registra el adaptador 
-    await Hive.openBox<ContactUser>(contactsBoxName);
-
+    Future<void> init() async {
+    if (!Hive.isAdapterRegistered(0)) { // Reemplaza "0" con el ID de tu adaptador
+      Hive.registerAdapter(ContactUserAdapter()); // Registra el adaptador solo si no está registrado
+    }
+    if (!Hive.isBoxOpen(contactsBoxName)) {
+      await Hive.openBox<ContactUser>(contactsBoxName); // Abre la caja solo si no está abierta
+    }
   }
 
   Future<List<ContactUser>> getContacts() async {
@@ -48,9 +51,7 @@ class HiveService {
 
     // Guardar los contactos actualizados
     await box.clear(); // Elimina todos los contactos actuales
-    for (var c in allContacts) {
-      await box.add(c); // Vuelve a añadir todos los contactos
-    }
+     await box.addAll(allContacts); 
   }
 
 
