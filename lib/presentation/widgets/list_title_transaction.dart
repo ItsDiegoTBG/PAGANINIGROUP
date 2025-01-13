@@ -30,18 +30,16 @@ class _ListTitleTransactionState extends State<ListTitleTransaction> {
       ),
       title: Row(
         children: [
-          // Originator
-          Expanded(
-            child: Text(
-              widget.transaction.originator,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 16,
-              ),
-              overflow: TextOverflow.ellipsis,
+          // Nombre del originador
+          Text(
+            widget.transaction.originator,
+            style: const TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
             ),
+            overflow: TextOverflow.ellipsis,
           ),
-          // Botón para mostrar más información (si aplica)
+          // Botón de flecha pegado al nombre
           if (widget.withDescription! && !widget.transaction.isIncome())
             IconButton(
               icon: const Icon(Icons.arrow_right),
@@ -50,8 +48,12 @@ class _ListTitleTransactionState extends State<ListTitleTransaction> {
                   _isDescriptionVisible = !_isDescriptionVisible;
                 });
               },
+              padding: EdgeInsets.zero, // Elimina el padding del IconButton
+              constraints: const BoxConstraints(), // Ajusta las restricciones
             ),
-          // Monto (siempre alineado a la derecha)
+          // Espaciador para empujar el monto al borde derecho
+          const Spacer(),
+          // Monto alineado a la derecha
           Text(
             widget.transaction.isIncome()
                 ? "+\$${widget.transaction.amount}"
