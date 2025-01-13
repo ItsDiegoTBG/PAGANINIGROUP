@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:u_credit_card/u_credit_card.dart';
+import 'package:paganini/presentation/pages/services/encryption_service.dart';
 
 class CreditCardWidget extends StatelessWidget {
   final String cardHolderFullName;
@@ -41,21 +42,28 @@ class CreditCardWidget extends StatelessWidget {
       }
     }
 
+    EncryptionService encryptionService = EncryptionService();
     return CreditCardUi(
-        autoHideBalance: true,
-        showValidFrom: false,
-        showBalance: true,
-        balance: balance,
-        width: width,
-        cardHolderFullName: cardHolderFullName,
-        doesSupportNfc: supportNfc,
-        cardNumber: cardNumber,
-        validThru: validThru,
-        cardType: whatCardTypeIs(cardType),
-        topLeftColor: color,
-        bottomRightColor: color,
-        cardProviderLogo: isFavorite== true ?  const Icon(Icons.star,color: Colors.yellow,size: 30,) : const SizedBox(),
-        cardProviderLogoPosition: CardProviderLogoPosition.right,                                       
-      );
+      autoHideBalance: true,
+      showValidFrom: false,
+      showBalance: true,
+      balance: balance,
+      width: width,
+      cardHolderFullName: cardHolderFullName,
+      doesSupportNfc: supportNfc,
+      cardNumber: encryptionService.decryptData(cardNumber),
+      validThru: validThru,
+      cardType: whatCardTypeIs(cardType),
+      topLeftColor: color,
+      bottomRightColor: color,
+      cardProviderLogo: isFavorite == true
+          ? const Icon(
+              Icons.star,
+              color: Colors.yellow,
+              size: 30,
+            )
+          : const SizedBox(),
+      cardProviderLogoPosition: CardProviderLogoPosition.right,
+    );
   }
 }

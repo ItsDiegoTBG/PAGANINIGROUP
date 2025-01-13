@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/domain/entity/card_credit.dart';
 import 'package:paganini/presentation/widgets/credit_card_ui.dart';
-
+import 'package:paganini/presentation/pages/services/encryption_service.dart';
 
 class CreditCardsView extends StatelessWidget {
   const CreditCardsView({

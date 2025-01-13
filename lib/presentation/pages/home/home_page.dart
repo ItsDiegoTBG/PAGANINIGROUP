@@ -11,6 +11,7 @@ import 'package:paganini/domain/entity/user_entity.dart';
 import 'package:paganini/helpers/show_qr.dart';
 import 'package:paganini/presentation/pages/payment/payment_page.dart';
 import 'package:paganini/presentation/pages/recharge/recharge_page.dart';
+import 'package:paganini/presentation/pages/services/encryption_service.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
@@ -56,7 +57,6 @@ class _HomePageState extends State<HomePage> {
         originator: 'John Doe',
         amount: 100.00,
         date: '14/12/2022'),
-   
   ];
 
   List<TransactionModel> filteredMovements = []; // Lista filtrada.
@@ -184,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                   )),
             ),
             _QuickAccessView(size: size),
-             Padding(
+            Padding(
                 padding: const EdgeInsets.only(top: 20, left: 30, bottom: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -201,9 +201,11 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(right: 5),
-                      child: IconButton(onPressed: (){
-                        Navigator.pushNamed(context, Routes.HISTORYPAGE);
-                      }, icon: const Icon(Icons.search)),
+                      child: IconButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, Routes.HISTORYPAGE);
+                          },
+                          icon: const Icon(Icons.search)),
                     )
                   ],
                 )),
@@ -219,7 +221,8 @@ class _HomePageState extends State<HomePage> {
                         : filteredMovements.length),
                 itemBuilder: (context, index) {
                   final TransactionModel transaction = filteredMovements[index];
-                  return ListTitleTransaction(transaction: transaction,paddingRight: 0);
+                  return ListTitleTransaction(
+                      transaction: transaction, paddingRight: 0);
                 },
               ),
             ),

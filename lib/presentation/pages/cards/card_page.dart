@@ -127,7 +127,6 @@ class _CardPageState extends State<CardPage> {
       try {
         EncryptionService encryptionService = EncryptionService();
 
-        // Encriptar los datos de la tarjeta antes de enviarlos
         String encryptedCardNumber = encryptionService
             .encryptData(numberCreditCardController.text.trim());
         String encryptedCvv =
