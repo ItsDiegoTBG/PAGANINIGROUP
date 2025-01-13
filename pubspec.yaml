@@ -73,7 +73,9 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   gap: ^3.0.1
   vector_graphics: ^1.1.10+1
-  
+  encrypt: ^5.0.0
+  convert: ^3.0.0
+  flutter_dotenv: ^5.1.0
   
   local_auth: ^2.3.0
   flutter_secure_storage: ^8.0.0
@@ -111,6 +113,7 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   assets:
+      - .env
       - assets/image/
       - assets/image/appstore.png
       - assets/image/tutorial/

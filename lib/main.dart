@@ -34,6 +34,7 @@ import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/pages/forget_password_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,9 +45,10 @@ void main() async {
   );
   await Hive.initFlutter();
   await Hive.openBox('settingsBox');
+  await dotenv.load(fileName: ".env");
   final hiveService = HiveService();
   await hiveService.init();
-   final authRepository = AuthRepositoryImpl(
+  final authRepository = AuthRepositoryImpl(
     FirebaseAuth.instance,
     LocalAuthentication(),
     const FlutterSecureStorage(),
@@ -62,8 +64,6 @@ void main() async {
   final authenticateWithBiometrics = AuthenticateWithBiometrics(authRepository);
   final bioProvider = BiometricAuthProvider(authenticateWithBiometrics);
 
-
-  
   await Future.delayed(const Duration(seconds: 1));
   FlutterNativeSplash.remove();
   //await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
@@ -71,20 +71,26 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => CreditCardProvider(creditCardsUseCase: creditCardsUseCase)),
+        ChangeNotifierProvider(
+            create: (_) =>
+                CreditCardProvider(creditCardsUseCase: creditCardsUseCase)),
         ChangeNotifierProvider(create: (_) => SaldoProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => ContactProvider()),
         ChangeNotifierProvider(create: (_) => bioProvider),
         Provider<HiveService>(create: (_) => hiveService),
-        Provider<ContactUseCase>(create: (context) => ContactUseCase(context.read<HiveService>()),),
-        Provider<NotificationService>(create: (_) => NotificationService(),),
+        Provider<ContactUseCase>(
+          create: (context) => ContactUseCase(context.read<HiveService>()),
+        ),
+        Provider<NotificationService>(
+          create: (_) => NotificationService(),
+        ),
         ChangeNotifierProvider(create: (_) => PaymentProvider()),
         ChangeNotifierProvider(lazy: false, create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(lazy: false,create: (_) => IntroductionProvider()),
+        ChangeNotifierProvider(
+            lazy: false, create: (_) => IntroductionProvider()),
       ],
       child: const MainApp(),
     ),
   );
 }
-

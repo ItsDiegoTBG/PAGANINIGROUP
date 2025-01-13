@@ -12,6 +12,7 @@ import 'package:paganini/data/datasources/credit_card_datasource.dart';
 import 'package:paganini/data/repositories/credit_card_repository_impl.dart';
 import 'package:paganini/domain/entity/card_credit.dart';
 import 'package:paganini/domain/usecases/credit_cards_use_case.dart';
+import 'package:paganini/presentation/pages/services/encryption_service.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
@@ -109,13 +110,13 @@ class _CardPageState extends State<CardPage> {
     final cardProviderRead = context.read<CreditCardProvider>();
     final userId = context.read<UserProvider>().currentUser?.id;
     final isFirstCardCreditRegistererd = cardProviderRead.creditCards.isEmpty;
-    
+
     final Map<Color, String> colors = {
-     const Color.fromARGB(255, 151, 41, 41): "red",
-     const Color.fromARGB(255, 54, 125, 57): "green",
+      const Color.fromARGB(255, 151, 41, 41): "red",
+      const Color.fromARGB(255, 54, 125, 57): "green",
       Colors.black: "black",
-     const Color.fromARGB(255, 49, 115, 168): "blue",
-     const Color.fromARGB(255, 207, 169, 54): "yellow",
+      const Color.fromARGB(255, 49, 115, 168): "blue",
+      const Color.fromARGB(255, 207, 169, 54): "yellow",
       AppColors.primaryColor: "primary",
     };
 
@@ -123,25 +124,31 @@ class _CardPageState extends State<CardPage> {
       setState(() {
         _isLoading = true;
       });
-      debugPrint("Vamos a registrar la tarjeta");
-
       try {
+        EncryptionService encryptionService = EncryptionService();
+
+        // Encriptar los datos de la tarjeta antes de enviarlos
+        String encryptedCardNumber = encryptionService
+            .encryptData(numberCreditCardController.text.trim());
+        String encryptedCvv =
+            encryptionService.encryptData(cvvCardController.text.trim());
+
         DatabaseReference cardRef =
             FirebaseDatabase.instance.ref('users/$userId/cards');
         String cardId = DateTime.now().millisecondsSinceEpoch.toString();
         Map<String, dynamic> cardData = {
           'id': cardId,
-          'cardNumber': numberCreditCardController.text.trim(),
+          'cardNumber': encryptedCardNumber,
           'expiryDate':
               "${monthExpirationController.text.trim()}/${yearExpirationController.text.trim()}",
-          'cvv': cvvCardController.text.trim(),
+          'cvv': encryptedCvv,
           'cardHolderFullName': nameController.text.trim(),
           'balance': 300,
           'color': colors[selectedColor] ?? "Sin color",
           'isFavorite': isFirstCardCreditRegistererd ? true : false,
         };
         await cardRef.child(cardId).set(cardData);
-        // ignore: use_build_context_synchronously
+
         AnimatedSnackBar(
           duration: const Duration(seconds: 3),
           builder: ((context) {
@@ -157,9 +164,8 @@ class _CardPageState extends State<CardPage> {
               ),
             );
           }),
-          // ignore: use_build_context_synchronously
         ).show(context);
-        // ignore: use_build_context_synchronously
+
         Future.delayed(const Duration(seconds: 1), () {
           cleanTextEditingControllers();
         });
@@ -170,8 +176,6 @@ class _CardPageState extends State<CardPage> {
       } catch (e) {
         debugPrint("Erro de REGISTRO DE TARJETAS AQUI!!!");
         debugPrint(e.toString());
-        // Mostrar mensaje de error
-        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error al registrar la tarjeta: $e'),
@@ -236,7 +240,7 @@ class _CardPageState extends State<CardPage> {
                       TextFormFieldSecondVersion(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Ingresa un numero de tarjeta porfa";
+                            return "Ingresa un numero de tarjeta por favor";
                           } else if (value.length < 16) {
                             return "El numero de tarjeta no puede ser menor a 16";
                           }
