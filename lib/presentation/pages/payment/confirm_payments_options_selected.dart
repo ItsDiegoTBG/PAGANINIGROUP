@@ -2,6 +2,7 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/helpers/show_animated_snackbar.dart';
 import 'package:paganini/presentation/pages/navigation_page.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/payment_provider.dart';
@@ -93,7 +94,7 @@ class ConfirmPaymentPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   if (isSaldoSelected)
-                     selectedCardAmounts.isNotEmpty
+                    selectedCardAmounts.isNotEmpty
                         ? ListTile(
                             title: const Text("Saldo de la cuenta"),
                             subtitle: Text("Monto seleccionado: \$$montoSaldo"),
@@ -103,12 +104,13 @@ class ConfirmPaymentPage extends StatelessWidget {
                             ),
                           )
                         : const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
                               "Se usara el saldo de la aplicacion",
-                              style: TextStyle(fontSize: 16, color: Colors.black),
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.black),
                             ),
-                        ),
+                          ),
                   ...selectedCardAmounts.entries.map((entry) {
                     final cardIndex = entry.key;
                     final cardAmount = entry.value;
@@ -212,103 +214,59 @@ class ConfirmPaymentPage extends StatelessWidget {
                             4.dejar los atributos del provider limpio para realizar otro paog
                           */
                             if (isSaldoSelected == true && saldo <= 0.0) {
-                              AnimatedSnackBar(
-                                duration: const Duration(seconds: 3),
-                                builder: ((context) {
-                                  return MaterialAnimatedSnackBar(
-                                    iconData: Icons.warning,
-                                    messageText: 'No tiene saldo en la cuenta',
-                                    type: AnimatedSnackBarType.error,
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(20)),
-                                    backgroundColor: Colors.amber[900]!,
-                                    titleTextStyle: const TextStyle(
-                                      color: Color.fromARGB(255, 255, 255, 255),
-                                      fontSize: 10,
-                                    ),
-                                  );
-                                }),
-                              ).show(context);
+                              ShowAnimatedSnackBar.show(
+                                  context,
+                                  "No tiene saldo en la cuenta",
+                                  Icons.warning,
+                                  AppColors.yellowColors);
                               return;
                             }
-                            if (isOnlySaldoSelected == true && selectedCardAmounts.isEmpty) {
-                              debugPrint("Solo saldo seleccionado");
-                              debugPrint(" EL saldo es $saldo y el total a pagar es $totalAmount");
-                              debugPrint("EL tatal a pagat es   $paymentProvider.totalAmountPayUser");
-                              saldoProviderWatch.subRecharge(totalPlayerAmount);
-                              paymentProvider.clearSelection();
-                              paymentProvider.clearTotalAmountPayUser();
-                               Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const NavigationPage()),
-                                  (Route<dynamic> route) => false);
-                              AnimatedSnackBar(
-                                duration: const Duration(seconds: 3),
-                                builder: ((context) {
-                                  return MaterialAnimatedSnackBar(
-                                    iconData: Icons.check,
-                                    messageText: 'El pago se realizo con exito',
-                                    type: AnimatedSnackBarType.error,
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(20)),
-                                    backgroundColor: Colors.green[900]!,
-                                    titleTextStyle: const TextStyle(
-                                      color: Color.fromARGB(255, 255, 255, 255),
-                                      fontSize: 10,
-                                    ),
-                                  );
-                                }),
-                              ).show(context);
-                             
-                              return;
+                            if (isOnlySaldoSelected == true &&selectedCardAmounts.isEmpty) {
+                              debugPrint("Entra al onluSelected");
+                              if (saldo < totalPlayerAmount) {
+                                Navigator.pop(context);
+
+                                ShowAnimatedSnackBar.show(context,"No tienes saldo suficiente",Icons.error,AppColors.redColors);
+                                return;
+                              } else {
+                                debugPrint("Solo saldo seleccionado");
+                                debugPrint("Solo seleciono el saldo como true ose onlysaldoselected");
+                                debugPrint("EL saldo es $saldo y el total a pagar es $totalAmount");
+                                debugPrint("EL tatal a pagat es   $paymentProvider.totalAmountPayUser");
+                                saldoProviderWatch.subRecharge(totalPlayerAmount);
+                                paymentProvider.clearSelection();
+                                paymentProvider.clearTotalAmountPayUser();
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const NavigationPage()),
+                                    (Route<dynamic> route) => false);
+
+                                ShowAnimatedSnackBar.show(context,"El pago se realizo con exito",Icons.check,AppColors.greenColors);
+                                return;
+                              }
+
+                              
                             }
 
                             //1
                             if (totalAmount !=
                                 paymentProvider.totalAmountPayUser) {
-                              AnimatedSnackBar(
-                                duration: const Duration(seconds: 3),
-                                builder: ((context) {
-                                  return const MaterialAnimatedSnackBar(
-                                    iconData: Icons.error,
-                                    messageText:
-                                        'El total de tus opciones de pago no cumple con el total que paga al usuario',
-                                    type: AnimatedSnackBarType.error,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(20)),
-                                    backgroundColor:
-                                        Color.fromARGB(255, 213, 55, 84),
-                                    titleTextStyle: TextStyle(
-                                      color: Color.fromARGB(255, 255, 255, 255),
-                                      fontSize: 10,
-                                    ),
-                                  );
-                                }),
-                              ).show(context);
+                              ShowAnimatedSnackBar.show(
+                                  context,
+                                  "El total de tus opciones de pago no cumple con el total que paga al usuario",
+                                  Icons.error,
+                                  AppColors.redColors);
                               return;
                             }
                             //2
                             if (montoSaldo > saldo) {
-                              AnimatedSnackBar(
-                                duration: const Duration(seconds: 3),
-                                builder: ((context) {
-                                  return MaterialAnimatedSnackBar(
-                                    iconData: Icons.info,
-                                    messageText:
-                                        'El monto de Saldo es mayor al que tiene en la cuenta',
-                                    type: AnimatedSnackBarType.error,
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(20)),
-                                    backgroundColor: Colors.blue[800]!,
-                                    titleTextStyle: const TextStyle(
-                                      color: Color.fromARGB(255, 255, 255, 255),
-                                      fontSize: 10,
-                                    ),
-                                  );
-                                }),
-                              ).show(context);
+                              ShowAnimatedSnackBar.show(
+                                  context,
+                                  "El monto de Saldo es mayor al que tiene en la cuenta",
+                                  Icons.info,
+                                  AppColors.blueColors);
                               return;
                             } else {
                               saldoProviderWatch.subRecharge(montoSaldo);
@@ -329,25 +287,11 @@ class ConfirmPaymentPage extends StatelessWidget {
                               // Verifica si el monto seleccionado es mayor que el saldo de la tarjeta
                               if (selectedAmount >
                                   creditCards[cardIndex].balance) {
-                                AnimatedSnackBar(
-                                  duration: const Duration(seconds: 3),
-                                  builder: ((context) {
-                                    return MaterialAnimatedSnackBar(
-                                      iconData: Icons.info,
-                                      messageText:
-                                          'El monto de la tarjeta ${creditCards[cardIndex].cardHolderFullName} es mayor al que tiene en la tarjeta',
-                                      type: AnimatedSnackBarType.error,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(20)),
-                                      backgroundColor: Colors.blue[800]!,
-                                      titleTextStyle: const TextStyle(
-                                        color:
-                                            Color.fromARGB(255, 255, 255, 255),
-                                        fontSize: 10,
-                                      ),
-                                    );
-                                  }),
-                                ).show(context);
+                                ShowAnimatedSnackBar.show(
+                                    context,
+                                    "El monto de la tarjeta ${creditCards[cardIndex].cardHolderFullName} es mayor al que tiene en la tarjeta",
+                                    Icons.info,
+                                    AppColors.blueColors);
                                 return;
                               }
 
@@ -365,24 +309,12 @@ class ConfirmPaymentPage extends StatelessWidget {
                             paymentProvider.clearTotalAmountPayUser();
 
                             //este mensaje es para indicar que se ha realizado un pago correcto
-                            AnimatedSnackBar(
-                              duration: const Duration(seconds: 3),
-                              builder: ((context) {
-                                return MaterialAnimatedSnackBar(
-                                  iconData: Icons.check,
-                                  messageText:
-                                      'El pago se ha realizado con exito!',
-                                  type: AnimatedSnackBarType.error,
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(20)),
-                                  backgroundColor: Colors.green[800],
-                                  titleTextStyle: const TextStyle(
-                                    color: Color.fromARGB(255, 255, 255, 255),
-                                    fontSize: 10,
-                                  ),
-                                );
-                              }),
-                            ).show(context);
+
+                            ShowAnimatedSnackBar.show(
+                                context,
+                                "El pago se ha realizado con exito",
+                                Icons.check,
+                                Colors.green);
                             Navigator.pop(context);
                             Navigator.pushNamed(context, Routes.NAVIGATIONPAGE);
                           },

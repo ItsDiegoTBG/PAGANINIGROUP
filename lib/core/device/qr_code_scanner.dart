@@ -3,6 +3,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:paganini/core/routes/app_routes.dart';
+import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/helpers/show_animated_snackbar.dart';
 import 'package:paganini/presentation/pages/navigation_page.dart';
 import 'package:paganini/presentation/pages/payment/payment_page.dart';
 
@@ -64,22 +66,8 @@ class QrCodeScanner extends StatelessWidget {
                         .stop()
                         .then((value) => controller.dispose())
                         .then((value) {
-                      AnimatedSnackBar(
-                        duration: const Duration(seconds: 2),
-                        builder: ((context) {
-                          return  MaterialAnimatedSnackBar(
-                            iconData: Icons.check,
-                            messageText: 'Escanero Correcto',
-                            type: AnimatedSnackBarType.error,
-                            borderRadius: const BorderRadius.all(Radius.circular(20)),
-                            backgroundColor: Colors.green[800]!,
-                            titleTextStyle: const  TextStyle(
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              fontSize: 10,
-                            ),
-                          );
-                        }),
-                      ).show(context);
+                      
+                      ShowAnimatedSnackBar.show(context, "Escaneo Correcto", Icons.check, AppColors.greenColors);
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
@@ -95,22 +83,7 @@ class QrCodeScanner extends StatelessWidget {
                   debugPrint(
                       "El usuario de este Qr no existe o no es QR valido del catch ");
 
-                  AnimatedSnackBar(
-                    duration: const Duration(seconds: 2),
-                    builder: ((context) {
-                      return  MaterialAnimatedSnackBar(
-                        iconData: Icons.check,
-                        messageText: 'Ocurrio un error al escanear el QR',
-                        type: AnimatedSnackBarType.error,
-                        borderRadius: const BorderRadius.all(Radius.circular(20)),
-                        backgroundColor: Colors.red[800]!,
-                        titleTextStyle: const  TextStyle(
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          fontSize: 10,
-                        ),
-                      );
-                    }),
-                  ).show(context);
+                  ShowAnimatedSnackBar.show(context, "Ocurrio un error al escanear el QR", Icons.check, AppColors.redColors);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -120,22 +93,8 @@ class QrCodeScanner extends StatelessWidget {
                   return;
                 }
               } else {
-                AnimatedSnackBar(
-                  duration: const Duration(seconds: 2),
-                  builder: ((context) {
-                    return const MaterialAnimatedSnackBar(
-                      iconData: Icons.check,
-                      messageText: 'Ocurrio un error al escanear el QR',
-                      type: AnimatedSnackBarType.error,
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      backgroundColor: Colors.red,
-                      titleTextStyle: TextStyle(
-                        color: Color.fromARGB(255, 255, 255, 255),
-                        fontSize: 10,
-                      ),
-                    );
-                  }),
-                ).show(context);
+                
+                ShowAnimatedSnackBar.show(context, "Ocurrio un error al escanear el QR", Icons.check, AppColors.redColors);
                 Navigator.push(
                     context,
                     MaterialPageRoute(

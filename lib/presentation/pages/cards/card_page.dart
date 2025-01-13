@@ -12,6 +12,7 @@ import 'package:paganini/data/datasources/credit_card_datasource.dart';
 import 'package:paganini/data/repositories/credit_card_repository_impl.dart';
 import 'package:paganini/domain/entity/card_credit.dart';
 import 'package:paganini/domain/usecases/credit_cards_use_case.dart';
+import 'package:paganini/helpers/show_animated_snackbar.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
@@ -109,13 +110,13 @@ class _CardPageState extends State<CardPage> {
     final cardProviderRead = context.read<CreditCardProvider>();
     final userId = context.read<UserProvider>().currentUser?.id;
     final isFirstCardCreditRegistererd = cardProviderRead.creditCards.isEmpty;
-    
+
     final Map<Color, String> colors = {
-     const Color.fromARGB(255, 151, 41, 41): "red",
-     const Color.fromARGB(255, 54, 125, 57): "green",
+      const Color.fromARGB(255, 151, 41, 41): "red",
+      const Color.fromARGB(255, 54, 125, 57): "green",
       Colors.black: "black",
-     const Color.fromARGB(255, 49, 115, 168): "blue",
-     const Color.fromARGB(255, 207, 169, 54): "yellow",
+      const Color.fromARGB(255, 49, 115, 168): "blue",
+      const Color.fromARGB(255, 207, 169, 54): "yellow",
       AppColors.primaryColor: "primary",
     };
 
@@ -141,24 +142,9 @@ class _CardPageState extends State<CardPage> {
           'isFavorite': isFirstCardCreditRegistererd ? true : false,
         };
         await cardRef.child(cardId).set(cardData);
-        // ignore: use_build_context_synchronously
-        AnimatedSnackBar(
-          duration: const Duration(seconds: 3),
-          builder: ((context) {
-            return const MaterialAnimatedSnackBar(
-              iconData: Icons.check,
-              messageText: 'La tarjeta se agrego correctamente',
-              type: AnimatedSnackBarType.success,
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-              backgroundColor: Color.fromARGB(255, 59, 141, 55),
-              titleTextStyle: TextStyle(
-                color: Color.fromARGB(255, 255, 255, 255),
-                fontSize: 10,
-              ),
-            );
-          }),
-          // ignore: use_build_context_synchronously
-        ).show(context);
+
+        ShowAnimatedSnackBar.show(context, "La tarjeta se agrego correctamente",
+            Icons.check, AppColors.greenColors);
         // ignore: use_build_context_synchronously
         Future.delayed(const Duration(seconds: 1), () {
           cleanTextEditingControllers();
@@ -447,25 +433,10 @@ class _CardPageState extends State<CardPage> {
                       await cardProviderRead.addCreditCard(userId!);
                     }
                   } else {
-                    AnimatedSnackBar(
-                      duration: const Duration(seconds: 3),
-                      builder: ((context) {
-                        return MaterialAnimatedSnackBar(
-                          iconData: Icons.info,
-                          messageText:
-                              'Revisa que los datos de la tarjeta sean correctos',
-                          type: AnimatedSnackBarType.error,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
-                          backgroundColor: Colors.blue[800]!,
-                          titleTextStyle: const TextStyle(
-                            color: Color.fromARGB(255, 255, 255, 255),
-                            fontSize: 10,
-                          ),
-                        );
-                      }),
-                    ).show(context);
+                    
+                    ShowAnimatedSnackBar.show(context, "Revisa que los datos de la tarjeta sean correctos", Icons.info, AppColors.blueColors);
                   }
+
                 },
                 text: registerOneCard ? "Registrar Otra" : "Registrar",
                 verticalPadding: 2,

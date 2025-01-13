@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/data/datasources/userservice.dart';
+import 'package:paganini/helpers/show_animated_snackbar.dart';
 import 'package:paganini/presentation/pages/payment/confirm_payments_options_selected.dart';
 import 'package:paganini/presentation/pages/payment/payments_options.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
@@ -29,7 +30,7 @@ class _PaymentPageState extends State<PaymentPage> {
   TextEditingController pageToUserController = TextEditingController();
   TextEditingController noteController = TextEditingController();
   List<TextEditingController> saldoControllers = [];
-  
+
   @override
   void initState() {
     super.initState();
@@ -79,7 +80,7 @@ class _PaymentPageState extends State<PaymentPage> {
           const SizedBox(
             height: 20,
           ),
-          firstPart(userService, context,userId ?? "No hay usuario"),
+          firstPart(userService, context, userId ?? "No hay usuario"),
           Padding(
             padding: const EdgeInsets.only(
               left: 12,
@@ -150,41 +151,43 @@ class _PaymentPageState extends State<PaymentPage> {
               ? ButtonSecondVersion(
                   text: "Siguiente",
                   function: () {
-                    paymentProviderWatch.setTotalAmountPayUser(double.tryParse(pageToUserController.text)!);
+                    paymentProviderWatch.setTotalAmountPayUser(
+                        double.tryParse(pageToUserController.text)!);
                     paymentProviderWatch.setNoteUserToPay(noteController.text);
                     showModalBottomSheet(
-                      context: context,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(30)),
-                      ),
-                      isScrollControlled: true,
-                      builder: (context) => DraggableScrollableSheet(
-                        expand: false,
-                        initialChildSize: 0.7,
-                        minChildSize: 0.32,
-                        maxChildSize: 0.9,
-                        builder: (context, scrollController) => SingleChildScrollView(
-                          controller: scrollController,
-                          child: Consumer<PaymentProvider>(
-                            builder: (context, paymentProviderWatch, child) {
-                              return paymentProviderWatch
-                                  .isConfirmPaymetOrPaymentSelected
-                                  ? const ConfirmPaymentPage()
-                                  : const PaymentOptions();
-                            },
-                          ),
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(30)),
                         ),
-                      ));
+                        isScrollControlled: true,
+                        builder: (context) => DraggableScrollableSheet(
+                              expand: false,
+                              initialChildSize: 0.7,
+                              minChildSize: 0.32,
+                              maxChildSize: 0.9,
+                              builder: (context, scrollController) =>
+                                  SingleChildScrollView(
+                                controller: scrollController,
+                                child: Consumer<PaymentProvider>(
+                                  builder:
+                                      (context, paymentProviderWatch, child) {
+                                    return paymentProviderWatch
+                                            .isConfirmPaymetOrPaymentSelected
+                                        ? const ConfirmPaymentPage()
+                                        : const PaymentOptions();
+                                  },
+                                ),
+                              ),
+                            ));
                   })
               : const Text("Asigna un monto para poder avanzar")
         ],
       ),
-
     );
   }
 
-  Row firstPart(UserService userService, BuildContext context,String userId) {
+  Row firstPart(UserService userService, BuildContext context, String userId) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -236,113 +239,7 @@ class _PaymentPageState extends State<PaymentPage> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             ElevatedButton(
-              onPressed: () async {
-                // Obtén el estado del proveedor sin escucharlo
-                final creditCardProviderWatch =
-                    context.read<CreditCardProvider>();
-                final creditCards = creditCardProviderWatch.creditCards;
-                double totalPago = 0.0;
-
-                // Accede a los valores de saldo sin reconstruir el widget
-                final saldoProviderRead = context.read<SaldoProvider>();
-                final saldo = saldoProviderRead.saldo;
-
-                // Convierte el saldo ingresado a double
-                double valueSaldo =
-                    double.tryParse(pageToUserController.text) ?? 0.0;
-
-                if (valueSaldo >= 0.0) {
-                  if (valueSaldo <= saldo) {
-                    // Realiza el descuento en el saldo
-                    saldoProviderRead.subRecharge(valueSaldo);
-                    totalPago += valueSaldo;
-                  } else {
-                    AnimatedSnackBar(
-                      duration: const Duration(seconds: 3),
-                      builder: ((context) {
-                        return const MaterialAnimatedSnackBar(
-                          iconData: Icons.check,
-                          messageText: 'Saldo Insuficiente',
-                          type: AnimatedSnackBarType.warning,
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          backgroundColor: Color.fromARGB(255, 222, 53, 48),
-                          titleTextStyle: TextStyle(
-                            color: Color.fromARGB(255, 255, 255, 255),
-                            fontSize: 10,
-                          ),
-                        );
-                      }),
-                    ).show(context);
-                    return;
-                  }
-                }
-
-                // Verifica cada tarjeta y el saldo ingresado para cada una
-                for (int i = 0; i < creditCards.length; i++) {
-                  double saldoPago =
-                      double.tryParse(saldoControllers[i].text) ?? 0.0;
-
-                  if (saldoPago > 0) {
-                    double tarjetaSaldo = creditCards[i].balance;
-
-                    if (tarjetaSaldo >= saldoPago) {
-                      // Realiza el descuento en la tarjeta y actualiza el saldo
-                      double nuevoSaldo = tarjetaSaldo - saldoPago;
-                      await creditCardProviderWatch.updateBalance(userId,
-                          creditCards[i].id, nuevoSaldo);
-
-                      totalPago += saldoPago;
-                    } else {
-                      AnimatedSnackBar(
-                        duration: const Duration(seconds: 3),
-                        builder: ((context) {
-                          return MaterialAnimatedSnackBar(
-                            iconData: Icons.check,
-                            messageText:
-                                'Saldo Insuficiente en ${creditCards[i].cardHolderFullName}',
-                            type: AnimatedSnackBarType.info,
-                            borderRadius: const BorderRadius.all(Radius.circular(20)),
-                            backgroundColor:
-                                const Color.fromARGB(255, 59, 84, 244),
-                            titleTextStyle: const TextStyle(
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              fontSize: 10,
-                            ),
-                          );
-                        }),
-                      ).show(context);
-                      return;
-                    }
-                  }
-                }
-
-                // Verifica si se realizaron pagos
-                if (totalPago > 0) {
-                  AnimatedSnackBar(
-                    duration: const Duration(seconds: 3),
-                    builder: ((context) {
-                      return MaterialAnimatedSnackBar(
-                        iconData: Icons.check,
-                        messageText:
-                            'Pago realizado con exito! Total \$${totalPago.toStringAsFixed(2)}',
-                        type: AnimatedSnackBarType.info,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(20)),
-                        backgroundColor: const Color.fromARGB(255, 30, 219, 17),
-                        titleTextStyle: const TextStyle(
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          fontSize: 10,
-                        ),
-                      );
-                    }),
-                  ).show(context);
-
-                  Future.delayed(const Duration(seconds: 2), () {
-                    // Este código se ejecutará después del retraso de 2 segundos
-                    Navigator.pushNamed(context, Routes.HOME);
-                  });
-                }
-              },
+              onPressed: () async {},
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
