@@ -4,7 +4,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 
 class SaldoProvider with ChangeNotifier {
-
   DatabaseReference? _saldoRef;
   double _saldo = 0.0;
 
@@ -17,40 +16,46 @@ class SaldoProvider with ChangeNotifier {
   void _initializeSaldo(String userId) {
     // Inicializa la referencia del saldo para el usuario específico
     _saldoRef = FirebaseDatabase.instance.ref().child('users/$userId/saldo');
-    
+
     // Escucha cambios en tiempo real
     _saldoRef?.onValue.listen((event) {
-      final newSaldo = event.snapshot.value as double?;
-      if (newSaldo != null) {
+      final newSaldo = double.tryParse(event.snapshot.value.toString());
+      if (newSaldo != null && newSaldo != _saldo) {
         _saldo = newSaldo;
-        notifyListeners();
+        notifyListeners(); // Solo notifica cambios si el saldo realmente cambia
       }
+    }, onError: (error) {
+      debugPrint("Error al escuchar cambios en el saldo: $error");
     });
   }
+
   Future<void> agregar() async {
-    _saldo += 1000;
-    await _updateSaldoInFirebase();
+    await _updateSaldoLocallyAndFirebase(_saldo + 1000);
   }
 
   Future<void> addRecharge(double recharge) async {
-    _saldo += recharge;
-    await _updateSaldoInFirebase();
+    await _updateSaldoLocallyAndFirebase(_saldo + recharge);
   }
 
   Future<void> subRecharge(double value) async {
-    _saldo -= value;
-    await _updateSaldoInFirebase();
+    if (value > _saldo) {
+      debugPrint("No se puede reducir más de lo que hay en el saldo.");
+      return;
+    }
+    await _updateSaldoLocallyAndFirebase(_saldo - value);
   }
 
-  Future<void> _updateSaldoInFirebase() async {
+  Future<void> setZero() async {
+    await _updateSaldoLocallyAndFirebase(0.0);
+  }
+
+  Future<void> _updateSaldoLocallyAndFirebase(double newSaldo) async {
+    _saldo = newSaldo;
+    notifyListeners(); // Notifica a los oyentes solo una vez
     try {
       await _saldoRef?.set(_saldo);
     } catch (e) {
-      debugPrint("Error updating saldo in Firebase: $e");
+      debugPrint("Error al actualizar el saldo en Firebase: $e");
     }
-  }
-  Future<void> setZero() async {
-    _saldo = 0.0;
-    await _updateSaldoInFirebase();
   }
 }
