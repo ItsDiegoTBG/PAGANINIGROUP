@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/presentation/pages/login/loading_screen.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/widgets/buttons/button_with_icon.dart';
 import 'package:provider/provider.dart';
@@ -96,15 +97,34 @@ class InitialPage extends StatelessWidget {
                   ButtonWithIcon(
                     function: () async {
                       try {
+
                         await bioProvider.authenticateWithBiometrics();
+
+                        showDialog(
+                          context: context,
+                          barrierDismissible:
+                              false, // Evita cerrar el diálogo manualmente
+                          builder: (context) {
+                            return const Center(child: LoadingScreen());
+                          },
+                        );
+                        await Future.delayed(const Duration(seconds: 2));
+
+                        // Cierra el diálogo después de la animación
+                        Navigator.pop(context);
+
+                        // Navega a la siguiente página
                         Navigator.pushNamed(context, Routes.NAVIGATIONPAGE);
                       } catch (e) {
+                        // Asegúrate de cerrar el diálogo en caso de error
+                        Navigator.pop(context);
+
+                        // Muestra el mensaje de error
                         debugPrint(e.toString());
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text(e.toString())),
                         );
                       }
-                      
                     },
                     icon: Icons.fingerprint_rounded,
                     textButton: "Biométrico",

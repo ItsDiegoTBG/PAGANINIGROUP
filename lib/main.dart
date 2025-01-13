@@ -72,7 +72,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => CreditCardProvider(creditCardsUseCase: creditCardsUseCase)),
-        ChangeNotifierProvider(create: (_) => SaldoProvider()),
+        ChangeNotifierProvider(create: (_) => SaldoProvider(FirebaseAuth.instance.currentUser!.uid)),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => ContactProvider()),
         ChangeNotifierProvider(create: (_) => bioProvider),
