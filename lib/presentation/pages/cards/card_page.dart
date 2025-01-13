@@ -131,15 +131,15 @@ class _CardPageState extends State<CardPage> {
             .encryptData(numberCreditCardController.text.trim());
         String encryptedCvv =
             encryptionService.encryptData(cvvCardController.text.trim());
-
+        String encrytedExpiryDate = encryptionService.encryptData(
+            "${monthExpirationController.text.trim()}/${yearExpirationController.text.trim()}");
         DatabaseReference cardRef =
             FirebaseDatabase.instance.ref('users/$userId/cards');
         String cardId = DateTime.now().millisecondsSinceEpoch.toString();
         Map<String, dynamic> cardData = {
           'id': cardId,
           'cardNumber': encryptedCardNumber,
-          'expiryDate':
-              "${monthExpirationController.text.trim()}/${yearExpirationController.text.trim()}",
+          'expiryDate': encrytedExpiryDate,
           'cvv': encryptedCvv,
           'cardHolderFullName': nameController.text.trim(),
           'balance': 300,
