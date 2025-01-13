@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:u_credit_card/u_credit_card.dart';
-import 'package:paganini/presentation/pages/services/encryption_service.dart';
+
 
 class CreditCardWidget extends StatelessWidget {
   final String cardHolderFullName;
@@ -42,7 +42,7 @@ class CreditCardWidget extends StatelessWidget {
       }
     }
 
-    EncryptionService encryptionService = EncryptionService();
+    
     return CreditCardUi(
       autoHideBalance: true,
       showValidFrom: false,
@@ -51,7 +51,7 @@ class CreditCardWidget extends StatelessWidget {
       width: width,
       cardHolderFullName: cardHolderFullName,
       doesSupportNfc: supportNfc,
-      cardNumber: encryptionService.decryptData(cardNumber),
+      cardNumber: cardNumber,
       validThru: validThru,
       cardType: whatCardTypeIs(cardType),
       topLeftColor: color,

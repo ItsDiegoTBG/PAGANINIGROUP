@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'dart:convert';
@@ -31,11 +32,10 @@ class EncryptionService {
       final encrypted = _encrypter.encrypt(data, iv: iv);
 
       // Concatenar el IV con los datos cifrados
-      final encryptedDataWithIv =
-          base64.encode(iv.bytes) + ':' + encrypted.base64;
+      final encryptedDataWithIv ='${base64.encode(iv.bytes)}:${encrypted.base64}';
       return encryptedDataWithIv;
     } catch (e) {
-      print('Error al encriptar: $e');
+      debugPrint("Error al cifrar: $e");
       return '';
     }
   }
@@ -56,7 +56,7 @@ class EncryptionService {
       // Desencriptar usando el IV extraído
       return _encrypter.decrypt(encrypted, iv: ivFromEncrypted);
     } catch (e) {
-      print('Error al desencriptar: $e');
+      debugPrint('Error al desencriptar: $e');
       return 'Error al desencriptar';
     }
   }
