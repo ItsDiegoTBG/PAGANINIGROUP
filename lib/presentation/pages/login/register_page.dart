@@ -51,7 +51,6 @@ class _RegisterPageState extends State<RegisterPage> {
         'ced': cedController.text.trim(),
         'email': emailController.text.trim(),
         'phone': phoneController.text.trim(),
-        'password': passwordController.text.trim(),
         'saldo': 0.0,
         'cards': [],
         // Puedes añadir más campos si lo necesitas

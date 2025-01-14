@@ -80,8 +80,7 @@ class _SettingPageState extends State<SettingPage> {
                                   iconData: Icons.settings,
                                   color: const Color(0xFF6bcde8),
                                   onTap: () {
-                                    Navigator.pushNamed(
-                                        context, Routes.SETTINGSPAGE);
+                                    debugPrint("click");
                                   }),
                               _ContainerIcon(
                                   iconData: Icons.logout,
