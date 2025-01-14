@@ -55,7 +55,8 @@ class _TransferPageState extends State<TransferPage> {
     final contactTransfered =
         context.watch<ContactProvider>().contactTransfered;
     final saldoActual = saldoProviderWatch.saldo;
-    final themeDark = Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+    final themeDark =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -82,7 +83,9 @@ class _TransferPageState extends State<TransferPage> {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Ingrese el monto a tranferir",
-                    style: TextStyle(fontSize: 18, color: themeDark ? Colors.white : Colors.grey[700]),
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: themeDark ? Colors.white : Colors.grey[700]),
                   ),
                 ),
               ],
@@ -95,7 +98,10 @@ class _TransferPageState extends State<TransferPage> {
                 top: myHeight * 0.05),
             child: TextFormField(
               keyboardType: TextInputType.number,
-              style:  TextStyle(fontSize: 60, color: themeDark ? Colors.white : Colors.black ,fontWeight: FontWeight.w200),
+              style: TextStyle(
+                  fontSize: 60,
+                  color: themeDark ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w200),
               textAlign: TextAlign.end,
               inputFormatters: [
                 LengthLimitingTextInputFormatter(8),
@@ -318,6 +324,7 @@ class _TransferPageState extends State<TransferPage> {
                             ).show(context);
                             Future.delayed(const Duration(seconds: 1), () {
                               showDialog(
+                                // ignore: use_build_context_synchronously
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
@@ -333,10 +340,14 @@ class _TransferPageState extends State<TransferPage> {
                                           fontStyle: FontStyle.italic,
                                           fontSize: 24),
                                     ),
-                                    content:  Text(
-                                        "¿Quieres recargar saldo en la aplicación?",style: TextStyle(
-                                          color: themeDark ? Colors.black : Colors.black,
-                                        ),),
+                                    content: Text(
+                                      "¿Quieres recargar saldo en la aplicación?",
+                                      style: TextStyle(
+                                        color: themeDark
+                                            ? Colors.black
+                                            : Colors.black,
+                                      ),
+                                    ),
                                     actions: [
                                       TextButton(
                                         style: TextButton.styleFrom(

@@ -30,7 +30,8 @@ class ConfirmPaymentPage extends StatelessWidget {
     final userId = context.read<UserProvider>().currentUser?.id;
     final isOnlySaldoSelected = paymentProvider.isOnlySaldoSelected;
     final totalPlayerAmount = paymentProvider.totalAmountPayUser;
-    final totalAmount = montoSaldo + selectedCardAmounts.values.fold(0.0, (sum, amount) => sum + amount);
+    final totalAmount = montoSaldo +
+        selectedCardAmounts.values.fold(0.0, (sum, amount) => sum + amount);
     final userPaymentEntity = paymentProvider.userPaymentData;
 
     return PopScope(
@@ -221,23 +222,34 @@ class ConfirmPaymentPage extends StatelessWidget {
                                   AppColors.yellowColors);
                               return;
                             }
-                            if (isOnlySaldoSelected == true &&selectedCardAmounts.isEmpty) {
+                            if (isOnlySaldoSelected == true &&
+                                selectedCardAmounts.isEmpty) {
                               debugPrint("Entra al onluSelected");
                               if (saldo < totalPlayerAmount) {
                                 Navigator.pop(context);
 
-                                ShowAnimatedSnackBar.show(context,"No tienes saldo suficiente",Icons.error,AppColors.redColors);
+                                ShowAnimatedSnackBar.show(
+                                    context,
+                                    "No tienes saldo suficiente",
+                                    Icons.error,
+                                    AppColors.redColors);
                                 return;
                               } else {
                                 debugPrint("Solo saldo seleccionado");
-                                debugPrint("Solo seleciono el saldo como true ose onlysaldoselected");
-                                debugPrint("EL saldo es $saldo y el total a pagar es $totalAmount");
-                                debugPrint("EL tatal a pagat es   $paymentProvider.totalAmountPayUser");
-                                saldoProviderWatch.subRecharge(totalPlayerAmount);
-                                paymentProvider.updateUserPaymentSaldo(userPaymentEntity!, totalPlayerAmount);
-                              
+                                debugPrint(
+                                    "Solo seleciono el saldo como true ose onlysaldoselected");
+                                debugPrint(
+                                    "EL saldo es $saldo y el total a pagar es $totalAmount");
+                                debugPrint(
+                                    "EL tatal a pagat es   $paymentProvider.totalAmountPayUser");
+                                saldoProviderWatch
+                                    .subRecharge(totalPlayerAmount);
+                                paymentProvider.updateUserPaymentSaldo(
+                                    userPaymentEntity!, totalPlayerAmount);
+
                                 paymentProvider.clearTotalAmountPayUser();
-                                paymentProvider.setTotalAmountPayUser(totalAmount);
+                                paymentProvider
+                                    .setTotalAmountPayUser(totalAmount);
                                 paymentProvider.clearSelection();
                                 Navigator.pushAndRemoveUntil(
                                     context,
@@ -246,11 +258,13 @@ class ConfirmPaymentPage extends StatelessWidget {
                                             const NavigationPage()),
                                     (Route<dynamic> route) => false);
 
-                                ShowAnimatedSnackBar.show(context,"El pago se realizo con exito",Icons.check,AppColors.greenColors);
+                                ShowAnimatedSnackBar.show(
+                                    context,
+                                    "El pago se realizo con exito",
+                                    Icons.check,
+                                    AppColors.greenColors);
                                 return;
                               }
-
-                              
                             }
 
                             //1
@@ -279,8 +293,9 @@ class ConfirmPaymentPage extends StatelessWidget {
                             for (int cardIndex in selectedCardAmounts.keys) {
                               debugPrint("Tarjeta $cardIndex");
                               // Verifica si el monto seleccionado es nulo
-                              if (selectedCardAmounts[cardIndex] == null)
+                              if (selectedCardAmounts[cardIndex] == null) {
                                 continue;
+                              }
 
                               // Obtén el monto seleccionado
                               double selectedAmount =
@@ -308,10 +323,11 @@ class ConfirmPaymentPage extends StatelessWidget {
                                   "El nuevo saldo de la tarjeta $cardIndex es: $newBalance");
                             }
                             //4
-                        
+
                             paymentProvider.clearTotalAmountPayUser();
-                            saldoProviderWatch.subRecharge(totalAmount);  
-                            paymentProvider.updateUserPaymentSaldo(userPaymentEntity!, totalPlayerAmount);    
+                            saldoProviderWatch.subRecharge(totalAmount);
+                            paymentProvider.updateUserPaymentSaldo(
+                                userPaymentEntity!, totalPlayerAmount);
                             paymentProvider.setTotalAmountPayUser(totalAmount);
                             paymentProvider.clearSelection();
                             //este mensaje es para indicar que se ha realizado un pago correcto

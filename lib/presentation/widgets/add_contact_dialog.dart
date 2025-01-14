@@ -6,7 +6,6 @@ import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/contact_model.dart';
 
-
 class AddContactDialog extends StatefulWidget {
   const AddContactDialog({super.key});
 
@@ -38,7 +37,6 @@ class _AddContactDialogState extends State<AddContactDialog> {
   Widget build(BuildContext context) {
     final contactProvider = context.watch<ContactProvider>();
     return AlertDialog(
-    
       title: const Text("Agregar Contacto"),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -63,7 +61,6 @@ class _AddContactDialogState extends State<AddContactDialog> {
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primaryColor,
-            
           ),
           onPressed: () async {
             final name = nameController.text.trim();
@@ -92,8 +89,9 @@ class _AddContactDialogState extends State<AddContactDialog> {
 
             bool exits = await contactProvider.contactUserNotExist(phone);
 
-            if(exits==false) {
+            if (exits == false) {
               ShowAnimatedSnackBar.show(
+                // ignore: use_build_context_synchronously
                 context,
                 "El usuaro no tiene cuenta en Paganini",
                 Icons.info,
@@ -104,12 +102,16 @@ class _AddContactDialogState extends State<AddContactDialog> {
 
             if (name.isNotEmpty && phone.isNotEmpty) {
               Navigator.pop(
+                // ignore: use_build_context_synchronously
                 context,
                 ContactUser(name: name, phone: phone, isRegistered: true),
               );
             }
           },
-          child: const Text("Guardar",style: TextStyle(color: Colors.white),),
+          child: const Text(
+            "Guardar",
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ],
     );

@@ -24,6 +24,7 @@ class QrPage extends StatefulWidget {
 }
 
 class _QrPageState extends State<QrPage> {
+  // ignore: unused_field
   String? _result;
 
   final screenshotController = ScreenshotController();
@@ -37,12 +38,12 @@ class _QrPageState extends State<QrPage> {
     setState(() => _result = result);
   }
 
-  
   @override
   Widget build(BuildContext context) {
     final userProviderWatch = context.watch<UserProvider>();
     final qrContainer = QrContainer(data: userProviderWatch.currentUser?.id);
-    final userName = userProviderWatch.currentUser?.firstname ?? "Usuario no disponible";
+    final userName =
+        userProviderWatch.currentUser?.firstname ?? "Usuario no disponible";
     return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -56,7 +57,7 @@ class _QrPageState extends State<QrPage> {
                   "assets/image/paganini_logo_horizontal_morado.png"),
             ),
           ),
-          
+
           //Text(_result ?? 'No result'),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -65,7 +66,7 @@ class _QrPageState extends State<QrPage> {
                 onTap: () {
                   debugPrint("QR TAP");
                   debugPrint("Se dio click en el Qr");
-                   ShowQr.showQrDialog(context, qrContainer, userName);
+                  ShowQr.showQrDialog(context, qrContainer, userName);
                 },
                 child: Center(
                   child: Screenshot(
@@ -101,15 +102,25 @@ class _QrPageState extends State<QrPage> {
                         color: AppColors.primaryColor,
                       )),
                   IconButton(
-                      onPressed: () async {
-                        final image = await screenshotController
-                            .captureFromWidget(qrContainer);
+                    onPressed: () async {
+                      final userProviderWatch = context.read<UserProvider>();
+                      final currentUserId = userProviderWatch.currentUser?.id;
+                      final image = await screenshotController
+                          .captureFromWidget(qrContainer);
+
+                      if (currentUserId == userProviderWatch.currentUser?.id) {
+                        ShowAnimatedSnackBar.show(
+                            // ignore: use_build_context_synchronously
+                            context,
+                            "No puedes compartir tu propio QR para pagarte a ti mismo.",
+                            Icons.error,
+                            Colors.red);
+                      } else {
                         await shareImage(image);
-                      },
-                      icon: const Icon(
-                        Icons.share_rounded,
-                        size: 40,
-                      )),
+                      }
+                    },
+                    icon: const Icon(Icons.share_rounded, size: 40),
+                  ),
                 ],
               )
             ],
@@ -130,7 +141,8 @@ Future<String> saveImage(Uint8List bytes, context) async {
   final result = await ImageGallerySaver.saveImage(bytes, name: name);
 
   if (result['filePath'] != null) {
-    ShowAnimatedSnackBar.show(context, "El QR se guardo correctamente", Icons.check, AppColors.greenColors);
+    ShowAnimatedSnackBar.show(context, "El QR se guardo correctamente",
+        Icons.check, AppColors.greenColors);
   } else {}
 
   return result['filePath'];

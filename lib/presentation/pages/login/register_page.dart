@@ -63,7 +63,10 @@ class _RegisterPageState extends State<RegisterPage> {
                     backgroundColor: AppColors.primaryColor,
                   ),
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text("Aceptar",style: TextStyle(color: Colors.white),),
+                  child: const Text(
+                    "Aceptar",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             );
@@ -98,9 +101,10 @@ class _RegisterPageState extends State<RegisterPage> {
       await clearFields();
 
       // Show success message
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(
-          duration: const  Duration(seconds: 1),
+        SnackBar(
+          duration: const Duration(seconds: 1),
           content: const Text('Registro exitoso'),
           backgroundColor: AppColors.greenColors,
         ),
@@ -108,6 +112,7 @@ class _RegisterPageState extends State<RegisterPage> {
       await Future.delayed(const Duration(seconds: 1));
 
       // Navigate to the login page
+      // ignore: use_build_context_synchronously
       await Navigator.pushNamed(context, Routes.LOGIN);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -116,6 +121,7 @@ class _RegisterPageState extends State<RegisterPage> {
         wrongEmailAlreadyInUse();
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error al registrar: $e'),
