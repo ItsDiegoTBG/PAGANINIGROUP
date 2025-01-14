@@ -71,9 +71,15 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => CreditCardProvider(creditCardsUseCase: creditCardsUseCase)),
-        ChangeNotifierProvider(create: (_) => SaldoProvider(FirebaseAuth.instance.currentUser!.uid)),
-        ChangeNotifierProvider(create: (_) =>CreditCardProvider(creditCardsUseCase: creditCardsUseCase)),
+        ChangeNotifierProvider(
+            create: (_) =>
+                CreditCardProvider(creditCardsUseCase: creditCardsUseCase)),
+        ChangeNotifierProvider(
+            create: (_) =>
+                SaldoProvider(FirebaseAuth.instance.currentUser!.uid)),
+        ChangeNotifierProvider(
+            create: (_) =>
+                CreditCardProvider(creditCardsUseCase: creditCardsUseCase)),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => ContactProvider()),
         ChangeNotifierProvider(create: (_) => bioProvider),
