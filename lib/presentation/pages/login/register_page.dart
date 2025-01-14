@@ -372,19 +372,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           await registerUser();
                         }
                       })),
-              const SizedBox(width: 10),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5)),
-                    padding: const EdgeInsets.all(0),
-                    backgroundColor: AppColors.primaryColor),
-                onPressed: () {},
-                child: const Icon(
-                  Icons.settings,
-                  color: Colors.white,
-                ),
-              ),
+              
             ],
           )
         ],

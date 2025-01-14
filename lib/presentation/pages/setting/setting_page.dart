@@ -57,7 +57,7 @@ class _SettingPageState extends State<SettingPage> {
                                     fontSize: 25,
                                     fontWeight: FontWeight.bold))),
                         const Gap(10),
-                        const Text('FCW-587462',
+                        const Text('Nro 2203232323',
                             style: TextStyle(color: Colors.black)),
                         const Gap(25),
                         Row(

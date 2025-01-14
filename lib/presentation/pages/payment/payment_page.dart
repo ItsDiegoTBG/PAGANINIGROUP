@@ -33,12 +33,14 @@ class _PaymentPageState extends State<PaymentPage> {
   TextEditingController noteController = TextEditingController();
   List<TextEditingController> saldoControllers = [];
 
-   late ContactUseCase contactUseCase;
+  late ContactUseCase contactUseCase;
+  List<ContactUser> contactsList = [];
 
   @override
   void initState() {
     super.initState();
     contactUseCase = context.read<ContactUseCase>();
+    _loadContacts();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final creditCardProviderWatch = context.read<CreditCardProvider>();
       final creditCards = creditCardProviderWatch.creditCards;
@@ -51,6 +53,13 @@ class _PaymentPageState extends State<PaymentPage> {
           });
         });
       }
+    });
+  }
+
+  Future<void> _loadContacts() async {
+    final fetchedContacts = await contactUseCase.callFetch();
+    setState(() {
+      contactsList = fetchedContacts;
     });
   }
 
@@ -79,7 +88,7 @@ class _PaymentPageState extends State<PaymentPage> {
         title: const ContentAppBar(),
         automaticallyImplyLeading: false,
       ),
-     // backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       body: Column(
         children: [
           const SizedBox(
@@ -212,7 +221,12 @@ class _PaymentPageState extends State<PaymentPage> {
             ),
             child: Center(
               child: Text(
-                  "Pagar a ${paymentProviderWatch.userPaymentData?.firstname}",style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),),
+                "Pagar a ${paymentProviderWatch.userPaymentData?.firstname}",
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
             ),
           ),
         ),
@@ -222,13 +236,25 @@ class _PaymentPageState extends State<PaymentPage> {
           children: [
             ElevatedButton(
               onPressed: () async {
+                if (contactsList.any((contact) =>
+                    contact.phone ==
+                    paymentProviderWatch.userPaymentData?.phone)) {
+                  ShowAnimatedSnackBar.show(
+                    context,
+                    "El usuario ya existe en tus contactos",
+                    Icons.info,
+                    AppColors.blueColors,
+                  );
+                  return;
+                }
                 ContactUser contact = ContactUser(
                   name: paymentProviderWatch.userPaymentData?.firstname ?? "",
                   phone: paymentProviderWatch.userPaymentData?.phone ?? "",
                   isRegistered: true,
                 );
                 contactUseCase.callSaveToFirst(contact);
-                ShowAnimatedSnackBar.show(context, "Agregado al contacto", Icons.check, AppColors.greenColors);
+                ShowAnimatedSnackBar.show(context, "Agregado al contacto",
+                    Icons.check, AppColors.greenColors);
               },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(

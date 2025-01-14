@@ -63,6 +63,7 @@ class QrCodeScanner extends StatelessWidget {
                     "No puedes pagarte a ti mismo",
                     Icons.error,
                     AppColors.redColors);
+               Navigator.push(context,MaterialPageRoute(builder: (context) => const  NavigationPage(initialIndex: 1))); 
                 return;
               }
 
