@@ -107,17 +107,7 @@ class _QrPageState extends State<QrPage> {
                       final currentUserId = userProviderWatch.currentUser?.id;
                       final image = await screenshotController
                           .captureFromWidget(qrContainer);
-
-                      if (currentUserId == userProviderWatch.currentUser?.id) {
-                        ShowAnimatedSnackBar.show(
-                            // ignore: use_build_context_synchronously
-                            context,
-                            "No puedes compartir tu propio QR para pagarte a ti mismo.",
-                            Icons.error,
-                            Colors.red);
-                      } else {
-                        await shareImage(image);
-                      }
+                      await shareImage(image);
                     },
                     icon: const Icon(Icons.share_rounded, size: 40),
                   ),
