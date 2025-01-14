@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:u_credit_card/u_credit_card.dart';
 
+
 class CreditCardWidget extends StatelessWidget {
   final String cardHolderFullName;
   final String cardNumber;
@@ -41,21 +42,28 @@ class CreditCardWidget extends StatelessWidget {
       }
     }
 
+    
     return CreditCardUi(
-        autoHideBalance: true,
-        showValidFrom: false,
-        showBalance: true,
-        balance: balance,
-        width: width,
-        cardHolderFullName: cardHolderFullName,
-        doesSupportNfc: supportNfc,
-        cardNumber: cardNumber,
-        validThru: validThru,
-        cardType: whatCardTypeIs(cardType),
-        topLeftColor: color,
-        bottomRightColor: color,
-        cardProviderLogo: isFavorite== true ?  const Icon(Icons.star,color: Colors.yellow,size: 30,) : const SizedBox(),
-        cardProviderLogoPosition: CardProviderLogoPosition.right,                                       
-      );
+      autoHideBalance: true,
+      showValidFrom: false,
+      showBalance: true,
+      balance: balance,
+      width: width,
+      cardHolderFullName: cardHolderFullName,
+      doesSupportNfc: supportNfc,
+      cardNumber: cardNumber,
+      validThru: validThru,
+      cardType: whatCardTypeIs(cardType),
+      topLeftColor: color,
+      bottomRightColor: color,
+      cardProviderLogo: isFavorite == true
+          ? const Icon(
+              Icons.star,
+              color: Colors.yellow,
+              size: 30,
+            )
+          : const SizedBox(),
+      cardProviderLogoPosition: CardProviderLogoPosition.right,
+    );
   }
 }

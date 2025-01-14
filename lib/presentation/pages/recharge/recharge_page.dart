@@ -3,6 +3,7 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/helpers/show_animated_snackbar.dart';
 import 'package:paganini/presentation/pages/recharge/confirm_recharge_page.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/floating_button_paganini.dart';
@@ -157,44 +158,14 @@ class RechargePageState extends State<RechargePage> {
                         ? double.tryParse(controllerAmount.text)
                         : 0.0;
                     if (controllerAmount.text.isEmpty) {
-                      AnimatedSnackBar(
-                        duration: const Duration(seconds: 3),
-                        builder: ((context) {
-                          return MaterialAnimatedSnackBar(
-                            iconData: Icons.check,
-                            messageText: 'Por favor ingrese un monto',
-                            type: AnimatedSnackBarType.info,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)),
-                            backgroundColor: Colors.blue[800]!,
-                            titleTextStyle: const TextStyle(
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              fontSize: 10,
-                            ),
-                          );
-                        }),
-                      ).show(context);
+                    
+                      ShowAnimatedSnackBar.show(context, "Por favor ingrese un monto",Icons.info, AppColors.blueColors);
                       return;
                     }
 
                     if (monto == null || monto <= 0) {
-                      AnimatedSnackBar(
-                        duration: const Duration(seconds: 3),
-                        builder: ((context) {
-                          return MaterialAnimatedSnackBar(
-                            iconData: Icons.check,
-                            messageText: 'Por favor ingrese un monto válido',
-                            type: AnimatedSnackBarType.info,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)),
-                            backgroundColor: Colors.blue[800]!,
-                            titleTextStyle: const TextStyle(
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              fontSize: 10,
-                            ),
-                          );
-                        }),
-                      ).show(context);
+                    
+                      ShowAnimatedSnackBar.show(context, "Por favor ingrese un monto válido",Icons.info, AppColors.blueColors);
                       return;
                     }
 

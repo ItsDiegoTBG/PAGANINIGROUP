@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/data/local/notification_service.dart';
+import 'package:paganini/domain/entity/user_entity.dart';
 import 'package:paganini/presentation/pages/transfer/transfer_receipt_page.dart';
 import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
@@ -25,6 +26,9 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
     final contactProviderRead = context.read<ContactProvider>();
     final saldoProviderRead = context.read<SaldoProvider>();
     final notificationService = Provider.of<NotificationService>(context);
+    final contactProviderWacth = context.watch<ContactProvider>();
+    final UserEntity? contactUserTransfered = contactProviderWacth.contactUser;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -59,10 +63,10 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
                         width: 105,
                         height: 110,
                         child: Image.asset("assets/image/img_transfer.png")),
-                   // const Icon(FontAwesomeIcons.handHoldingHeart),
-                    const Text(
-                      '\$100',
-                      style: TextStyle(
+                    // const Icon(FontAwesomeIcons.handHoldingHeart),
+                    Text(
+                      '\$${widget.valueTransfered}',
+                      style: const TextStyle(
                         fontSize: 40,
                         color: Colors.grey,
                       ),
@@ -72,16 +76,16 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
               ),
             ),
             const SizedBox(height: 20),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text(
+                const Text(
                   'Saldo Restante:',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "\$588",
-                  style: TextStyle(fontSize: 18),
+                  "\$${saldoProviderRead.saldo - widget.valueTransfered}",
+                  style: const TextStyle(fontSize: 18),
                 ),
               ],
             ),
@@ -97,62 +101,87 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
               ),
             ),
             const SizedBox(height: 10),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 80, // Ancho fijo para las etiquetas
-                  child: Text(
-                    "Nombre: ",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            Padding(
+              padding: const EdgeInsets.only(left: 64),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        width: 80, // Ancho fijo para las etiquetas
+                        child: Text(
+                          "Nombre: ",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        // Usamos Expanded para que el texto ocupe el espacio restante
+                        child: Text(
+                          contactUserTransfered?.firstname ??
+                              'N/A', // Añadí un valor por defecto en caso de que sea null
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Text(
-                  "Diego Contreras",
-                  style: TextStyle(fontSize: 16),
-                ),
-              ],
-            ),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 80, // Mismo ancho para alinear con "Nombre"
-                  child: Text(
-                    "Teléfono: ",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        width: 80, // Mismo ancho para alinear con "Nombre"
+                        child: Text(
+                          "Teléfono: ",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        // Expandido para el texto
+                        child: Text(
+                          contactUserTransfered?.phone ??
+                              'N/A', // Añadí un valor por defecto en caso de que sea null
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 25),
-                  child: Text(
-                    "0999999999",
-                    style: TextStyle(fontSize: 16),
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width:
+                            80, // Mismo ancho para alinear con las demás etiquetas
+                        child: Text(
+                          "Nro: ",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        // Expandido para el texto
+                        child: Text(
+                          "2203234040", // Aquí el valor está estático pero también podrías usar algo dinámico
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 80, // Mismo ancho para alinear con las demás etiquetas
-                  child: Text(
-                    "Nro: ",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 25),
-                  child: Text(
-                    "2203234040",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
             const Spacer(),
             Column(
@@ -161,13 +190,25 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
                 ButtonSecondVersion(
                   text: "Confirmar",
                   function: () async {
+                    debugPrint(
+                        "Datao del usuario del contacto que se ha transferio");
+                    debugPrint(
+                        "Data2 del usuario del contacto ${contactProviderWacth.contactUser?.phone}");
+                    debugPrint(
+                        "Datao3 del usuario del contacto ${contactProviderWacth.contactUser?.firstname}");
+                   
                     saldoProviderRead.subRecharge(widget.valueTransfered);
                     contactProviderRead.resetContact();
-                    notificationService.showNotification("Transferencia Exitosa", "Haz transferido de manera exitosa");
+                    contactProviderWacth.updateUserSaldo(contactUserTransfered!, widget.valueTransfered);
+                    notificationService.showNotification(
+                        "Transferencia Exitosa",
+                        "Haz transferido de manera exitosa");
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => TransferReceipt()));
+                            builder: (context) => TransferReceipt(
+                                valueTransfered: widget.valueTransfered,
+                                userByTransfered: contactUserTransfered)));
                   },
                   horizontalPadding: 70,
                   buttonWidth: 300,

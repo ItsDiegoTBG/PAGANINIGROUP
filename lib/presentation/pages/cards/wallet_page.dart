@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/domain/entity/card_credit.dart';
 import 'package:paganini/domain/usecases/credit_cards_use_case.dart';
+import 'package:paganini/presentation/pages/services/encryption_service.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
@@ -143,7 +144,7 @@ class _WalletPageState extends State<WalletPage> {
                 )
               : const Text(""),
 
-          //tarjatas
+          //tarjetas
           if (creditCards.isNotEmpty)
             Column(
               children: [
@@ -169,6 +170,7 @@ class _WalletPageState extends State<WalletPage> {
                               } else {
                                 value = index == 0 ? 1.0 : 0.7;
                               }
+
                               return Transform.scale(
                                 scale: value,
                                 child: Opacity(

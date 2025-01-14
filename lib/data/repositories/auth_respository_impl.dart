@@ -15,7 +15,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
 Future<void> authenticateWithBiometrics() async {
   bool isAuthenticated = await _localAuth.authenticate(
-    localizedReason: 'Autenticate para accder a tu cuenta paganini',
+    localizedReason: 'Autenticate para acceder a tu cuenta paganini',
     options: const AuthenticationOptions(
       stickyAuth: true,
     ),

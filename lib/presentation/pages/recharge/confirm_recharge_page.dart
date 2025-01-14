@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/domain/entity/card_credit.dart';
+import 'package:paganini/helpers/show_animated_snackbar.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
@@ -315,25 +316,8 @@ class _ConfirmRechargePageState extends State<ConfirmRechargePage> {
                             debugPrint(
                                 "Saldo insuficiente en la tarjeta seleccionada");
 
-                            AnimatedSnackBar(
-                              duration: const Duration(seconds: 3),
-                              builder: ((context) {
-                                return const MaterialAnimatedSnackBar(
-                                  iconData: Icons.check,
-                                  messageText:
-                                      'Saldo insuficiente en la tarjeta',
-                                  type: AnimatedSnackBarType.error,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20)),
-                                  backgroundColor:
-                                      Color.fromARGB(255, 213, 55, 84),
-                                  titleTextStyle: TextStyle(
-                                    color: Color.fromARGB(255, 255, 255, 255),
-                                    fontSize: 10,
-                                  ),
-                                );
-                              }),
-                            ).show(context);
+                          
+                            ShowAnimatedSnackBar.show(context, "Saldo insuficiente en la tarjeta",Icons.error,AppColors.redColors);
                           }
 
                           const Duration(seconds: 1);

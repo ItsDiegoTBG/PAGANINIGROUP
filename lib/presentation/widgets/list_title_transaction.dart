@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/data/models/transaction_model.dart';
+import 'package:paganini/presentation/providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 class ListTitleTransaction extends StatefulWidget {
   final bool? withDescription;
   final TransactionModel transaction;
-  final double? paddingRight ;
-    const ListTitleTransaction({
+  final double? paddingRight;
+
+  const ListTitleTransaction({
     super.key,
     required this.transaction,
     this.withDescription = false,
@@ -19,90 +22,68 @@ class ListTitleTransaction extends StatefulWidget {
 
 class _ListTitleTransactionState extends State<ListTitleTransaction> {
   bool _isDescriptionVisible = false;
+
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     return ListTile(
-      title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        // Información principal
-        Flexible(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.transaction.originator,
-                style:
-                    const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
-                widget.transaction.date,
-                style: const TextStyle(color: Colors.grey, fontSize: 12),
-              ),
-            ],
-          ),
-        ),
-        // Monto
-        Row(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                widget.transaction.isIncome()
-                    ? Padding(
-                      padding:  EdgeInsets.only(right: widget.paddingRight!),
-                      child: Text(
-                          "+\$${widget.transaction.amount}",
-                          style: const TextStyle(
-                              color: Colors.green,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600),
-                        ),
-                    )
-                    : Text(
-                        "-\$${widget.transaction.amount.abs()}",
-                        style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600),
-                      ),
-              ],
-            ),
-            if (widget.withDescription! && !widget.transaction.isIncome())
-              Padding(
-                padding: const EdgeInsets.only(left: 5),
-                child: IconButton(
-                    icon: const Icon(Icons.arrow_right),
-                    onPressed: () {
-                      setState(() {
-                        // Cambiar el estado para mostrar u ocultar la descripción
-                        _isDescriptionVisible = !_isDescriptionVisible;
-                      });
-                    }),
-              ),
-          ],
-        ),
-
-        // Icono
-      ]),
       leading: CircleAvatar(
         backgroundColor: AppColors.secondaryColor,
-        child: Text(widget.transaction.originator[0]),
+        child: Text(widget.transaction.originator[0],style: TextStyle(color: themeProvider.isDarkMode ? Colors.black : Colors.white),),
+      ),
+      title: Row(
+        children: [
+          // Nombre del originador
+          Text(
+            widget.transaction.originator,
+            style: const TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+          // Botón de flecha pegado al nombre
+          if (widget.withDescription! && !widget.transaction.isIncome())
+            IconButton(
+              icon: const Icon(Icons.arrow_right),
+              onPressed: () {
+                setState(() {
+                  _isDescriptionVisible = !_isDescriptionVisible;
+                });
+              },
+              padding: EdgeInsets.zero, // Elimina el padding del IconButton
+              constraints: const BoxConstraints(), // Ajusta las restricciones
+            ),
+          // Espaciador para empujar el monto al borde derecho
+          const Spacer(),
+          // Monto alineado a la derecha
+          Text(
+            widget.transaction.isIncome()
+                ? "+\$${widget.transaction.amount}"
+                : "-\$${widget.transaction.amount.abs()}",
+            style: TextStyle(
+              color: widget.transaction.isIncome() ? Colors.green : Colors.red,
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.right,
+          ),
+        ],
       ),
       subtitle: _isDescriptionVisible
-          ?  Column(
+          ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   "Métodos de pago:",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                ...widget.transaction.paymentMethods!.map((paymentMethod) {
-                  return Text(
+                ...widget.transaction.paymentMethods!.map(
+                  (paymentMethod) => Text(
                     paymentMethod,
                     style: const TextStyle(color: Colors.black, fontSize: 14),
-                  );
-                })
-                
+                  ),
+                ),
               ],
             )
           : null,

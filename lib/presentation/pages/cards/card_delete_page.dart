@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 
 import 'package:paganini/domain/entity/card_credit.dart';
+import 'package:paganini/helpers/show_animated_snackbar.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
@@ -31,7 +33,7 @@ class _CardDeletePageState extends State<CardDeletePage> {
         automaticallyImplyLeading: false,
         title: const ContentAppBar(),
       ),
-      backgroundColor: Colors.white,
+     // backgroundColor: Colors.white,
       body: creditCards.isEmpty
           ? Center(
               child: Column(
@@ -142,11 +144,41 @@ class _CardDeletePageState extends State<CardDeletePage> {
                           );
 
                           // Si el usuario confirma la eliminación
-                          if (confirmDelete == true) {
-                            await creditCardProviderRead.deleteCreditCard(
-                                userId, index);
-                            // Aquí puedes agregar código para actualizar la interfaz o mostrar un mensaje
-                          }
+                         if (confirmDelete == true) {
+                          // Mostrar el indicador de progreso
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false, // Evita que se cierre al tocar fuera del diálogo
+                          builder: (BuildContext context) {
+                            return const Center(
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                     Text("Eliminando tarjeta...",style: TextStyle(fontSize: 18,color: Colors.white),),
+                                    CircularProgressIndicator(
+                                      color: AppColors.primaryColor,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+
+                      // Simular un retraso de 3 segundos
+                      await Future.delayed(const Duration(seconds: 5));
+
+                      // Llamar al método de eliminación
+                      await creditCardProviderRead.deleteCreditCard(userId, index);
+
+                      // Cerrar el indicador de progreso
+                      Navigator.of(context).pop();
+
+                     ShowAnimatedSnackBar.show(context, "Tarjeta eliminada exitosamente", Icons.check, AppColors.greenColors);
+
+  } 
+
                         },
                         icon: const Icon(
                           Icons.delete_rounded,

@@ -27,7 +27,7 @@ class CreditCardRepositoryImpl implements CreditCardRepository {
         .toList();
   }
 
- /* @override
+  /* @override
   Future<void> addCreditCard(CreditCardEntity creditCard) async {
     // Convertir CreditCardEntity a CreditCardModel
     final creditCardModel = CreditCardModel(
@@ -52,7 +52,7 @@ class CreditCardRepositoryImpl implements CreditCardRepository {
   @override
   Future<bool> deleteCreditCard(String userId, int index) async {
     try {
-      await remoteDataSource.deleteCreditCardById(userId,index);
+      await remoteDataSource.deleteCreditCardById(userId, index);
       return true;
     } catch (e) {
       return false;
@@ -60,9 +60,10 @@ class CreditCardRepositoryImpl implements CreditCardRepository {
   }
 
   @override
-  Future<void> updateBalance(String userId, int idCreditCard, double newBalance) async {
+  Future<void> updateBalance(
+      String userId, int idCreditCard, double newBalance) async {
     try {
-      await remoteDataSource.updateBalance(userId,idCreditCard, newBalance);
+      await remoteDataSource.updateBalance(userId, idCreditCard, newBalance);
     } catch (e) {
       throw Exception('Error al agregar la tarjeta: $e');
     }

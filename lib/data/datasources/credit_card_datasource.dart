@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/data/models/credit_card_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:paganini/presentation/pages/services/encryption_service.dart';
 
 abstract class CreditCardRemoteDataSource {
   Future<List<CreditCardModel>> fetchCreditCards(String userid);
@@ -18,41 +19,53 @@ class CreditCardRemoteDataSourceImpl implements CreditCardRemoteDataSource {
   final List<CreditCardModel> _creditCards = [];
 
   Future<List<CreditCardModel>> getUserCreditCards(String userId) async {
-    final path = 'users/$userId/cards';
+  final path = 'users/$userId/cards';
+  final encryptionService = EncryptionService(); // Instancia del servicio de encriptación
 
-    try {
-      final snapshot = await db.child(path).get();
+  try {
+    final snapshot = await db.child(path).get();
 
-      // Limpiar la lista antes de llenarla
-      _creditCards.clear();
+    // Limpiar la lista antes de llenarla
+    _creditCards.clear();
 
-      // Verificar si el snapshot existe y contiene datos
-      if (!snapshot.exists || snapshot.value == null) {
-        debugPrint("No hay tarjetas para este usuario.");
-        return []; // Retornar lista vacía si no hay datos
+    // Verificar si el snapshot existe y contiene datos
+    if (!snapshot.exists || snapshot.value == null) {
+      debugPrint("No hay tarjetas para este usuario.");
+      return []; // Retornar lista vacía si no hay datos
+    }
+
+    // Asegurarse de que el valor sea un Map antes de procesarlo
+    final rawData = snapshot.value as Map<dynamic, dynamic>;
+
+    // Iterar sobre los datos obtenidos y agregarlos a la lista
+    rawData.forEach((key, value) {
+      final cardMap = Map<String, dynamic>.from(value as Map);
+      
+      try {
+        // Desencriptar los datos sensibles
+        cardMap['cardNumber'] =
+            encryptionService.decryptData(cardMap['cardNumber'] ?? '');
+        cardMap['cvv'] = encryptionService.decryptData(cardMap['cvv'] ?? '');
+        cardMap['expiryDate'] =
+            encryptionService.decryptData(cardMap['expiryDate'] ?? '');
+      } catch (e) {
+        debugPrint("Error al desencriptar los datos: $e");
       }
 
-      // Asegurarse de que el valor sea un Map antes de procesarlo
-      final rawData = snapshot.value as Map<dynamic, dynamic>;
+      // Agregar el modelo de tarjeta a la lista
+      _creditCards.add(CreditCardModel.fromMap({
+        'id': key.toString(), // Convertir la clave a String
+        ...cardMap,
+      }));
+    });
 
-      // Iterar sobre los datos obtenidos y agregarlos a la lista
-      rawData.forEach((key, value) {
-        final cardMap = {
-          'id': key.toString(), // Convertir la clave a String
-          ...Map<String, dynamic>.from(
-              value as Map), // Convertir el valor a Map<String, dynamic>
-        };
-
-        // Agregar el modelo de tarjeta a la lista
-        _creditCards.add(CreditCardModel.fromMap(cardMap));
-      });
-
-      return _creditCards; // Retornar la lista de tarjetas
-    } catch (e) {
-      debugPrint("Error al obtener las tarjetas: $e");
-      return []; // En caso de error, retornar lista vacía
-    }
+    return _creditCards; // Retornar la lista de tarjetas
+  } catch (e) {
+    debugPrint("Error al obtener las tarjetas: $e");
+    return []; // En caso de error, retornar lista vacía
   }
+}
+
 
   @override
   Future<List<CreditCardModel>> fetchCreditCards(String userid) async {

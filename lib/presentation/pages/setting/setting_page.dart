@@ -25,6 +25,7 @@ class _SettingPageState extends State<SettingPage> {
     final userProvider = context.watch<UserProvider>();
     final notificationService = Provider.of<NotificationService>(context);
     final UserEntity userEntity = userProvider.currentUser!;
+    final notificationProvider = Provider.of<NotificationService>(context);
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
 
     return SingleChildScrollView(
@@ -72,26 +73,28 @@ class _SettingPageState extends State<SettingPage> {
                                   iconData: Icons.credit_card_off_outlined,
                                   color: const Color(0xFF2290b8),
                                   onTap: () {
-                                    Navigator.pushNamed(context,Routes.CARDDELETEPAGE);
+                                    Navigator.pushNamed(
+                                        context, Routes.CARDDELETEPAGE);
                                   }),
                               _ContainerIcon(
                                   iconData: Icons.settings,
                                   color: const Color(0xFF6bcde8),
                                   onTap: () {
-                                    Navigator.pushNamed(context,Routes.SETTINGSPAGE);
+                                    Navigator.pushNamed(
+                                        context, Routes.SETTINGSPAGE);
                                   }),
                               _ContainerIcon(
                                   iconData: Icons.logout,
                                   color: const Color(0xFF6b41dc),
-                                  onTap: () {
-                                    userProvider.signOut();
-                                    notificationService.showNotification(
-                                        "Sesion Cerrada",
-                                        "Haz cerrado sesion de manera exitosa");
+                                  onTap: () async {
+                                    notificationProvider.showNotification(
+                                        "Salir de Sesion",
+                                        "Haz salido de sesion de manera exitosa");
                                     Navigator.pushNamedAndRemoveUntil(
                                         context,
                                         Routes.INITIAL,
                                         (Route<dynamic> route) => false);
+                                    await userProvider.signOut();
                                   }),
                             ]),
                         const Gap(23)
@@ -141,14 +144,17 @@ class _SettingPageState extends State<SettingPage> {
               text: "Soporte",
               iconData: Icons.support_agent_outlined,
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             ContainerSettings(
               text: "Tema Oscuro",
               iconData: Icons.dark_mode_outlined,
               needSwitch: true,
               darkThemeSelected: dartThemeSelected,
               onSwitchChanged: (value) {
-                Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+                Provider.of<ThemeProvider>(context, listen: false)
+                    .toggleTheme();
                 setState(() {
                   dartThemeSelected = value;
                 });

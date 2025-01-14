@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:paganini/helpers/show_animated_snackbar.dart';
 import 'package:paganini/helpers/show_qr.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/core/device/qr_code_scanner.dart';
@@ -129,22 +130,7 @@ Future<String> saveImage(Uint8List bytes, context) async {
   final result = await ImageGallerySaver.saveImage(bytes, name: name);
 
   if (result['filePath'] != null) {
-    AnimatedSnackBar(
-      duration: const Duration(seconds: 3),
-      builder: ((context) {
-        return const MaterialAnimatedSnackBar(
-          iconData: Icons.check,
-          messageText: 'El QR se guardo correctamente',
-          type: AnimatedSnackBarType.success,
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          backgroundColor: Color.fromARGB(255, 59, 141, 55),
-          titleTextStyle: TextStyle(
-            color: Color.fromARGB(255, 255, 255, 255),
-            fontSize: 10,
-          ),
-        );
-      }),
-    ).show(context);
+    ShowAnimatedSnackBar.show(context, "El QR se guardo correctamente", Icons.check, AppColors.greenColors);
   } else {}
 
   return result['filePath'];
