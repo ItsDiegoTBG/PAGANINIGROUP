@@ -9,6 +9,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/domain/usecases/contact_use_case.dart';
 import 'package:paganini/presentation/providers/contact_provider.dart';
+import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
 import 'package:paganini/presentation/widgets/contact_user.dart';
 import 'package:paganini/presentation/widgets/edit_contact_dialog.dart';
@@ -35,6 +36,8 @@ class _ContactsPageState extends State<ContactsPage> {
   List<ContactUser> filteredContacts = []; // Lista para almacenar los contactos filtrados.
 
   bool contactsImported = false;
+
+  
 
   @override
   void initState() {
@@ -84,6 +87,9 @@ class _ContactsPageState extends State<ContactsPage> {
   }
 
 Future<void> contactsFetch() async {
+  final userProvider = context.read<UserProvider>();
+  final userEntity = userProvider.currentUser;
+  userProvider.setUserImportedContacts();
   if (await FlutterContacts.requestPermission()) {
     // Obtén los contactos del dispositivo
     var contacts = await FlutterContacts.getContacts(
@@ -91,13 +97,14 @@ Future<void> contactsFetch() async {
       withPhoto: true,
     );
 
-    // Convierte los contactos obtenidos en una lista de ContactUser
-    var decodedContacts = contacts.map((contact) {
+    // Convierte los contactos obtenidos en una lista de ContactUserf
+     var decodedContacts = contacts.where((contact) {
+      return contact.phones.isNotEmpty &&
+          _formatPhoneNumber(contact.phones[0].number) != _formatPhoneNumber(userEntity!.phone);
+    }).map((contact) {
       return ContactUser(
         name: contact.displayName,
-        phone: contact.phones.isNotEmpty
-            ? _formatPhoneNumber(contact.phones[0].number)
-            : '',
+        phone: _formatPhoneNumber(contact.phones[0].number),
         isRegistered: false,
       );
     }).toList();
@@ -189,6 +196,7 @@ void filterContacts(String query) {
     double myHeight = MediaQuery.of(context).size.height;
     double myWidth = MediaQuery.of(context).size.width;
     final contactProviderRead = context.read<ContactProvider>();
+    final userProvider = context.watch<UserProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -422,7 +430,7 @@ void filterContacts(String query) {
           ),
         ],
       ),
-      floatingActionButton: contactsImported
+      floatingActionButton: userProvider.isImportedContacts
           ? null  // Si los contactos han sido importados, no mostrar el FloatingActionButton
           : FloatingButtonPaganini(
               onPressed: () {

@@ -61,10 +61,10 @@ class _RegisterPageState extends State<RegisterPage> {
       // Mostrar mensaje de éxito
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          duration: Duration(seconds: 1),
-          content: Text('Registro exitoso'),
-          backgroundColor: Colors.green,
+         SnackBar(
+          duration: const  Duration(seconds: 1),
+          content: const Text('Registro exitoso'),
+          backgroundColor: AppColors.greenColors,
         ),
       );
       await Future.delayed(const Duration(seconds: 1));
