@@ -32,6 +32,8 @@ class _ContactsPageState extends State<ContactsPage> {
   late ContactUseCase contactUseCase;
 
   List<ContactUser> contactsList = [];
+  List<ContactUser> filteredContacts = []; // Lista para almacenar los contactos filtrados.
+
   bool contactsImported = false;
 
   @override
@@ -50,6 +52,7 @@ class _ContactsPageState extends State<ContactsPage> {
 
   Future<void> loadContacts() async {
     contactsList = await contactUseCase.callFetch();
+    filteredContacts =  contactsList;
     setState(() {});
   }
 
@@ -165,6 +168,19 @@ String _formatPhoneNumber(String phoneNumber) {
   return cleanedNumber; // Devuelve el número limpio sin modificaciones
 }
 
+void filterContacts(String query) {
+  if (query.isEmpty) {
+    setState(() {
+      filteredContacts = List.from(contactsList); // Mostrar todos los contactos si no hay búsqueda.
+    });
+  } else {
+    setState(() {
+      filteredContacts = contactsList.where((contact) {
+        return contact.phone.contains(query); // Filtrar por número de teléfono.
+      }).toList();
+    });
+  }
+}
 
 
 
@@ -240,6 +256,7 @@ String _formatPhoneNumber(String phoneNumber) {
               right: myWidth * 0.08,
             ),
             child: TextField(
+              onChanged: filterContacts,
               controller: textEditingController,
               decoration: const InputDecoration(
                 suffixIcon: Icon(
@@ -287,7 +304,7 @@ String _formatPhoneNumber(String phoneNumber) {
 
           // Lista de contactos
           Expanded(
-            child: contactsList.isEmpty
+            child: filteredContacts.isEmpty
                 ? Padding(
                     padding: const EdgeInsets.only(bottom: 80),
                     child: Center(
@@ -325,9 +342,9 @@ String _formatPhoneNumber(String phoneNumber) {
                     slivers: [
                       SliverList(
                         delegate: SliverChildBuilderDelegate(
-                          childCount: contactsList.length,
+                          childCount: filteredContacts.length,
                           (context, index) {
-                            final contact = contactsList[index];
+                            final contact = filteredContacts[index];
                             debugPrint("Los contactos registrado es: ${contact.name} con el número: ${contact.phone} y si esta registrado: ${contact.isRegistered}");
                             return Padding(
                               padding: EdgeInsets.symmetric(

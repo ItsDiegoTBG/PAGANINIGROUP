@@ -62,4 +62,14 @@ class ContactProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+   Future<void> updateUserSaldo(UserEntity contactUser, double amount) async {
+    try {
+      double newSaldo = contactUser.saldo + amount;
+      await _database.ref('users').child(contactUser.id).update({'saldo': newSaldo});
+      debugPrint("Saldo actualizado exitosamente para el usuario receptor");
+    } catch (e) {
+      debugPrint('Error al actualizar el saldo del usuario: $e');
+    }
+  }
 }

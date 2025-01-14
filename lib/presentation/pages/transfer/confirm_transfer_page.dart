@@ -199,6 +199,7 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
                    
                     saldoProviderRead.subRecharge(widget.valueTransfered);
                     contactProviderRead.resetContact();
+                    contactProviderWacth.updateUserSaldo(contactUserTransfered!, widget.valueTransfered);
                     notificationService.showNotification(
                         "Transferencia Exitosa",
                         "Haz transferido de manera exitosa");
@@ -207,7 +208,7 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
                         MaterialPageRoute(
                             builder: (context) => TransferReceipt(
                                 valueTransfered: widget.valueTransfered,
-                                userByTransfered: contactUserTransfered!)));
+                                userByTransfered: contactUserTransfered)));
                   },
                   horizontalPadding: 70,
                   buttonWidth: 300,

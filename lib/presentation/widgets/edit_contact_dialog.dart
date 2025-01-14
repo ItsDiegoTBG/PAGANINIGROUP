@@ -27,7 +27,8 @@ class EditContactDialog extends StatelessWidget {
           onPressed: () {
             final updatedContact = ContactUser(
               name: nameController.text,
-              phone: contact.phone, // El teléfono permanece igual
+              phone: contact.phone, 
+              isRegistered: true// El teléfono permanece igual
             );
             Navigator.pop(context, updatedContact);
           },

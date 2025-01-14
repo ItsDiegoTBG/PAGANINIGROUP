@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/data/models/transaction_model.dart';
+import 'package:paganini/presentation/providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 class ListTitleTransaction extends StatefulWidget {
   final bool? withDescription;
@@ -23,10 +25,11 @@ class _ListTitleTransactionState extends State<ListTitleTransaction> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: AppColors.secondaryColor,
-        child: Text(widget.transaction.originator[0]),
+        child: Text(widget.transaction.originator[0],style: TextStyle(color: themeProvider.isDarkMode ? Colors.black : Colors.white),),
       ),
       title: Row(
         children: [

@@ -266,21 +266,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
                           },
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5)),
-                            padding: const EdgeInsets.all(0),
-                            backgroundColor: AppColors.primaryColor),
-                        onPressed: () {
-                          // Configuración
-                        },
-                        child: const Icon(
-                          Icons.settings,
-                          color: Colors.white,
-                        ),
-                      ),
+                    
                     ],
                   ),
                   const SizedBox(height: 10),

@@ -7,6 +7,8 @@ import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/helpers/show_animated_snackbar.dart';
 import 'package:paganini/presentation/pages/navigation_page.dart';
 import 'package:paganini/presentation/pages/payment/payment_page.dart';
+import 'package:paganini/presentation/providers/payment_provider.dart';
+import 'package:provider/provider.dart';
 
 class QrCodeScanner extends StatelessWidget {
   QrCodeScanner({
@@ -19,6 +21,7 @@ class QrCodeScanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final paymentProvider = Provider.of<PaymentProvider>(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -66,7 +69,7 @@ class QrCodeScanner extends StatelessWidget {
                         .stop()
                         .then((value) => controller.dispose())
                         .then((value) {
-                      
+                      paymentProvider.initializeUserPaymentData(data);
                       ShowAnimatedSnackBar.show(context, "Escaneo Correcto", Icons.check, AppColors.greenColors);
                       Navigator.pushReplacement(
                         context,

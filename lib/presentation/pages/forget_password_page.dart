@@ -86,8 +86,9 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                 height: 60,
               ),
               const Text(
-                'Ingrese su correo electrónico para recuperar su contraseña:',
-                textAlign: TextAlign.justify,
+                'Ingrese su correo electrónico para recuperar su contraseña',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 16),
               TextFormFieldWidget(

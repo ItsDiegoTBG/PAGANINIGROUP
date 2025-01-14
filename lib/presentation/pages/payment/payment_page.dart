@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/data/datasources/userservice.dart';
+import 'package:paganini/data/models/contact_model.dart';
+import 'package:paganini/domain/usecases/contact_use_case.dart';
 import 'package:paganini/helpers/show_animated_snackbar.dart';
 import 'package:paganini/presentation/pages/payment/confirm_payments_options_selected.dart';
 import 'package:paganini/presentation/pages/payment/payments_options.dart';
@@ -31,9 +33,12 @@ class _PaymentPageState extends State<PaymentPage> {
   TextEditingController noteController = TextEditingController();
   List<TextEditingController> saldoControllers = [];
 
+   late ContactUseCase contactUseCase;
+
   @override
   void initState() {
     super.initState();
+    contactUseCase = context.read<ContactUseCase>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final creditCardProviderWatch = context.read<CreditCardProvider>();
       final creditCards = creditCardProviderWatch.creditCards;
@@ -74,13 +79,16 @@ class _PaymentPageState extends State<PaymentPage> {
         title: const ContentAppBar(),
         automaticallyImplyLeading: false,
       ),
-      backgroundColor: Colors.white,
+     // backgroundColor: Colors.white,
       body: Column(
         children: [
           const SizedBox(
             height: 20,
           ),
           firstPart(userService, context, userId ?? "No hay usuario"),
+          const SizedBox(
+            height: 20,
+          ),
           Padding(
             padding: const EdgeInsets.only(
               left: 12,
@@ -187,12 +195,14 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  Row firstPart(UserService userService, BuildContext context, String userId) {
-    return Row(
+  Column firstPart(
+      UserService userService, BuildContext context, String userId) {
+    final paymentProviderWatch = context.watch<PaymentProvider>();
+    return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 50),
+          padding: const EdgeInsets.only(bottom: 20),
           child: Container(
             height: 50,
             width: 200,
@@ -200,46 +210,26 @@ class _PaymentPageState extends State<PaymentPage> {
               borderRadius: BorderRadius.circular(10),
               color: AppColors.primaryColor,
             ),
-            child: widget.dataId != null
-                ? Center(
-                    child: FutureBuilder<Map<String, dynamic>?>(
-                      future: userService.fetchUserById(widget.dataId!),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const CircularProgressIndicator(); // Muestra un cargador mientras se obtienen los datos
-                        } else if (snapshot.hasError) {
-                          return const Text(
-                              'Error al cargar datos'); // Muestra un mensaje de error
-                        } else if (snapshot.hasData) {
-                          final userData = snapshot.data!;
-
-                          return Text(
-                            "Pagar a ${userData['firstname']}", // Muestra el nombre del usuario
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                          );
-                        } else {
-                          return const Text(
-                              'Usuario no encontrado'); // Si el usuario no existe
-                        }
-                      },
-                    ),
-                  )
-                : const Text(
-                    'ID de usuario no proporcionado',
-                    style: TextStyle(color: Colors.black),
-                  ),
+            child: Center(
+              child: Text(
+                  "Pagar a ${paymentProviderWatch.userPaymentData?.firstname}",style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),),
+            ),
           ),
         ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             ElevatedButton(
-              onPressed: () async {},
+              onPressed: () async {
+                ContactUser contact = ContactUser(
+                  name: paymentProviderWatch.userPaymentData?.firstname ?? "",
+                  phone: paymentProviderWatch.userPaymentData?.phone ?? "",
+                  isRegistered: true,
+                );
+                contactUseCase.callSaveToFirst(contact);
+                ShowAnimatedSnackBar.show(context, "Agregado al contacto", Icons.check, AppColors.greenColors);
+              },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),

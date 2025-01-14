@@ -30,8 +30,8 @@ class ConfirmPaymentPage extends StatelessWidget {
     final userId = context.read<UserProvider>().currentUser?.id;
     final isOnlySaldoSelected = paymentProvider.isOnlySaldoSelected;
     final totalPlayerAmount = paymentProvider.totalAmountPayUser;
-    final totalAmount = montoSaldo +
-        selectedCardAmounts.values.fold(0.0, (sum, amount) => sum + amount);
+    final totalAmount = montoSaldo + selectedCardAmounts.values.fold(0.0, (sum, amount) => sum + amount);
+    final userPaymentEntity = paymentProvider.userPaymentData;
 
     return PopScope(
       canPop: false,
@@ -234,8 +234,11 @@ class ConfirmPaymentPage extends StatelessWidget {
                                 debugPrint("EL saldo es $saldo y el total a pagar es $totalAmount");
                                 debugPrint("EL tatal a pagat es   $paymentProvider.totalAmountPayUser");
                                 saldoProviderWatch.subRecharge(totalPlayerAmount);
-                                paymentProvider.clearSelection();
+                                paymentProvider.updateUserPaymentSaldo(userPaymentEntity!, totalPlayerAmount);
+                              
                                 paymentProvider.clearTotalAmountPayUser();
+                                paymentProvider.setTotalAmountPayUser(totalAmount);
+                                paymentProvider.clearSelection();
                                 Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
@@ -305,9 +308,12 @@ class ConfirmPaymentPage extends StatelessWidget {
                                   "El nuevo saldo de la tarjeta $cardIndex es: $newBalance");
                             }
                             //4
-                            paymentProvider.clearSelection();
+                        
                             paymentProvider.clearTotalAmountPayUser();
-
+                            saldoProviderWatch.subRecharge(totalAmount);  
+                            paymentProvider.updateUserPaymentSaldo(userPaymentEntity!, totalPlayerAmount);    
+                            paymentProvider.setTotalAmountPayUser(totalAmount);
+                            paymentProvider.clearSelection();
                             //este mensaje es para indicar que se ha realizado un pago correcto
 
                             ShowAnimatedSnackBar.show(

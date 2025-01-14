@@ -50,8 +50,6 @@ class CreditCardModel {
       color: getColorFromString(map['color'].toString()),
     );
   }
-
-
 }
 
 Color getColorFromString(String color) {
