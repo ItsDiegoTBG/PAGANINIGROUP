@@ -8,6 +8,10 @@ class UserProvider with ChangeNotifier {
   UserEntity? _currentUser;
   UserEntity? get currentUser => _currentUser;
 
+  bool _isImportedContacts = false;
+
+  bool get isImportedContacts => _isImportedContacts;
+
 
 
  void initializeUser() {
@@ -41,4 +45,9 @@ class UserProvider with ChangeNotifier {
   _currentUser = null;
   notifyListeners();
  } 
+
+ void setUserImportedContacts(){
+   _isImportedContacts = true;
+   notifyListeners();
+ }
 }

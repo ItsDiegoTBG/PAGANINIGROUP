@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/helpers/show_animated_snackbar.dart';
 import 'package:paganini/presentation/pages/login/loading_screen.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/widgets/buttons/button_with_icon.dart';
@@ -113,13 +114,11 @@ class InitialPage extends StatelessWidget {
                         Navigator.pushNamed(context, Routes.NAVIGATIONPAGE);
                       } catch (e) {
                         // Asegúrate de cerrar el diálogo en caso de error
-                        Navigator.pop(context);
+                        Navigator.pushNamed(context, Routes.LOGIN);
 
                         // Muestra el mensaje de error
                         debugPrint(e.toString());
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.toString())),
-                        );
+                        ShowAnimatedSnackBar.show(context, "Debes iniciar sesion por lo menos una vez",Icons.error, AppColors.redColors,seconds: 4);
                       }
                     },
                     icon: Icons.fingerprint_rounded,

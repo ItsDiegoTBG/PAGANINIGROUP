@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 
 class ShowAnimatedSnackBar {
   static void show(
-      BuildContext context, String text, IconData icon, Color color) {
+      BuildContext context, String text, IconData icon, Color color, {int seconds = 3}) {
     AnimatedSnackBar(
-      duration: const Duration(seconds: 2),
+      duration:  Duration(seconds: seconds),
       builder: ((context) {
         return MaterialAnimatedSnackBar(
           iconData: icon,

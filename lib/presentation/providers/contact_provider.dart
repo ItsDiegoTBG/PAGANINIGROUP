@@ -54,7 +54,18 @@ class ContactProvider with ChangeNotifier {
     }
     notifyListeners();
   }
-
+  Future<bool> contactUserNotExist(String phoneNumber) async {
+    try {
+      final snapshot = await _database.ref('users') // Ruta donde están almacenados los usuarios
+          .orderByChild('phone') // Ordenar por el campo phone
+          .equalTo(phoneNumber) // Comparar con el número de teléfono
+          .get(); // Obtener los datos  
+      return snapshot.exists && snapshot.value != null;
+    } catch (e) {
+      debugPrint('Error al verificar si el usuario existe: $e');
+      return false;
+    }
+  }
   void resetContact() {
     if (WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) {
       _contactTransfered = null;

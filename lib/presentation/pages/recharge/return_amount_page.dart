@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/helpers/show_animated_snackbar.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
@@ -230,87 +231,54 @@ class _ReturnAmountPageState extends State<ReturnAmountPage> {
                           onPressed: () async {
                             if (saldoProviderRead.saldo == 0) {
                               debugPrint("El saldo actual es 0");
-                              AnimatedSnackBar(
-                                duration: const Duration(seconds: 3),
-                                builder: ((context) {
-                                  return MaterialAnimatedSnackBar(
-                                    iconData: Icons.info,
-                                    messageText: 'No hay saldo en la cuenta',
-                                    type: AnimatedSnackBarType.error,
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(20)),
-                                    backgroundColor: Colors.blue[900]!,
-                                    titleTextStyle: const TextStyle(
-                                      color: Color.fromARGB(255, 255, 255, 255),
-                                      fontSize: 10,
-                                    ),
-                                  );
-                                }),
-                              ).show(context);
+
+                              ShowAnimatedSnackBar.show(
+                                  context,
+                                  "No hay saldo en la cuenta",
+                                  Icons.info,
+                                  AppColors.blueColors);
                               return;
                             }
                             if (!_isEnabledTextFormField) {
                               setState(() {
                                 _isLoading = true; // Mostrar indicador de carga
                               });
-                              int selectedIndex = _pageController.page?.round() ?? 0;
+                              int selectedIndex =
+                                  _pageController.page?.round() ?? 0;
                               final selectedCard = creditCards[selectedIndex];
-                              final newBalance = selectedCard.balance + saldoProviderRead.saldo;
+                              final newBalance = selectedCard.balance +
+                                  saldoProviderRead.saldo;
                               // Operación asíncrona fuera de setState
                               await Future.delayed(const Duration(seconds: 2));
-                              creditCardProviderWatch.updateBalance(userId!, selectedIndex, newBalance);
+                              creditCardProviderWatch.updateBalance(
+                                  userId!, selectedIndex, newBalance);
                               saldoProviderWatch.setZero();
                               if (context.mounted) {
                                 // Asegurarse de que el contexto siga montado antes de navegar
                                 Navigator.pop(context);
-                                AnimatedSnackBar(
-                                duration: const Duration(seconds: 3),
-                                builder: ((context) {
-                                  return MaterialAnimatedSnackBar(
-                                    iconData: Icons.check,
-                                    messageText: 'Accion exitosa',
-                                    type: AnimatedSnackBarType.error,
-                                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                                    backgroundColor: Colors.green[900]!,
-                                    titleTextStyle: const TextStyle(
-                                      color: Color.fromARGB(255, 255, 255, 255),
-                                      fontSize: 10,
-                                    ),
-                                  );
-                                }),
-                              ).show(context);
+
+                                ShowAnimatedSnackBar.show(context,
+                                    "Accion exitosa", Icons.check, color);
                               }
 
                               setState(() {
-                                _isLoading =false; // Ocultar indicador de carga
+                                _isLoading =
+                                    false; // Ocultar indicador de carga
                               });
 
                               return;
                             }
 
                             if (returnAmountController.text.isEmpty) {
-                              AnimatedSnackBar(
-                                duration: const Duration(seconds: 3),
-                                builder: ((context) {
-                                  return MaterialAnimatedSnackBar(
-                                    iconData: Icons.info,
-                                    messageText: 'Asigne un monto',
-                                    type: AnimatedSnackBarType.error,
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(20)),
-                                    backgroundColor: Colors.blue[900]!,
-                                    titleTextStyle: const TextStyle(
-                                      color: Color.fromARGB(255, 255, 255, 255),
-                                      fontSize: 10,
-                                    ),
-                                  );
-                                }),
-                              ).show(context);
+                              
+                              ShowAnimatedSnackBar.show(context, "Asigne un monto", Icons.info, AppColors.blueColors);
                               return;
                             }
 
-                            final double amountReturn = double.parse(returnAmountController.text);
-                            int selectedIndex = _pageController.page?.round() ?? 0;
+                            final double amountReturn =
+                                double.parse(returnAmountController.text);
+                            int selectedIndex =
+                                _pageController.page?.round() ?? 0;
                             final selectedCard = creditCards[selectedIndex];
                             debugPrint("El monto a regresar es: $amountReturn");
                             if (amountReturn < 0 || amountReturn == 0) {
@@ -361,8 +329,10 @@ class _ReturnAmountPageState extends State<ReturnAmountPage> {
                             await Future.delayed(const Duration(seconds: 2));
 
                             saldoProviderWatch.subRecharge(amountReturn);
-                            final newBalance =amountReturn + selectedCard.balance;
-                            creditCardProviderWatch.updateBalance(userId!, selectedIndex, newBalance);
+                            final newBalance =
+                                amountReturn + selectedCard.balance;
+                            creditCardProviderWatch.updateBalance(
+                                userId!, selectedIndex, newBalance);
 
                             if (context.mounted) {
                               Navigator.pop(context);
@@ -372,9 +342,11 @@ class _ReturnAmountPageState extends State<ReturnAmountPage> {
                                 builder: ((context) {
                                   return MaterialAnimatedSnackBar(
                                     iconData: Icons.check,
-                                    messageText: 'Operacion realizada con exito',
+                                    messageText:
+                                        'Operacion realizada con exito',
                                     type: AnimatedSnackBarType.error,
-                                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(20)),
                                     backgroundColor: Colors.green[900]!,
                                     titleTextStyle: const TextStyle(
                                       color: Color.fromARGB(255, 255, 255, 255),
@@ -384,9 +356,9 @@ class _ReturnAmountPageState extends State<ReturnAmountPage> {
                                 }),
                               ).show(context);
                             }
-                             setState(() {
-                                _isLoading =false; // Ocultar indicador de carga
-                              });
+                            setState(() {
+                              _isLoading = false; // Ocultar indicador de carga
+                            });
                           },
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
