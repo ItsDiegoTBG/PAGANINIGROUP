@@ -59,8 +59,11 @@ class _RegisterPageState extends State<RegisterPage> {
                   "El número de cédula o teléfono ya está registrado en el sistema."),
               actions: [
                 TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor,
+                  ),
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text("OK"),
+                  child: const Text("Aceptar",style: TextStyle(color: Colors.white),),
                 ),
               ],
             );

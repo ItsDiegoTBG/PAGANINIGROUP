@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paganini/core/utils/colors.dart';
 import '../../data/models/contact_model.dart';
 
 class AddContactDialog extends StatelessWidget {
@@ -10,6 +11,7 @@ class AddContactDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+    
       title: const Text("Agregar Contacto"),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -30,6 +32,10 @@ class AddContactDialog extends StatelessWidget {
           child: const Text("Cancelar"),
         ),
         ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primaryColor,
+            
+          ),
           onPressed: () {
             final name = nameController.text.trim();
             final phone = phoneController.text.trim();
@@ -38,7 +44,7 @@ class AddContactDialog extends StatelessWidget {
               Navigator.pop(context, ContactUser(name: name, phone: phone,isRegistered: true));
             }
           },
-          child: const Text("Guardar"),
+          child: const Text("Guardar",style: TextStyle(color: Colors.white),),
         ),
       ],
     );
