@@ -6,12 +6,6 @@ import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/contact_model.dart';
 
-import 'package:flutter/material.dart';
-import 'package:paganini/core/utils/colors.dart';
-import 'package:paganini/domain/usecases/contact_use_case.dart';
-import 'package:paganini/helpers/show_animated_snackbar.dart';
-import 'package:provider/provider.dart';
-import '../../data/models/contact_model.dart';
 
 class AddContactDialog extends StatefulWidget {
   const AddContactDialog({super.key});
@@ -44,6 +38,7 @@ class _AddContactDialogState extends State<AddContactDialog> {
   Widget build(BuildContext context) {
     final contactProvider = context.watch<ContactProvider>();
     return AlertDialog(
+    
       title: const Text("Agregar Contacto"),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -66,6 +61,10 @@ class _AddContactDialogState extends State<AddContactDialog> {
           child: const Text("Cancelar"),
         ),
         ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primaryColor,
+            
+          ),
           onPressed: () async {
             final name = nameController.text.trim();
             final phone = phoneController.text.trim();
@@ -110,7 +109,7 @@ class _AddContactDialogState extends State<AddContactDialog> {
               );
             }
           },
-          child: const Text("Guardar"),
+          child: const Text("Guardar",style: TextStyle(color: Colors.white),),
         ),
       ],
     );

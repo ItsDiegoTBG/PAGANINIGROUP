@@ -34,6 +34,48 @@ class _RegisterPageState extends State<RegisterPage> {
     debugPrint("Vamos a registerUser");
 
     try {
+      // Reference to the Realtime Database
+      DatabaseReference usersRef = FirebaseDatabase.instance.ref('users');
+
+      // Query to check if ced or phone exists
+      final cedQuery = await usersRef
+          .orderByChild('ced')
+          .equalTo(cedController.text.trim())
+          .once();
+
+      final phoneQuery = await usersRef
+          .orderByChild('phone')
+          .equalTo(phoneController.text.trim())
+          .once();
+
+      if (cedQuery.snapshot.exists || phoneQuery.snapshot.exists) {
+        // Show warning message
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text("Número ya registrado"),
+              content: const Text(
+                  "El número de cédula o teléfono ya está registrado en el sistema."),
+              actions: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor,
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text("Aceptar",style: TextStyle(color: Colors.white),),
+                ),
+              ],
+            );
+          },
+        );
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Proceed with user registration if ced/phone doesn't exist
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
@@ -41,10 +83,8 @@ class _RegisterPageState extends State<RegisterPage> {
       );
       String uid = userCredential.user!.uid;
 
-      // Obtener la referencia a la base de datos en tiempo real
+      // Save user data to Realtime Database
       DatabaseReference userRef = FirebaseDatabase.instance.ref('users/$uid');
-
-      // Guardar los datos del usuario en Realtime Database
       await userRef.set({
         'firstname': firstNameController.text.trim(),
         'lastname': lastNameController.text.trim(),
@@ -53,13 +93,11 @@ class _RegisterPageState extends State<RegisterPage> {
         'phone': phoneController.text.trim(),
         'saldo': 0.0,
         'cards': [],
-        // Puedes añadir más campos si lo necesitas
       });
 
       await clearFields();
 
-      // Mostrar mensaje de éxito
-      // ignore: use_build_context_synchronously
+      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
          SnackBar(
           duration: const  Duration(seconds: 1),
@@ -69,7 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
       );
       await Future.delayed(const Duration(seconds: 1));
 
-      // ignore: use_build_context_synchronously
+      // Navigate to the login page
       await Navigator.pushNamed(context, Routes.LOGIN);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -78,7 +116,6 @@ class _RegisterPageState extends State<RegisterPage> {
         wrongEmailAlreadyInUse();
       }
     } catch (e) {
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error al registrar: $e'),
@@ -242,13 +279,14 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           const SizedBox(height: 10),
           const Text("Contraseña", style: TextStyle(fontSize: 16)),
-          
           TextFormField(
             obscureText: !_isPasswordVisible,
             controller: passwordController,
             decoration: InputDecoration(
               suffixIcon: IconButton(
-                icon: _isPasswordVisible ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off),
+                icon: _isPasswordVisible
+                    ? const Icon(Icons.visibility)
+                    : const Icon(Icons.visibility_off),
                 onPressed: () {
                   setState(() {
                     _isPasswordVisible = !_isPasswordVisible;
