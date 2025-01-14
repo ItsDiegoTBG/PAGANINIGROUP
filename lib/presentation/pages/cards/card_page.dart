@@ -228,7 +228,7 @@ class _CardPageState extends State<CardPage> {
                           if (value == null || value.isEmpty) {
                             return "Ingresa un numero de tarjeta por favor";
                           } else if (value.length < 16) {
-                            return "El numero de tarjeta no puede ser menor a 16";
+                            return "la cantidad de numeros de tarjeta no puede ser menor a 16";
                           }
                           return null;
                         },
@@ -295,7 +295,7 @@ class _CardPageState extends State<CardPage> {
                                 inputFormatters: [
                                   LengthLimitingTextInputFormatter(2),
                                   FilteringTextInputFormatter.allow(RegExp(
-                                      r'^[1-9]$|^[1-2][0-9]$|^3[0-1]$')), // Permite del 1 al 31
+                                      r'^[2-3]$|^2[5-9]$|^3[0-6]$')), // Permite del 1 al 31
                                 ],
                                 onChanged: (value) {},
                                 validator: (value) {
@@ -437,10 +437,12 @@ class _CardPageState extends State<CardPage> {
                       await cardProviderRead.addCreditCard(userId!);
                     }
                   } else {
-                    
-                    ShowAnimatedSnackBar.show(context, "Revisa que los datos de la tarjeta sean correctos", Icons.info, AppColors.blueColors);
+                    ShowAnimatedSnackBar.show(
+                        context,
+                        "Revisa que los datos de la tarjeta sean correctos",
+                        Icons.info,
+                        AppColors.blueColors);
                   }
-
                 },
                 text: registerOneCard ? "Registrar Otra" : "Registrar",
                 verticalPadding: 2,
