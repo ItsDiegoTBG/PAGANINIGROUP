@@ -1,6 +1,26 @@
-n# paganini
+# Anexo de Instalacion
 
-A new Flutter project.
+# Guía de Instalación de [Nombre de la Aplicación]
+
+## Requisitos Previos
+Antes de comenzar, asegúrate de tener lo siguiente instalado en tu máquina:
+
+- **Flutter SDK** ([Guía oficial de instalación](https://flutter.dev/docs/get-started/install))
+- **Dart SDK** (normalmente incluido con Flutter)
+- **Git** (para clonar el repositorio)
+- **Editor de Código** (recomendado: [Visual Studio Code](https://code.visualstudio.com/) o [Android Studio](https://developer.android.com/studio))
+- **Emulador o Dispositivo Físico** (para pruebas)
+- **Java Development Kit (JDK)** (para Android)
+
+## Clonar el Repositorio
+1. Abre una terminal.
+2. Clona el repositorio con el siguiente comando:
+
+   ```bash
+   git clone https://github.com/usuario/repositorio.git
+
+
+
 
 # Paganini
 
