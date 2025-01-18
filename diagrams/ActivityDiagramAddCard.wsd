@@ -1,0 +1,35 @@
+@startuml ActivityDiagramAddCard
+|Usuario|
+start
+:Seleccionar la opción "Añadir Tarjeta";
+:Ingresar datos de la tarjeta;
+:Confirmar datos de la tarjeta;
+
+|Sistema|
+:Validar formato de datos;
+if (¿Datos válidos?) then (Sí)
+  :Enviar datos al banco para validación;
+else (No)
+  :Notificar error al usuario;
+  stop
+endif
+
+|Banco|
+:Validar tarjeta;
+if (¿Tarjeta válida?) then (Sí)
+  :Confirmar validez al sistema;
+else (No)
+  :Notificar rechazo al sistema;
+  |Usuario|
+  :Notificar al usuario sobre tarjeta rechazada;
+  stop
+endif
+
+|Sistema|
+:Guardar tarjeta en Firebase Database;
+
+|Usuario|
+:Notificar al usuario sobre tarjeta añadida exitosamente;
+
+stop
+@enduml
