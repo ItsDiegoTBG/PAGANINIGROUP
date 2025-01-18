@@ -95,7 +95,7 @@ void main() async {
         ChangeNotifierProvider(
             lazy: false, create: (_) => IntroductionProvider()),
       ],
-      child: const AppLoader(),
+      child: const MainApp(),
     ),
   );
 }
