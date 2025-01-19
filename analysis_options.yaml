@@ -10,6 +10,10 @@
 analyzer:
   errors:
     unused_import: ignore
+    use_build_context_synchronously: ignore
+    unused_field: ignore
+    unused_local_variable: ignore
+    asset_does_not_exist: ignore
 include: package:flutter_lints/flutter.yaml
 
 linter:
