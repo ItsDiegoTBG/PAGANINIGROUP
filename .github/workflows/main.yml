@@ -3,11 +3,11 @@ name: Flutter CI
 on:
   push:
     branches:
-      - main   # Ejecuta en cada push a la rama principal
-      - develop # Puedes incluir otras ramas aquí
+      - main    # Ejecuta en cada push a la rama principal
+      - develop # Ejecuta en cada push a la rama de desarrollo
   pull_request:
     branches:
-      - main   # Ejecuta en cada pull request hacia la rama principal
+      - main    # Ejecuta en cada pull request hacia la rama principal
 
 jobs:
   flutter-ci:
@@ -19,13 +19,17 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
-      # 2. Configura Flutter
+      # 2. Configura Flutter con la versión específica
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: stable  # Cambia a beta o dev si lo prefieres
+          flutter-version: 3.24.0  # Especifica la versión exacta de Flutter
 
-      # 3. Cache de dependencias
+      # 3. Verifica la instalación de Flutter
+      - name: Verify Flutter installation
+        run: flutter --version
+
+      # 4. Cache de dependencias de Flutter
       - name: Cache Flutter dependencies
         uses: actions/cache@v3
         with:
@@ -34,31 +38,31 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pub-cache-
 
-      # 4. Instala dependencias
+      # 5. Instala las dependencias del proyecto
       - name: Install dependencies
         run: flutter pub get
 
-      # 5. Análisis de código
+      # 6. Análisis estático del código
       - name: Run Flutter analyze
         run: flutter analyze
 
-      # 6. Corre las pruebas
+      # 7. Ejecuta las pruebas unitarias
       - name: Run Flutter tests
         run: flutter test
 
-      # 7. Construye el APK (Android)
+      # 8. Construcción del APK para Android
       - name: Build APK
         run: flutter build apk --release
 
-      # 8. Construye el paquete para iOS (solo en runners macOS)
+      # 9. Construcción del paquete para iOS (solo en runners macOS)
       - name: Build iOS
         if: runner.os == 'macOS'
         run: flutter build ios --release
 
-      # 9. Almacena los artefactos (opcional)
+      # 10. Almacena los artefactos (APK)
       - name: Upload APK
         if: success()
         uses: actions/upload-artifact@v3
         with:
           name: APK
-          path: build/app/outputs/flutter-apk/app-release.apk
+       
