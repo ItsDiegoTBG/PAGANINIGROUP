@@ -1,0 +1,44 @@
+@startuml ActivityDiagramQR
+|Usuario Emisor|
+start
+:Generar código QR;
+:Mostrar QR al Usuario Receptor;
+
+|Usuario Receptor|
+:Escanear QR;
+
+if (¿QR válido?) then (Sí)
+  :Confirmar monto a pagar;
+  |Usuario Emisor|
+  :Aceptar solicitud de pago;
+else (No)
+  :Notificar error al Usuario Receptor;
+  stop
+endif
+
+|Sistema|
+:Validar método de pago;
+if (¿Método válido?) then (Sí)
+  :Iniciar proceso de pago;
+  |Banco|
+  :Procesar y autenticar pago;
+
+  if (¿Pago exitoso?) then (Sí)
+    |Usuario Emisor|
+    :Notificar pago exitoso al Usuario Emisor;
+    |Usuario Receptor|
+    :Notificar pago exitoso al Usuario Receptor;
+  else (No)
+    |Usuario Emisor|
+    :Notificar error en el pago;
+    |Usuario Receptor|
+    :Notificar error en el pago;
+  endif
+
+else (No)
+  :Notificar error en el método de pago;
+  stop
+endif
+
+stop
+@enduml

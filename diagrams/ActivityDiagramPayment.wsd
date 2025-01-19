@@ -1,0 +1,40 @@
+@startuml ActivityDiagramPayment
+|Usuario|
+start
+:Seleccionar método de pago;
+if (¿Pagar con saldo?) then (Sí)
+  :Verificar saldo disponible;
+  if (¿Saldo suficiente?) then (Sí)
+    :Iniciar pago con saldo;
+  else (No)
+    stop
+  endif
+else (No)
+  if (¿Pagar con tarjeta?) then (Sí)
+    :Seleccionar tarjeta;
+    :Validar tarjeta seleccionada;
+  else (No)
+    if (¿Pagar con tarjeta y saldo?) then (Sí)
+      :Seleccionar tarjeta;
+      :Validar tarjeta seleccionada;
+      :Verificar saldo disponible;
+    else (No)
+      stop
+    endif
+  endif
+endif
+
+|Banco|
+:Procesar pago;
+:Autenticar pago;
+
+if (¿Pago exitoso?) then (Sí)
+  |Usuario|
+  :Notificar pago exitoso;
+else (No)
+  |Usuario|
+  :Notificar error en el pago;
+endif
+
+stop
+@enduml

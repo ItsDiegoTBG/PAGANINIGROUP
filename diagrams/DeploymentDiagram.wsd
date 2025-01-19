@@ -1,0 +1,22 @@
+@startuml
+node "Dispositivo Móvil (Usuario)" {
+    [Aplicación Móvil] --> [Firebase Authentication]
+    [Aplicación Móvil] --> [Firebase Database]
+    [Aplicación Móvil] --> [Firebase Cloud Messaging]
+    [Aplicación Móvil] --> [QR Scanner]
+}
+
+cloud "Firebase" {
+    [Firebase Authentication]
+    [Firebase Database]
+    [Firebase Cloud Messaging]
+}
+
+node "Sistema Bancario" {
+    [Procesador de Pagos]
+}
+
+[Aplicación Móvil] --> [Procesador de Pagos]
+[Procesador de Pagos] --> [Firebase Database]
+
+@enduml

@@ -1,0 +1,65 @@
+@startuml USE CASE DIAGRAM PAGANINI
+
+left to right direction
+
+actor Usuario as U
+actor Banco as B
+actor UsuarioReceptor as UR
+
+usecase "Iniciar sesión" as UC_Login
+usecase "Autenticación por contraseña" as UC_Contrasena
+usecase "Autenticación biométrica" as UC_Biometria
+usecase "Recuperar contraseña" as UC_Recuperar
+usecase "Agregar tarjeta" as UC_AgregarTarjeta
+usecase "Quitar tarjeta" as UC_QuitarTarjeta
+usecase "Validar tarjeta" as UC_ValidarTarjeta
+usecase "Pagar una cuenta" as UC_PagarCuenta
+usecase "Lectura QR" as UC_LecturaQR
+usecase "Pagar con tarjeta" as UC_Tarjeta
+usecase "Pagar con saldo" as UC_Saldo
+usecase "Pagar con tarjeta y saldo" as UC_TarjetaSaldo
+usecase "Enviar notificación de confirmación" as UC_Notificacion
+usecase "Agregar saldo" as UC_AgregarSaldo
+usecase "Quitar saldo" as UC_QuitarSaldo
+usecase "Pagar a otro usuario" as UC_PagarOtroUsuario
+usecase "Recibir pago" as UC_RecibirPago
+
+U --> UC_Login
+UC_Login --> UC_Contrasena : <<include>>
+UC_Login --> UC_Biometria : <<include>>
+UC_Login .> UC_Recuperar : <<extend>>
+
+U --> UC_AgregarTarjeta
+UC_AgregarTarjeta --> UC_ValidarTarjeta : <<include>>
+
+U --> UC_QuitarTarjeta
+B --> UC_ValidarTarjeta
+
+U --> UC_PagarCuenta
+UC_PagarCuenta --> UC_LecturaQR : <<include>>
+UC_PagarCuenta --> UC_Tarjeta : <<include>>
+UC_PagarCuenta --> UC_Saldo : <<include>>
+UC_TarjetaSaldo .> UC_Tarjeta : <<extend>>
+UC_TarjetaSaldo .> UC_Saldo : <<extend>>
+UC_PagarCuenta .> UC_Notificacion : <<extend>>
+
+U --> UC_AgregarSaldo
+UC_AgregarSaldo --> UC_Tarjeta : <<include>>
+UC_AgregarSaldo .> UC_Notificacion : <<extend>>
+
+U --> UC_QuitarSaldo
+UC_QuitarSaldo .> UC_Notificacion : <<extend>>
+
+U --> UC_PagarOtroUsuario
+UC_PagarOtroUsuario --> UC_Tarjeta : <<include>>
+UC_PagarOtroUsuario --> UC_Saldo : <<include>>
+UC_PagarOtroUsuario .> UC_Notificacion : <<extend>>
+
+UR --> UC_RecibirPago
+UC_RecibirPago .> UC_Notificacion : <<extend>>
+
+B --> UC_AgregarSaldo : <<include>>
+B --> UC_QuitarSaldo : <<include>>
+B --> UC_PagarOtroUsuario : <<include>>
+
+@enduml

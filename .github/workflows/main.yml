@@ -1,0 +1,68 @@
+name: Flutter CI
+
+on:
+  push:
+    branches:
+      - main    # Ejecuta en cada push a la rama principal
+      - develop # Ejecuta en cada push a la rama de desarrollo
+  pull_request:
+    branches:
+      - main    # Ejecuta en cada pull request hacia la rama principal
+
+jobs:
+  flutter-ci:
+    name: Flutter CI Pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Verifica el código fuente
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      # 2. Configura Flutter con la versión específica
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.24.0  # Especifica la versión exacta de Flutter
+
+      # 3. Verifica la instalación de Flutter
+      - name: Verify Flutter installation
+        run: flutter --version
+
+      # 4. Cache de dependencias de Flutter
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-cache-${{ hashFiles('pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-cache-
+
+      # 5. Instala las dependencias del proyecto
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 6. Análisis estático del código
+      - name: Run Flutter analyze
+        run: flutter analyze
+
+      # 7. Ejecuta las pruebas unitarias
+      - name: Run Flutter tests
+        run: flutter test
+
+      # 8. Construcción del APK para Android
+      - name: Build APK
+        run: flutter build apk --release
+
+      # 9. Construcción del paquete para iOS (solo en runners macOS)
+      - name: Build iOS
+        if: runner.os == 'macOS'
+        run: flutter build ios --release
+
+      # 10. Almacena los artefactos (APK)
+      - name: Upload APK
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: APK
+       

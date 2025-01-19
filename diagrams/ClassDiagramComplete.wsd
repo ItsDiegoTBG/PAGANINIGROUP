@@ -1,0 +1,1284 @@
+@startuml paganini
+set namespaceSeparator ::
+
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam classWidth 400
+skinparam classMargin 50
+
+
+class "paganini::app_data.dart::AppData" {
+}
+
+class "paganini::app_loader.dart::AppLoader" {
+  +State<AppLoader> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::app_loader.dart::AppLoader"
+
+class "paganini::app_loader.dart::_AppLoaderState" {
+  -ValueNotifier<bool> _isSplashScreenVisible
+  -ValueNotifier<AppData?> _data
+  -AnimationController _controller
+  -dynamic _loader
+  +void initState()
+  +void didChangeDependencies()
+  +void dispose()
+  -dynamic _load()
+  +Widget build()
+}
+
+"paganini::app_loader.dart::_AppLoaderState" o-- "flutter::src::foundation::change_notifier.dart::ValueNotifier<bool>"
+"paganini::app_loader.dart::_AppLoaderState" o-- "flutter::src::foundation::change_notifier.dart::ValueNotifier<AppData>"
+"paganini::app_loader.dart::_AppLoaderState" o-- "flutter::src::animation::animation_controller.dart::AnimationController"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::app_loader.dart::_AppLoaderState"
+"flutter::src::widgets::ticker_provider.dart::SingleTickerProviderStateMixin" <|-- "paganini::app_loader.dart::_AppLoaderState"
+
+class "paganini::core::device::qr_code_scanner.dart::QrCodeScanner" {
+  +Function setResult
+  +MobileScannerController controller
+  +Widget build()
+}
+
+"paganini::core::device::qr_code_scanner.dart::QrCodeScanner" o-- "mobile_scanner::src::mobile_scanner_controller.dart::MobileScannerController"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::core::device::qr_code_scanner.dart::QrCodeScanner"
+
+abstract class "paganini::core::routes::app_routes.dart::Routes" {
+  {static} +String HOME
+  {static} +String INITIAL
+  {static} +String LOGIN
+  {static} +String BIOLOGIN
+  {static} +String REGISTER
+  {static} +String QRPAGE
+  {static} +String WALLETPAGE
+  {static} +String CARDPAGE
+  {static} +String CARDDELETEPAGE
+  {static} +String TRANSFERPAGE
+  {static} +String CONTACTSPAGE
+  {static} +String AUTHPAGE
+  {static} +String RECHARGE
+  {static} +String CONFRECHARGE
+  {static} +String PAYMENTPAGE
+  {static} +String RECEIPTRECHARGE
+  {static} +String CONFTRANSFER
+  {static} +String RECEIPTRANSFER
+  {static} +String PRINCIPALNAVIGATIONPAGE
+  {static} +String INTRODUCTIONPAGE
+  {static} +String APPTUTORIALSCREEN
+  {static} +String NAVIGATIONPAGE
+  {static} +String SETTINGSPAGE
+  {static} +String RETURNAMOUNTPAGE
+  {static} +String FORGETPASSWORD
+  {static} +String HISTORYPAGE
+}
+
+class "paganini::core::theme::app_theme.dart::AppTheme" {
+  +ThemeData themeLightMode()
+  +ThemeData themeDarkMode()
+}
+
+class "paganini::core::utils::colors.dart::AppColors" {
+  {static} +Color primaryColor
+  {static} +Color secondaryColor
+  {static} +Color greenColors
+  {static} +Color redColors
+  {static} +Color blueColors
+  {static} +Color yellowColors
+}
+
+"paganini::core::utils::colors.dart::AppColors" o-- "dart::ui::Color"
+
+abstract class "paganini::data::datasources::credit_card_datasource.dart::CreditCardRemoteDataSource" {
+  +dynamic fetchCreditCards()
+  +dynamic deleteCreditCardById()
+  +dynamic updateBalance()
+}
+
+class "paganini::data::datasources::credit_card_datasource.dart::CreditCardRemoteDataSourceImpl" {
+  +DatabaseReference db
+  -List<CreditCardModel> _creditCards
+  +dynamic getUserCreditCards()
+  +dynamic fetchCreditCards()
+  +dynamic deleteCreditCardById()
+  +dynamic updateBalance()
+}
+
+"paganini::data::datasources::credit_card_datasource.dart::CreditCardRemoteDataSourceImpl" o-- "firebase_database::firebase_database.dart::DatabaseReference"
+"paganini::data::datasources::credit_card_datasource.dart::CreditCardRemoteDataSource" <|-- "paganini::data::datasources::credit_card_datasource.dart::CreditCardRemoteDataSourceImpl"
+
+class "paganini::data::datasources::userservice.dart::UserService" {
+  -FirebaseDatabase _database
+  +dynamic fetchUserById()
+}
+
+"paganini::data::datasources::userservice.dart::UserService" o-- "firebase_database::firebase_database.dart::FirebaseDatabase"
+
+class "paganini::data::local::hive_service.dart::HiveService" {
+  {static} +String contactsBoxName
+  +dynamic init()
+  +dynamic getContacts()
+  +dynamic saveContact()
+  +dynamic deleteContact()
+  +dynamic updateContactName()
+  +dynamic saveContactToFirst()
+}
+
+class "paganini::data::local::notification_service.dart::NotificationService" {
+  +FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin
+  +dynamic showNotification()
+}
+
+"paganini::data::local::notification_service.dart::NotificationService" o-- "flutter_local_notifications::src::flutter_local_notifications_plugin.dart::FlutterLocalNotificationsPlugin"
+
+class "paganini::data::models::contact_model.dart::ContactUser" {
+  +String name
+  +String phone
+  +bool isRegistered
+}
+
+class "paganini::data::models::contact_model.dart::ContactUserAdapter" {
+  +int typeId
+  +int hashCode
+  +ContactUser read()
+  +void write()
+  +bool ==()
+}
+
+"hive::hive.dart::TypeAdapter" <|-- "paganini::data::models::contact_model.dart::ContactUserAdapter"
+
+class "paganini::data::models::credit_card_model.dart::CreditCardModel" {
+  +int id
+  +String cardHolderFullName
+  +String cardNumber
+  +String cardType
+  +String validThru
+  +bool isFavorite
+  +String cvv
+  +double balance
+  +Color color
+  +Map<String, dynamic> toMap()
+}
+
+"paganini::data::models::credit_card_model.dart::CreditCardModel" o-- "dart::ui::Color"
+
+class "paganini::data::models::transaction_model.dart::TransactionModel" {
+  +String name
+  +String originator
+  +double amount
+  +String date
+  +List<String>? paymentMethods
+  +bool isIncome()
+  +String toString()
+}
+
+class "paganini::data::repositories::auth_respository_impl.dart::AuthRepositoryImpl" {
+  -FirebaseAuth _auth
+  -LocalAuthentication _localAuth
+  -FlutterSecureStorage _secureStorage
+  +dynamic authenticateWithBiometrics()
+  +dynamic loginWithEmailAndPassword()
+  +dynamic saveCredentials()
+}
+
+"paganini::data::repositories::auth_respository_impl.dart::AuthRepositoryImpl" o-- "firebase_auth::firebase_auth.dart::FirebaseAuth"
+"paganini::data::repositories::auth_respository_impl.dart::AuthRepositoryImpl" o-- "local_auth::src::local_auth.dart::LocalAuthentication"
+"paganini::data::repositories::auth_respository_impl.dart::AuthRepositoryImpl" o-- "flutter_secure_storage::flutter_secure_storage.dart::FlutterSecureStorage"
+"paganini::domain::repositories::auth_repository_impl.dart::AuthRepository" <|-- "paganini::data::repositories::auth_respository_impl.dart::AuthRepositoryImpl"
+
+class "paganini::data::repositories::credit_card_repository_impl.dart::CreditCardRepositoryImpl" {
+  +CreditCardRemoteDataSource remoteDataSource
+  +dynamic getCreditCards()
+  +dynamic deleteCreditCard()
+  +dynamic updateBalance()
+}
+
+"paganini::data::repositories::credit_card_repository_impl.dart::CreditCardRepositoryImpl" o-- "paganini::data::datasources::credit_card_datasource.dart::CreditCardRemoteDataSource"
+"paganini::domain::repositories::credit_card_repository.dart::CreditCardRepository" <|-- "paganini::data::repositories::credit_card_repository_impl.dart::CreditCardRepositoryImpl"
+
+class "paganini::domain::entity::card_credit.dart::CreditCardEntity" {
+  +int id
+  +String cardHolderFullName
+  +String cardNumber
+  +String cardType
+  +String validThru
+  +Color color
+  +bool isFavorite
+  +String cvv
+  +double balance
+}
+
+"paganini::domain::entity::card_credit.dart::CreditCardEntity" o-- "dart::ui::Color"
+
+class "paganini::domain::entity::user_entity.dart::UserEntity" {
+  +String id
+  +String firstname
+  +String lastname
+  +String ced
+  +String email
+  +String phone
+  +double saldo
+  +Map<String, dynamic> toMap()
+}
+
+abstract class "paganini::domain::repositories::auth_repository_impl.dart::AuthRepository" {
+  +dynamic authenticateWithBiometrics()
+  +dynamic loginWithEmailAndPassword()
+  +dynamic saveCredentials()
+}
+
+abstract class "paganini::domain::repositories::credit_card_repository.dart::CreditCardRepository" {
+  +dynamic getCreditCards()
+  +dynamic deleteCreditCard()
+  +dynamic updateBalance()
+}
+
+class "paganini::domain::usecases::authenticate_with_biometrics.dart::AuthenticateWithBiometrics" {
+  +AuthRepository repository
+  +dynamic call()
+  +dynamic saveCredentials()
+}
+
+"paganini::domain::usecases::authenticate_with_biometrics.dart::AuthenticateWithBiometrics" o-- "paganini::domain::repositories::auth_repository_impl.dart::AuthRepository"
+
+class "paganini::domain::usecases::contact_use_case.dart::ContactUseCase" {
+  +HiveService hiveService
+  +dynamic callDelete()
+  +dynamic callFetch()
+  +dynamic callSave()
+  +dynamic callUpdateName()
+  +dynamic callSaveToFirst()
+}
+
+"paganini::domain::usecases::contact_use_case.dart::ContactUseCase" o-- "paganini::data::local::hive_service.dart::HiveService"
+
+class "paganini::domain::usecases::credit_cards_use_case.dart::CreditCardsUseCase" {
+  +CreditCardRepository repository
+  +dynamic call()
+  +dynamic delete()
+  +dynamic updateBalance()
+}
+
+"paganini::domain::usecases::credit_cards_use_case.dart::CreditCardsUseCase" o-- "paganini::domain::repositories::credit_card_repository.dart::CreditCardRepository"
+
+class "paganini::firebase_options.dart::DefaultFirebaseOptions" {
+  {static} +FirebaseOptions web
+  {static} +FirebaseOptions android
+  {static} +FirebaseOptions ios
+  {static} +FirebaseOptions macos
+  {static} +FirebaseOptions windows
+  {static} +FirebaseOptions currentPlatform
+}
+
+"paganini::firebase_options.dart::DefaultFirebaseOptions" o-- "firebase_core_platform_interface::firebase_core_platform_interface.dart::FirebaseOptions"
+
+class "paganini::helpers::request_notification_permission.dart::RequestNotificationPermission" {
+  {static} +dynamic requestNotificationPermission()
+}
+
+class "paganini::helpers::show_animated_snackbar.dart::ShowAnimatedSnackBar" {
+  {static} +void show()
+}
+
+class "paganini::helpers::show_qr.dart::ShowQr" {
+  {static} +void showQrDialog()
+}
+
+class "paganini::main_app.dart::MainApp" {
+  +AppData? appData
+  +Widget build()
+}
+
+"paganini::main_app.dart::MainApp" o-- "paganini::app_data.dart::AppData"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::main_app.dart::MainApp"
+
+class "paganini::presentation::pages::biometric_login_page.dart::BiometricAuthPage" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::pages::biometric_login_page.dart::BiometricAuthPage"
+
+class "paganini::presentation::pages::cards::card_delete_page.dart::CardDeletePage" {
+  +State<CardDeletePage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::cards::card_delete_page.dart::CardDeletePage"
+
+class "paganini::presentation::pages::cards::card_delete_page.dart::_CardDeletePageState" {
+  +Widget build()
+  +Padding creditCardListView()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::cards::card_delete_page.dart::_CardDeletePageState"
+
+class "paganini::presentation::pages::cards::card_page.dart::CardPage" {
+  +State<CardPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::cards::card_page.dart::CardPage"
+
+class "paganini::presentation::pages::cards::card_page.dart::_CardPageState" {
+  -GlobalKey<FormState> _formKey
+  +TextEditingController nameController
+  +TextEditingController numberCreditCardController
+  +TextEditingController monthExpirationController
+  +TextEditingController yearExpirationController
+  +TextEditingController cvvCardController
+  +Color? selectedColor
+  +String selectedCardType
+  +String nameNewCard
+  +String numberNewCard
+  +String monthExpirationNewCard
+  +String yearExpirationNewCard
+  +String cvvNewCard
+  -bool _isLoading
+  +bool isDateValid
+  +bool isCvvValid
+  +bool registerOneCard
+  +void initState()
+  +void cleanTextEditingControllers()
+  +void dispose()
+  +Widget build()
+}
+
+"paganini::presentation::pages::cards::card_page.dart::_CardPageState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"paganini::presentation::pages::cards::card_page.dart::_CardPageState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"paganini::presentation::pages::cards::card_page.dart::_CardPageState" o-- "dart::ui::Color"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::cards::card_page.dart::_CardPageState"
+
+class "paganini::presentation::pages::cards::wallet_page.dart::WalletPage" {
+  +State<WalletPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::cards::wallet_page.dart::WalletPage"
+
+class "paganini::presentation::pages::cards::wallet_page.dart::_WalletPageState" {
+  -PageController _pageController
+  +void initState()
+  +void dispose()
+  +Widget build()
+}
+
+"paganini::presentation::pages::cards::wallet_page.dart::_WalletPageState" o-- "flutter::src::widgets::page_view.dart::PageController"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::cards::wallet_page.dart::_WalletPageState"
+
+class "paganini::presentation::pages::forget_password_page.dart::ForgetPasswordPage" {
+  +State<ForgetPasswordPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::forget_password_page.dart::ForgetPasswordPage"
+
+class "paganini::presentation::pages::forget_password_page.dart::_ForgetPasswordPageState" {
+  -TextEditingController _emailController
+  -FirebaseAuth _auth
+  -dynamic _resetPassword()
+  +void clearText()
+  +Widget build()
+}
+
+"paganini::presentation::pages::forget_password_page.dart::_ForgetPasswordPageState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"paganini::presentation::pages::forget_password_page.dart::_ForgetPasswordPageState" o-- "firebase_auth::firebase_auth.dart::FirebaseAuth"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::forget_password_page.dart::_ForgetPasswordPageState"
+
+class "paganini::presentation::pages::history::history_movement.dart::HistoryMovement" {
+  +State<HistoryMovement> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::history::history_movement.dart::HistoryMovement"
+
+class "paganini::presentation::pages::history::history_movement.dart::_HistoryMovementState" {
+  +bool showAllMovements
+  +List<TransactionModel> movements
+  +List<TransactionModel> filteredMovements
+  +String searchQuery
+  +void initState()
+  -void _filterMovements()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::history::history_movement.dart::_HistoryMovementState"
+
+class "paganini::presentation::pages::home::home_page.dart::HomePage" {
+  +State<HomePage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::home::home_page.dart::HomePage"
+
+class "paganini::presentation::pages::home::home_page.dart::_HomePageState" {
+  +UserEntity? userEntity
+  -bool _isInitialized
+  +bool showAllMovements
+  +List<TransactionModel> movements
+  +List<TransactionModel> filteredMovements
+  +String searchQuery
+  -String? _result
+  +void initState()
+  +void didChangeDependencies()
+  +void setResult()
+  +Widget build()
+}
+
+"paganini::presentation::pages::home::home_page.dart::_HomePageState" o-- "paganini::domain::entity::user_entity.dart::UserEntity"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::home::home_page.dart::_HomePageState"
+
+class "paganini::presentation::pages::home::home_page.dart::_QuickAccessView" {
+  +Size size
+  +Widget build()
+}
+
+"paganini::presentation::pages::home::home_page.dart::_QuickAccessView" o-- "dart::ui::Size"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::pages::home::home_page.dart::_QuickAccessView"
+
+class "paganini::presentation::pages::home::home_page.dart::_CreditCardsView" {
+  +List<CreditCardEntity> creditCards
+  -dynamic _simulateLoading()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::pages::home::home_page.dart::_CreditCardsView"
+
+class "paganini::presentation::pages::initial_page.dart::InitialPage" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::pages::initial_page.dart::InitialPage"
+
+class "paganini::presentation::pages::introduction_tutorial::app_tutorial_screen.dart::SlideInfo" {
+  +String title
+  +String caption
+  +String imageUrl
+}
+
+class "paganini::presentation::pages::introduction_tutorial::app_tutorial_screen.dart::AppTutorialScreen" {
+  {static} +String name
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::pages::introduction_tutorial::app_tutorial_screen.dart::AppTutorialScreen"
+
+class "paganini::presentation::pages::introduction_tutorial::app_tutorial_screen.dart::_AppTutorialView" {
+  +State<_AppTutorialView> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::introduction_tutorial::app_tutorial_screen.dart::_AppTutorialView"
+
+class "paganini::presentation::pages::introduction_tutorial::app_tutorial_screen.dart::_AppTutorialViewState" {
+  -PageController _pageController
+  +bool endReached
+  +void initState()
+  +void dispose()
+  +Widget build()
+}
+
+"paganini::presentation::pages::introduction_tutorial::app_tutorial_screen.dart::_AppTutorialViewState" o-- "flutter::src::widgets::page_view.dart::PageController"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::introduction_tutorial::app_tutorial_screen.dart::_AppTutorialViewState"
+
+class "paganini::presentation::pages::introduction_tutorial::app_tutorial_screen.dart::_SlideView" {
+  +String title
+  +String caption
+  +String imageUrl
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::pages::introduction_tutorial::app_tutorial_screen.dart::_SlideView"
+
+class "paganini::presentation::pages::introduction_tutorial::introduction_page.dart::OnBoardingPage" {
+  +OnBoardingPageState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::introduction_tutorial::introduction_page.dart::OnBoardingPage"
+
+class "paganini::presentation::pages::introduction_tutorial::introduction_page.dart::OnBoardingPageState" {
+  +GlobalKey<IntroductionScreenState> introKey
+  -void _onIntroEnd()
+  -Widget _buildFullscreenImage()
+  -Widget _buildImage()
+  +Widget build()
+}
+
+"paganini::presentation::pages::introduction_tutorial::introduction_page.dart::OnBoardingPageState" o-- "flutter::src::widgets::framework.dart::GlobalKey<IntroductionScreenState>"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::introduction_tutorial::introduction_page.dart::OnBoardingPageState"
+
+class "paganini::presentation::pages::login::loading_screen.dart::LoadingScreen" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::pages::login::loading_screen.dart::LoadingScreen"
+
+class "paganini::presentation::pages::login::login_page.dart::LoginPage" {
+  +State<LoginPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::login::login_page.dart::LoginPage"
+
+class "paganini::presentation::pages::login::login_page.dart::_LoginRegisterScreenState" {
+  +TextEditingController emailController
+  +TextEditingController passwordController
+  -FirebaseAuth _auth
+  -bool _isPasswordVisible
+  +void signUserIn()
+  -void _showSnackBar()
+  +void wrongEmailMessage()
+  +void wrongPasswordMessage()
+  +Widget build()
+}
+
+"paganini::presentation::pages::login::login_page.dart::_LoginRegisterScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"paganini::presentation::pages::login::login_page.dart::_LoginRegisterScreenState" o-- "firebase_auth::firebase_auth.dart::FirebaseAuth"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::login::login_page.dart::_LoginRegisterScreenState"
+
+class "paganini::presentation::pages::login::register_page.dart::RegisterPage" {
+  +State<RegisterPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::login::register_page.dart::RegisterPage"
+
+class "paganini::presentation::pages::login::register_page.dart::_RegisterPageState" {
+  +TextEditingController firstNameController
+  +TextEditingController lastNameController
+  +TextEditingController emailController
+  +TextEditingController passwordController
+  +TextEditingController phoneController
+  +TextEditingController cedController
+  -FirebaseAuth _auth
+  -GlobalKey<FormState> _formKey
+  -bool _isLoading
+  -bool _isPasswordVisible
+  +dynamic registerUser()
+  +void wrongWeakPasswordMessage()
+  +void wrongEmailAlreadyInUse()
+  +dynamic clearFields()
+  +Widget build()
+  +Form form()
+  +void dispose()
+}
+
+"paganini::presentation::pages::login::register_page.dart::_RegisterPageState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"paganini::presentation::pages::login::register_page.dart::_RegisterPageState" o-- "firebase_auth::firebase_auth.dart::FirebaseAuth"
+"paganini::presentation::pages::login::register_page.dart::_RegisterPageState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::login::register_page.dart::_RegisterPageState"
+
+class "paganini::presentation::pages::navigation_page.dart::NavigationPage" {
+  +int initialIndex
+  +State<NavigationPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::navigation_page.dart::NavigationPage"
+
+class "paganini::presentation::pages::navigation_page.dart::_NavigationPageState" {
+  -int _selectedIndex
+  -List<Widget> _pages
+  +void initState()
+  +void goToIndex()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::navigation_page.dart::_NavigationPageState"
+
+class "paganini::presentation::pages::page_qr::qr_pages.dart::QrPage" {
+  +State<QrPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::page_qr::qr_pages.dart::QrPage"
+
+class "paganini::presentation::pages::page_qr::qr_pages.dart::_QrPageState" {
+  -String? _result
+  +ScreenshotController screenshotController
+  +dynamic directoryPath
+  +void setResult()
+  +Widget build()
+}
+
+"paganini::presentation::pages::page_qr::qr_pages.dart::_QrPageState" o-- "screenshot::screenshot.dart::ScreenshotController"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::page_qr::qr_pages.dart::_QrPageState"
+
+class "paganini::presentation::pages::payment::confirm_payments_options_selected.dart::ConfirmPaymentPage" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::pages::payment::confirm_payments_options_selected.dart::ConfirmPaymentPage"
+
+class "paganini::presentation::pages::payment::payments_options.dart::PaymentOptions" {
+  +State<PaymentOptions> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::payment::payments_options.dart::PaymentOptions"
+
+class "paganini::presentation::pages::payment::payments_options.dart::_PaymentOptionsState" {
+  +Map<int, bool> selectedCards
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::payment::payments_options.dart::_PaymentOptionsState"
+
+class "paganini::presentation::pages::payment::payment_page.dart::PaymentPage" {
+  +String? dataId
+  +State<PaymentPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::payment::payment_page.dart::PaymentPage"
+
+class "paganini::presentation::pages::payment::payment_page.dart::_PaymentPageState" {
+  +TextEditingController pageToUserController
+  +TextEditingController noteController
+  +List<TextEditingController> saldoControllers
+  +ContactUseCase contactUseCase
+  +void initState()
+  +void dispose()
+  +Widget build()
+  +Column firstPart()
+}
+
+"paganini::presentation::pages::payment::payment_page.dart::_PaymentPageState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"paganini::presentation::pages::payment::payment_page.dart::_PaymentPageState" o-- "paganini::domain::usecases::contact_use_case.dart::ContactUseCase"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::payment::payment_page.dart::_PaymentPageState"
+
+class "paganini::presentation::pages::recharge::confirm_recharge_page.dart::ConfirmRechargePage" {
+  +String? valueRecharge
+  +State<ConfirmRechargePage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::recharge::confirm_recharge_page.dart::ConfirmRechargePage"
+
+class "paganini::presentation::pages::recharge::confirm_recharge_page.dart::_ConfirmRechargePageState" {
+  -PageController _pageController
+  -bool _isLoading
+  +void initState()
+  +void dispose()
+  +Widget build()
+}
+
+"paganini::presentation::pages::recharge::confirm_recharge_page.dart::_ConfirmRechargePageState" o-- "flutter::src::widgets::page_view.dart::PageController"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::recharge::confirm_recharge_page.dart::_ConfirmRechargePageState"
+
+class "paganini::presentation::pages::recharge::recharge_page.dart::RechargePage" {
+  +State<RechargePage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::recharge::recharge_page.dart::RechargePage"
+
+class "paganini::presentation::pages::recharge::recharge_page.dart::RechargePageState" {
+  +TextEditingController controllerAmount
+  -String _selectedAmount
+  -void _selectAmount()
+  -void _clearSelection()
+  +Widget build()
+  -Widget _buildAmountButton()
+}
+
+"paganini::presentation::pages::recharge::recharge_page.dart::RechargePageState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::recharge::recharge_page.dart::RechargePageState"
+
+class "paganini::presentation::pages::recharge::return_amount_page.dart::ReturnAmountPage" {
+  +State<ReturnAmountPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::recharge::return_amount_page.dart::ReturnAmountPage"
+
+class "paganini::presentation::pages::recharge::return_amount_page.dart::_ReturnAmountPageState" {
+  -PageController _pageController
+  +TextEditingController returnAmountController
+  -bool _isLoading
+  +String selectedType
+  -bool _isEnabledTextFormField
+  +void initState()
+  +void dispose()
+  +Widget build()
+}
+
+"paganini::presentation::pages::recharge::return_amount_page.dart::_ReturnAmountPageState" o-- "flutter::src::widgets::page_view.dart::PageController"
+"paganini::presentation::pages::recharge::return_amount_page.dart::_ReturnAmountPageState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::recharge::return_amount_page.dart::_ReturnAmountPageState"
+
+class "paganini::presentation::pages::recharge::return_amount_page.dart::_ProcessingStep" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::pages::recharge::return_amount_page.dart::_ProcessingStep"
+
+class "paganini::presentation::pages::services::encryption_service.dart::EncryptionService" {
+  -String _base64Key
+  -Encrypter _encrypter
+  -Key _key
+  +String encryptData()
+  +String decryptData()
+}
+
+"paganini::presentation::pages::services::encryption_service.dart::EncryptionService" o-- "encrypt::encrypt.dart::Encrypter"
+"paganini::presentation::pages::services::encryption_service.dart::EncryptionService" o-- "encrypt::encrypt.dart::Key"
+
+class "paganini::presentation::pages::setting::setting_page.dart::SettingPage" {
+  +State<SettingPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::setting::setting_page.dart::SettingPage"
+
+class "paganini::presentation::pages::setting::setting_page.dart::_SettingPageState" {
+  +bool dartThemeSelected
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::setting::setting_page.dart::_SettingPageState"
+
+class "paganini::presentation::pages::setting::setting_page.dart::_ContainerIcon" {
+  +IconData iconData
+  +Color color
+  +void Function() onTap
+  +Widget build()
+}
+
+"paganini::presentation::pages::setting::setting_page.dart::_ContainerIcon" o-- "flutter::src::widgets::icon_data.dart::IconData"
+"paganini::presentation::pages::setting::setting_page.dart::_ContainerIcon" o-- "dart::ui::Color"
+"paganini::presentation::pages::setting::setting_page.dart::_ContainerIcon" o-- "flutter::src::gestures::tap.dart::void Function()"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::pages::setting::setting_page.dart::_ContainerIcon"
+
+class "paganini::presentation::pages::transfer::confirm_transfer_page.dart::ConfirmTransfer" {
+  +double valueTransfered
+  +State<ConfirmTransfer> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::transfer::confirm_transfer_page.dart::ConfirmTransfer"
+
+class "paganini::presentation::pages::transfer::confirm_transfer_page.dart::_ConfirmTransferState" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::transfer::confirm_transfer_page.dart::_ConfirmTransferState"
+
+class "paganini::presentation::pages::transfer::contacts_page.dart::ContactsPage" {
+  +State<ContactsPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::transfer::contacts_page.dart::ContactsPage"
+
+class "paganini::presentation::pages::transfer::contacts_page.dart::_ContactsPageState" {
+  +TextEditingController textEditingController
+  +ContactUseCase contactUseCase
+  +List<ContactUser> contactsList
+  +List<ContactUser> filteredContacts
+  +bool contactsImported
+  +void initState()
+  +void dispose()
+  +dynamic loadContacts()
+  +dynamic deleteContactIndex()
+  +dynamic addContact()
+  +dynamic editContact()
+  +dynamic contactsFetch()
+  +dynamic checkIfContactRegistered()
+  -String _formatPhoneNumber()
+  +void filterContacts()
+  +Widget build()
+}
+
+"paganini::presentation::pages::transfer::contacts_page.dart::_ContactsPageState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"paganini::presentation::pages::transfer::contacts_page.dart::_ContactsPageState" o-- "paganini::domain::usecases::contact_use_case.dart::ContactUseCase"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::transfer::contacts_page.dart::_ContactsPageState"
+
+class "paganini::presentation::pages::transfer::transfer_page.dart::TransferPage" {
+  +State<TransferPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::pages::transfer::transfer_page.dart::TransferPage"
+
+class "paganini::presentation::pages::transfer::transfer_page.dart::_TransferPageState" {
+  +TextEditingController trasferedController
+  +ContactProvider contactProvider
+  +ContactProvider contactProviderWacth
+  +void didChangeDependencies()
+  +void dispose()
+  +Widget build()
+  +Container selectBeneficiary()
+}
+
+"paganini::presentation::pages::transfer::transfer_page.dart::_TransferPageState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"paganini::presentation::pages::transfer::transfer_page.dart::_TransferPageState" o-- "paganini::presentation::providers::contact_provider.dart::ContactProvider"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::pages::transfer::transfer_page.dart::_TransferPageState"
+
+class "paganini::presentation::pages::transfer::transfer_receipt_page.dart::TransferReceipt" {
+  +double valueTransfered
+  +UserEntity userByTransfered
+  +Widget build()
+}
+
+"paganini::presentation::pages::transfer::transfer_receipt_page.dart::TransferReceipt" o-- "paganini::domain::entity::user_entity.dart::UserEntity"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::pages::transfer::transfer_receipt_page.dart::TransferReceipt"
+
+class "paganini::presentation::pages::transfer::transfer_receipt_page.dart::InfoRow" {
+  +String label
+  +String value
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::pages::transfer::transfer_receipt_page.dart::InfoRow"
+
+class "paganini::presentation::providers::biometric_auth_provider.dart::BiometricAuthProvider" {
+  -AuthenticateWithBiometrics _authenticateWithBiometrics
+  -bool _isAuthenticating
+  +bool isAuthenticating
+  +dynamic authenticateWithBiometrics()
+  +dynamic saveCredentials()
+}
+
+"paganini::presentation::providers::biometric_auth_provider.dart::BiometricAuthProvider" o-- "paganini::domain::usecases::authenticate_with_biometrics.dart::AuthenticateWithBiometrics"
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "paganini::presentation::providers::biometric_auth_provider.dart::BiometricAuthProvider"
+
+class "paganini::presentation::providers::contact_provider.dart::ContactProvider" {
+  -ContactUserWidget? _contactTransfered
+  -UserEntity? _contactUser
+  -FirebaseDatabase _database
+  +ContactUserWidget? contactTransfered
+  +UserEntity? contactUser
+  +dynamic setContactTransfered()
+  +dynamic contactUserNotExist()
+  +void resetContact()
+  +dynamic updateUserSaldo()
+}
+
+"paganini::presentation::providers::contact_provider.dart::ContactProvider" o-- "paganini::presentation::widgets::contact_user.dart::ContactUserWidget"
+"paganini::presentation::providers::contact_provider.dart::ContactProvider" o-- "paganini::domain::entity::user_entity.dart::UserEntity"
+"paganini::presentation::providers::contact_provider.dart::ContactProvider" o-- "firebase_database::firebase_database.dart::FirebaseDatabase"
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "paganini::presentation::providers::contact_provider.dart::ContactProvider"
+
+class "paganini::presentation::providers::credit_card_provider.dart::CreditCardProvider" {
+  +CreditCardsUseCase creditCardsUseCase
+  -List<CreditCardEntity> _creditCards
+  +List<CreditCardEntity> creditCards
+  +dynamic fetchCreditCards()
+  +dynamic addCreditCard()
+  +dynamic deleteCreditCard()
+  +dynamic updateBalance()
+}
+
+"paganini::presentation::providers::credit_card_provider.dart::CreditCardProvider" o-- "paganini::domain::usecases::credit_cards_use_case.dart::CreditCardsUseCase"
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "paganini::presentation::providers::credit_card_provider.dart::CreditCardProvider"
+
+class "paganini::presentation::providers::introduction_provider.dart::IntroductionProvider" {
+  {static} -String _introductionKey
+  -bool _isIntroductionPage
+  +bool isIntroductionPage
+  -dynamic _loadIntroductionPreference()
+  +dynamic closeForEverything()
+}
+
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "paganini::presentation::providers::introduction_provider.dart::IntroductionProvider"
+
+class "paganini::presentation::providers::payment_provider.dart::PaymentProvider" {
+  -bool _isSaldoSelected
+  -double _montoSaldo
+  -Map<int, double> _selectedCardAmounts
+  -double _totalAmountPayUser
+  -String _nameUserToPay
+  -bool _isConfirmPaymetOrPaymentSelected
+  -String _noteUserToPay
+  -bool _isOnlySaldoSelected
+  -UserEntity? _userPaymentData
+  -FirebaseDatabase _database
+  +bool isSaldoSelected
+  +bool isOnlySaldoSelected
+  +double montoSaldo
+  +Map<int, double> selectedCardAmounts
+  +double totalAmountPayUser
+  +String nameUserToPay
+  +bool isConfirmPaymetOrPaymentSelected
+  +String noteUserToPay
+  +UserEntity? userPaymentData
+  +void setNoteUserToPay()
+  +void setOnlySaldoSelected()
+  +void toggleSaldoSelection()
+  +void toggleConfirmPaymetOrPaymentSelected()
+  +void setNameUserToPay()
+  +void setTotalAmountPayUser()
+  +void setMontoSaldo()
+  +void setCardAmount()
+  +void clearSelection()
+  +void clearTotalAmountPayUser()
+  +void initializeUserPaymentData()
+  +dynamic updateUserPaymentSaldo()
+}
+
+"paganini::presentation::providers::payment_provider.dart::PaymentProvider" o-- "paganini::domain::entity::user_entity.dart::UserEntity"
+"paganini::presentation::providers::payment_provider.dart::PaymentProvider" o-- "firebase_database::firebase_database.dart::FirebaseDatabase"
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "paganini::presentation::providers::payment_provider.dart::PaymentProvider"
+
+class "paganini::presentation::providers::qr_container_provider.dart::QrContainerProvider" {
+  +String? data
+  +void setData()
+}
+
+class "paganini::presentation::providers::saldo_provider.dart::SaldoProvider" {
+  -DatabaseReference? _saldoRef
+  -double _saldo
+  +double saldo
+  -void _initializeSaldo()
+  +dynamic agregar()
+  +dynamic addRecharge()
+  +dynamic subRecharge()
+  +dynamic setZero()
+  -dynamic _updateSaldoLocallyAndFirebase()
+}
+
+"paganini::presentation::providers::saldo_provider.dart::SaldoProvider" o-- "firebase_database::firebase_database.dart::DatabaseReference"
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "paganini::presentation::providers::saldo_provider.dart::SaldoProvider"
+
+class "paganini::presentation::providers::theme_provider.dart::ThemeProvider" {
+  {static} -String _themeKey
+  -bool _isDarkMode
+  +bool isDarkMode
+  -dynamic _loadThemePreference()
+  +dynamic toggleTheme()
+}
+
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "paganini::presentation::providers::theme_provider.dart::ThemeProvider"
+
+class "paganini::presentation::providers::user_provider.dart::UserProvider" {
+  -UserEntity? _currentUser
+  -bool _isImportedContacts
+  +UserEntity? currentUser
+  +bool isImportedContacts
+  +void initializeUser()
+  +dynamic signOut()
+  +void setUserCurrent()
+  +void setUserImportedContacts()
+}
+
+"paganini::presentation::providers::user_provider.dart::UserProvider" o-- "paganini::domain::entity::user_entity.dart::UserEntity"
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "paganini::presentation::providers::user_provider.dart::UserProvider"
+
+class "paganini::presentation::widgets::add_contact_dialog.dart::AddContactDialog" {
+  +State<AddContactDialog> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::widgets::add_contact_dialog.dart::AddContactDialog"
+
+class "paganini::presentation::widgets::add_contact_dialog.dart::_AddContactDialogState" {
+  +TextEditingController nameController
+  +TextEditingController phoneController
+  +ContactUseCase contactUseCase
+  +List<ContactUser> contactsList
+  +void initState()
+  -dynamic _loadContacts()
+  +Widget build()
+}
+
+"paganini::presentation::widgets::add_contact_dialog.dart::_AddContactDialogState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"paganini::presentation::widgets::add_contact_dialog.dart::_AddContactDialogState" o-- "paganini::domain::usecases::contact_use_case.dart::ContactUseCase"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::widgets::add_contact_dialog.dart::_AddContactDialogState"
+
+class "paganini::presentation::widgets::app_bar_content.dart::ContentAppBar" {
+  +void signUserOut()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::widgets::app_bar_content.dart::ContentAppBar"
+
+class "paganini::presentation::widgets::buttons::button_second_version.dart::ButtonSecondVersion" {
+  +String text
+  +Function function
+  +double verticalPadding
+  +double horizontalPadding
+  +Color backgroundColor
+  +double? buttonWidth
+  +double? buttonHeight
+  +double? fontSize
+  +Color? colorText
+  +Widget build()
+}
+
+"paganini::presentation::widgets::buttons::button_second_version.dart::ButtonSecondVersion" o-- "dart::ui::Color"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::widgets::buttons::button_second_version.dart::ButtonSecondVersion"
+
+class "paganini::presentation::widgets::buttons::button_second_version_icon.dart::ButtonSecondVersionIcon" {
+  +Function function
+  +String text
+  +IconData icon
+  +IconAlignment iconAlignment
+  +Color color
+  +double horizontalPadding
+  +Widget build()
+}
+
+"paganini::presentation::widgets::buttons::button_second_version_icon.dart::ButtonSecondVersionIcon" o-- "flutter::src::widgets::icon_data.dart::IconData"
+"paganini::presentation::widgets::buttons::button_second_version_icon.dart::ButtonSecondVersionIcon" o-- "flutter::src::material::button_style_button.dart::IconAlignment"
+"paganini::presentation::widgets::buttons::button_second_version_icon.dart::ButtonSecondVersionIcon" o-- "dart::ui::Color"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::widgets::buttons::button_second_version_icon.dart::ButtonSecondVersionIcon"
+
+class "paganini::presentation::widgets::buttons::button_without_icon.dart::ButtonWithoutIcon" {
+  +String text
+  +void Function() onPressed
+  +FontStyle? fontStyle
+  +Widget build()
+}
+
+"paganini::presentation::widgets::buttons::button_without_icon.dart::ButtonWithoutIcon" o-- "dart::ui::void Function()"
+"paganini::presentation::widgets::buttons::button_without_icon.dart::ButtonWithoutIcon" o-- "dart::ui::FontStyle"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::widgets::buttons::button_without_icon.dart::ButtonWithoutIcon"
+
+class "paganini::presentation::widgets::buttons::button_with_icon.dart::ButtonWithIcon" {
+  +Function function
+  +String textButton
+  +IconData icon
+  +Color? color
+  +Widget build()
+}
+
+"paganini::presentation::widgets::buttons::button_with_icon.dart::ButtonWithIcon" o-- "flutter::src::widgets::icon_data.dart::IconData"
+"paganini::presentation::widgets::buttons::button_with_icon.dart::ButtonWithIcon" o-- "dart::ui::Color"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::widgets::buttons::button_with_icon.dart::ButtonWithIcon"
+
+class "paganini::presentation::widgets::contact_user.dart::ContactUserWidget" {
+  +double width
+  +double height
+  +Color color
+  +String nameUser
+  +String phoneUser
+  +bool isRegistered
+  +Widget build()
+}
+
+"paganini::presentation::widgets::contact_user.dart::ContactUserWidget" o-- "dart::ui::Color"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::widgets::contact_user.dart::ContactUserWidget"
+
+class "paganini::presentation::widgets::container_action_button.dart::ContainerActionButton" {
+  +String text
+  +IconData iconData
+  +Color color
+  +double width
+  +double height
+  +Widget build()
+}
+
+"paganini::presentation::widgets::container_action_button.dart::ContainerActionButton" o-- "flutter::src::widgets::icon_data.dart::IconData"
+"paganini::presentation::widgets::container_action_button.dart::ContainerActionButton" o-- "dart::ui::Color"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::widgets::container_action_button.dart::ContainerActionButton"
+
+class "paganini::presentation::widgets::container_settings.dart::ContainerSettings" {
+  +String text
+  +IconData iconData
+  +bool? needSwitch
+  +bool? darkThemeSelected
+  +bool? withoutIconArrowGo
+  +void Function(bool)? onSwitchChanged
+  +void Function()? onPressed
+  +Widget build()
+}
+
+"paganini::presentation::widgets::container_settings.dart::ContainerSettings" o-- "flutter::src::widgets::icon_data.dart::IconData"
+"paganini::presentation::widgets::container_settings.dart::ContainerSettings" o-- "flutter::src::foundation::basic_types.dart::void Function(bool)"
+"paganini::presentation::widgets::container_settings.dart::ContainerSettings" o-- "dart::ui::void Function()"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::widgets::container_settings.dart::ContainerSettings"
+
+class "paganini::presentation::widgets::credits_cards_view.dart::CreditCardsView" {
+  -PageController _pageController
+  +List<CreditCardEntity> creditCards
+  +Widget build()
+}
+
+"paganini::presentation::widgets::credits_cards_view.dart::CreditCardsView" o-- "flutter::src::widgets::page_view.dart::PageController"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::widgets::credits_cards_view.dart::CreditCardsView"
+
+class "paganini::presentation::widgets::credit_card_ui.dart::CreditCardWidget" {
+  +String cardHolderFullName
+  +String cardNumber
+  +String cardType
+  +String validThru
+  +Color color
+  +bool? isFavorite
+  +String cvv
+  +double width
+  +double balance
+  +bool supportNfc
+  +Widget build()
+}
+
+"paganini::presentation::widgets::credit_card_ui.dart::CreditCardWidget" o-- "dart::ui::Color"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::widgets::credit_card_ui.dart::CreditCardWidget"
+
+class "paganini::presentation::widgets::edit_contact_dialog.dart::EditContactDialog" {
+  +ContactUser contact
+  +Widget build()
+}
+
+"paganini::presentation::widgets::edit_contact_dialog.dart::EditContactDialog" o-- "paganini::data::models::contact_model.dart::ContactUser"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::widgets::edit_contact_dialog.dart::EditContactDialog"
+
+class "paganini::presentation::widgets::floating_button_paganini.dart::FloatingButtonPaganini" {
+  +bool isQrPrincipal
+  +void Function()? onPressed
+  +IconData iconData
+  +Widget build()
+}
+
+"paganini::presentation::widgets::floating_button_paganini.dart::FloatingButtonPaganini" o-- "dart::ui::void Function()"
+"paganini::presentation::widgets::floating_button_paganini.dart::FloatingButtonPaganini" o-- "flutter::src::widgets::icon_data.dart::IconData"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::widgets::floating_button_paganini.dart::FloatingButtonPaganini"
+
+class "paganini::presentation::widgets::list_title_transaction.dart::ListTitleTransaction" {
+  +bool? withDescription
+  +TransactionModel transaction
+  +double? paddingRight
+  +State<ListTitleTransaction> createState()
+}
+
+"paganini::presentation::widgets::list_title_transaction.dart::ListTitleTransaction" o-- "paganini::data::models::transaction_model.dart::TransactionModel"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::presentation::widgets::list_title_transaction.dart::ListTitleTransaction"
+
+class "paganini::presentation::widgets::list_title_transaction.dart::_ListTitleTransactionState" {
+  -bool _isDescriptionVisible
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::presentation::widgets::list_title_transaction.dart::_ListTitleTransactionState"
+
+class "paganini::presentation::widgets::qr_container.dart::QrContainer" {
+  +String? data
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::widgets::qr_container.dart::QrContainer"
+
+class "paganini::presentation::widgets::smooth_page_indicator.dart::SmoothPageIndicatorWidget" {
+  +PageController pageController
+  +int totalCounts
+  +IndicatorEffect smoothPageEffect
+  +Widget build()
+}
+
+"paganini::presentation::widgets::smooth_page_indicator.dart::SmoothPageIndicatorWidget" o-- "flutter::src::widgets::page_view.dart::PageController"
+"paganini::presentation::widgets::smooth_page_indicator.dart::SmoothPageIndicatorWidget" o-- "smooth_page_indicator::src::effects::indicator_effect.dart::IndicatorEffect"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::widgets::smooth_page_indicator.dart::SmoothPageIndicatorWidget"
+
+class "paganini::presentation::widgets::textfile_form.dart::TextFieldForm" {
+  +String? hintText
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::widgets::textfile_form.dart::TextFieldForm"
+
+class "paganini::presentation::widgets::text_form_field_widget.dart::TextFormFieldWidget" {
+  +TextEditingController controller
+  +String hintText
+  +String? Function(String?)? validator
+  +TextInputType textInputType
+  +bool? enabled
+  +Widget build()
+}
+
+"paganini::presentation::widgets::text_form_field_widget.dart::TextFormFieldWidget" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"paganini::presentation::widgets::text_form_field_widget.dart::TextFormFieldWidget" o-- "flutter::src::widgets::form.dart::String Function(String)"
+"paganini::presentation::widgets::text_form_field_widget.dart::TextFormFieldWidget" o-- "flutter::src::services::text_input.dart::TextInputType"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::widgets::text_form_field_widget.dart::TextFormFieldWidget"
+
+class "paganini::presentation::widgets::tex_form_fiedl_widget_second.dart::TextFormFieldSecondVersion" {
+  +TextEditingController controller
+  +TextCapitalization textCapitalization
+  +IconData? icon
+  +String hintext
+  +InputBorder? inputBorder
+  +List<TextInputFormatter> inputFormatters
+  +TextInputType keyboardType
+  +TextAlign? textAlign
+  +String? Function(String?)? validator
+  +void Function(String)? onChanged
+  +Widget build()
+}
+
+"paganini::presentation::widgets::tex_form_fiedl_widget_second.dart::TextFormFieldSecondVersion" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"paganini::presentation::widgets::tex_form_fiedl_widget_second.dart::TextFormFieldSecondVersion" o-- "flutter::src::services::text_input.dart::TextCapitalization"
+"paganini::presentation::widgets::tex_form_fiedl_widget_second.dart::TextFormFieldSecondVersion" o-- "flutter::src::widgets::icon_data.dart::IconData"
+"paganini::presentation::widgets::tex_form_fiedl_widget_second.dart::TextFormFieldSecondVersion" o-- "flutter::src::material::input_border.dart::InputBorder"
+"paganini::presentation::widgets::tex_form_fiedl_widget_second.dart::TextFormFieldSecondVersion" o-- "flutter::src::services::text_input.dart::TextInputType"
+"paganini::presentation::widgets::tex_form_fiedl_widget_second.dart::TextFormFieldSecondVersion" o-- "dart::ui::TextAlign"
+"paganini::presentation::widgets::tex_form_fiedl_widget_second.dart::TextFormFieldSecondVersion" o-- "flutter::src::widgets::form.dart::String Function(String)"
+"paganini::presentation::widgets::tex_form_fiedl_widget_second.dart::TextFormFieldSecondVersion" o-- "flutter::src::foundation::basic_types.dart::void Function(String)"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::presentation::widgets::tex_form_fiedl_widget_second.dart::TextFormFieldSecondVersion"
+
+class "paganini::wise_splash_screen.dart::WiseSplashScreen" {
+  +AnimationController controller
+  {static} +AnimationController createController()
+  +State<WiseSplashScreen> createState()
+}
+
+"paganini::wise_splash_screen.dart::WiseSplashScreen" o-- "flutter::src::animation::animation_controller.dart::AnimationController"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::wise_splash_screen.dart::WiseSplashScreen"
+
+class "paganini::wise_splash_screen.dart::_WiseSplashScreenState" {
+  -Animation<double> _opacity
+  +Widget build()
+}
+
+"paganini::wise_splash_screen.dart::_WiseSplashScreenState" o-- "flutter::src::animation::animation.dart::Animation<double>"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::wise_splash_screen.dart::_WiseSplashScreenState"
+
+class "paganini::wise_splash_screen.dart::_Background" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "paganini::wise_splash_screen.dart::_Background"
+
+class "paganini::wise_splash_screen.dart::_Foreground" {
+  +AnimationController controller
+  +State<_Foreground> createState()
+}
+
+"paganini::wise_splash_screen.dart::_Foreground" o-- "flutter::src::animation::animation_controller.dart::AnimationController"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "paganini::wise_splash_screen.dart::_Foreground"
+
+class "paganini::wise_splash_screen.dart::_ForegroundState" {
+  -Animation<double> _frontTrackProgress
+  -Animation<double> _frontTrackExpansion
+  -Animation<double> _frontTrackHeadExpansion
+  -Animation<double> _backTrackProgress
+  -Animation<double> _imageScale
+  +Widget build()
+}
+
+"paganini::wise_splash_screen.dart::_ForegroundState" o-- "flutter::src::animation::animation.dart::Animation<double>"
+"flutter::src::widgets::framework.dart::State" <|-- "paganini::wise_splash_screen.dart::_ForegroundState"
+
+class "paganini::wise_splash_screen.dart::_TrackPainter" {
+  +Animation<double> progress
+  +void paint()
+  +bool shouldRepaint()
+}
+
+"paganini::wise_splash_screen.dart::_TrackPainter" o-- "flutter::src::animation::animation.dart::Animation<double>"
+"flutter::src::rendering::custom_paint.dart::CustomPainter" <|-- "paganini::wise_splash_screen.dart::_TrackPainter"
+
+class "paganini::wise_splash_screen.dart::_Clipper" {
+  +Animation<double> progress
+  +Animation<double> expansion
+  +Path getClip()
+  +bool shouldReclip()
+}
+
+"paganini::wise_splash_screen.dart::_Clipper" o-- "flutter::src::animation::animation.dart::Animation<double>"
+"flutter::src::rendering::proxy_box.dart::CustomClipper" <|-- "paganini::wise_splash_screen.dart::_Clipper"
+
+class "paganini::wise_splash_screen.dart::_Delegate" {
+  +Animation<double> progress
+  +Animation<double> expansion
+  +Size getSize()
+  +BoxConstraints getConstraintsForChild()
+  +Offset getPositionForChild()
+  +bool shouldRelayout()
+}
+
+"paganini::wise_splash_screen.dart::_Delegate" o-- "flutter::src::animation::animation.dart::Animation<double>"
+"flutter::src::rendering::shifted_box.dart::SingleChildLayoutDelegate" <|-- "paganini::wise_splash_screen.dart::_Delegate"
+
+class "paganini::wise_splash_screen.dart::_CirclePainter" {
+  +void paint()
+  +bool shouldRepaint()
+}
+
+"flutter::src::rendering::custom_paint.dart::CustomPainter" <|-- "paganini::wise_splash_screen.dart::_CirclePainter"
+
+class "paganini::wise_splash_screen.dart::_Track" {
+  +Path path
+  +Offset trackHeadCenter
+}
+
+"paganini::wise_splash_screen.dart::_Track" o-- "dart::ui::Path"
+"paganini::wise_splash_screen.dart::_Track" o-- "dart::ui::Offset"
+
+
+@enduml
