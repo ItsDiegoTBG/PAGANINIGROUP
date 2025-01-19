@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:paganini/presentation/providers/biometric_auth_provider.dart';
 
 class BiometricAuthPage extends StatelessWidget {
-  const BiometricAuthPage({Key? key}) : super(key: key);
+  const BiometricAuthPage({super.key});
 
   @override
   Widget build(BuildContext context) {

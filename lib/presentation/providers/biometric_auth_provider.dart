@@ -8,8 +8,8 @@ class BiometricAuthProvider extends ChangeNotifier {
 
   BiometricAuthProvider(this._authenticateWithBiometrics);
 
-  // ignore: prefer_final_fields
-  bool _isAuthenticating = false;
+
+  final bool _isAuthenticating = false;
   bool get isAuthenticating => _isAuthenticating;
 
   Future<void> authenticateWithBiometrics() async {
@@ -18,8 +18,8 @@ class BiometricAuthProvider extends ChangeNotifier {
     } catch (e) {
       if (e.toString().contains('No stored credentials')) {
         // Muestra un mensaje al usuario
-        // ignore: avoid_print
-        print('Por favor, inicia sesión manualmente primero.');
+        
+        debugPrint('Por favor, inicia sesión manualmente primero.');
       }
       throw Exception('Biometric login failed: $e');
     }

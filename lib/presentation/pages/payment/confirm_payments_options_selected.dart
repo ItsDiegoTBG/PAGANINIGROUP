@@ -112,6 +112,7 @@ class ConfirmPaymentPage extends StatelessWidget {
                                   TextStyle(fontSize: 16, color: Colors.black),
                             ),
                           ),
+
                   ...selectedCardAmounts.entries.map((entry) {
                     final cardIndex = entry.key;
                     final cardAmount = entry.value;

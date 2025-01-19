@@ -341,10 +341,10 @@ class _CreditCardsView extends StatelessWidget {
 
   final List<CreditCardEntity> creditCards;
 
-  Future<bool> _simulateLoading() async {
+/*  Future<bool> _simulateLoading() async {
     await Future.delayed(const Duration(milliseconds: 1600));
     return true;
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
