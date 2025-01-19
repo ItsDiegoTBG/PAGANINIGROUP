@@ -59,10 +59,11 @@ jobs:
         if: runner.os == 'macOS'
         run: flutter build ios --release
 
-      # 10. Almacena los artefactos (APK)
+     # 10. Almacena los artefactos (APK)
       - name: Upload APK
-        if: success()
+        if: fileExists('build/app/outputs/flutter-apk/app-release.apk')
         uses: actions/upload-artifact@v3
         with:
           name: APK
-       
+          path: build/app/outputs/flutter-apk/app-release.apk
+
