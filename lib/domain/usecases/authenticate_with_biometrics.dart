@@ -13,3 +13,16 @@ class AuthenticateWithBiometrics {
   }
 }
 
+class AuthenticateTransferWithBiometrics {
+  final AuthRepository repository;
+
+  AuthenticateTransferWithBiometrics(this.repository);
+
+  Future<void> call() async {
+    return repository.authenticateTransferWithBiometrics();
+  }
+  Future<void> saveCredentials(String email, String password) async {
+    await repository.saveCredentials(email, password);
+  }
+}
+

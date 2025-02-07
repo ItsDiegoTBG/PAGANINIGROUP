@@ -40,7 +40,8 @@ class MainApp extends StatelessWidget {
           Routes.FORGETPASSWORD : (context) => const   ForgetPasswordPage(),
           Routes.SETTINGSPAGE: (context) => const SettingPage(),
           Routes.HISTORYPAGE: (context) => const HistoryMovement(),
-          Routes.BIOLOGIN : (context) => const BiometricAuthPage()
+          Routes.BIOLOGIN : (context) => const BiometricAuthPage(),
+          Routes.EDITPROFILEPAGE : (context) => const EditProfilePage()
         },
         theme: Provider.of<ThemeProvider>(context).isDarkMode
             ? AppTheme().themeDarkMode()

@@ -62,7 +62,8 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   final authenticateWithBiometrics = AuthenticateWithBiometrics(authRepository);
-  final bioProvider = BiometricAuthProvider(authenticateWithBiometrics);
+  final authenticateTransferWithBiometrics = AuthenticateTransferWithBiometrics(authRepository);
+  final bioProvider = BiometricAuthProvider(authenticateWithBiometrics, authenticateTransferWithBiometrics);
 
   await Future.delayed(const Duration(seconds: 1));
   FlutterNativeSplash.remove();

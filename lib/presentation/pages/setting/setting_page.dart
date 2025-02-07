@@ -9,6 +9,7 @@ import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/container_settings.dart';
 import 'package:provider/provider.dart';
+import 'package:paganini/presentation/widgets/add_sign_out_dialog.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -27,6 +28,23 @@ class _SettingPageState extends State<SettingPage> {
     final UserEntity userEntity = userProvider.currentUser!;
     final notificationProvider = Provider.of<NotificationService>(context);
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+
+    Future<void> confirmSignOut() async {
+      final signOut = await showDialog(
+        context: context,
+        builder: (_) =>  const AddSignOutDialog(),
+        );
+      if (signOut != null) {
+        notificationProvider.showNotification(
+            "Salir de Sesion",
+            "Haz salido de sesion de manera exitosa");
+        Navigator.pushNamedAndRemoveUntil(
+            context,
+            Routes.INITIAL,
+            (Route<dynamic> route) => false);
+        await userProvider.signOut();
+      }
+    }
 
     return SingleChildScrollView(
       child: Padding(
@@ -80,20 +98,15 @@ class _SettingPageState extends State<SettingPage> {
                                   iconData: Icons.settings,
                                   color: const Color(0xFF6bcde8),
                                   onTap: () {
+                                    Navigator.pushNamed(
+                                        context, Routes.EDITPROFILEPAGE);
                                     debugPrint("click");
                                   }),
                               _ContainerIcon(
                                   iconData: Icons.logout,
                                   color: const Color(0xFF6b41dc),
                                   onTap: () async {
-                                    notificationProvider.showNotification(
-                                        "Salir de Sesion",
-                                        "Haz salido de sesion de manera exitosa");
-                                    Navigator.pushNamedAndRemoveUntil(
-                                        context,
-                                        Routes.INITIAL,
-                                        (Route<dynamic> route) => false);
-                                    await userProvider.signOut();
+                                    await confirmSignOut();
                                   }),
                             ]),
                         const Gap(23)

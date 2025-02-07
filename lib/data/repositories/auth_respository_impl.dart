@@ -36,6 +36,30 @@ Future<void> authenticateWithBiometrics() async {
   }
 }
 
+  @override
+  Future<void> authenticateTransferWithBiometrics() async {
+    bool isAuthenticated = await _localAuth.authenticate(
+      localizedReason: 'Autenticate para transferir con tu cuenta paganini',
+      options: const AuthenticationOptions(
+        stickyAuth: true,
+      ),
+    
+    );
+    debugPrint("El metodo authenticateTransferWithBiometrics fue llamado , isAuthenticated: $isAuthenticated");
+    if (isAuthenticated) {
+      final email = await _secureStorage.read(key: 'email');
+      final password = await _secureStorage.read(key: 'password');
+
+      if (email != null && password != null) {
+        await _auth.signInWithEmailAndPassword(email: email, password: password);
+      } else {
+        throw Exception('No stored credentials found. Please log in with your email and password first.');
+      }
+    } else {
+      throw Exception('Biometric authentication failed.');
+    }
+  }
+
 
   @override
   Future<void> loginWithEmailAndPassword(String email, String password) async {

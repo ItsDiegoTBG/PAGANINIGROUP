@@ -50,4 +50,10 @@ class UserProvider with ChangeNotifier {
    _isImportedContacts = true;
    notifyListeners();
  }
+
+ void setUserData(){
+  initializeUser();
+  notifyListeners();
+ }
+
 }

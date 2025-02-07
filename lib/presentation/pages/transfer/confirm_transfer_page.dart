@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/data/local/notification_service.dart';
 import 'package:paganini/domain/entity/user_entity.dart';
+import 'package:paganini/helpers/show_animated_snackbar.dart';
+import 'package:paganini/presentation/pages/login/loading_screen.dart';
 import 'package:paganini/presentation/pages/transfer/transfer_receipt_page.dart';
+import 'package:paganini/presentation/providers/biometric_auth_provider.dart';
 import 'package:paganini/presentation/providers/contact_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
 import 'package:paganini/presentation/widgets/app_bar_content.dart';
@@ -27,7 +31,74 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
     final saldoProviderRead = context.read<SaldoProvider>();
     final notificationService = Provider.of<NotificationService>(context);
     final contactProviderWacth = context.watch<ContactProvider>();
+    final bioProvider =
+        Provider.of<BiometricAuthProvider>(context, listen: false);
     final UserEntity? contactUserTransfered = contactProviderWacth.contactUser;
+
+    Future<void> confirmTransfer() async {
+      final contactProviderRead = context.read<ContactProvider>();
+      final saldoProviderRead = context.read<SaldoProvider>();
+      final notificationService = Provider.of<NotificationService>(context, listen: false);
+      final contactProviderWatch = context.read<ContactProvider>();
+      final UserEntity? contactUserTransfered = contactProviderWatch.contactUser;
+      debugPrint("Función antes del try");
+      try {
+        debugPrint("Dato del usuario del contacto que se ha transferido");
+        debugPrint("Teléfono del usuario del contacto: ${contactUserTransfered?.phone}");
+        debugPrint("Nombre del usuario del contacto: ${contactUserTransfered?.firstname}");
+        
+        saldoProviderRead.subRecharge(widget.valueTransfered);
+        contactProviderRead.resetContact();
+        contactProviderWatch.updateUserSaldo(contactUserTransfered!, widget.valueTransfered);
+        
+        notificationService.showNotification(
+          "Transferencia Exitosa",
+          "Haz transferido de manera exitosa",
+        );
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TransferReceipt(
+              valueTransfered: widget.valueTransfered,
+              userByTransfered: contactUserTransfered,
+            ),
+          ),
+        );
+      } catch (e) {
+        debugPrint("Error durante la transferencia: $e");
+      }
+    }
+
+    Future<void> authenticateTransfer() async {
+      try {
+        await bioProvider.authenticateTransferWithBiometrics();
+
+        showDialog(
+          context: context,
+          barrierDismissible:
+              false, // Evita cerrar el diálogo manualmente
+          builder: (context) {
+            return const Center(child: LoadingScreen());
+          },
+        );
+        await Future.delayed(const Duration(seconds: 2));
+
+        // Cierra el diálogo después de la animación
+        Navigator.pop(context);
+
+        // Confirma la transferencia
+        debugPrint("Calling confirmTransfer()...");
+        confirmTransfer();
+      } catch (e) {
+        // Asegúrate de cerrar el diálogo en caso de error
+        Navigator.pushNamed(context, Routes.CONFTRANSFER);
+
+        // Muestra el mensaje de error
+        debugPrint(e.toString());
+        ShowAnimatedSnackBar.show(context, "Debes registrar tus datos biométricos.",Icons.error, AppColors.redColors,seconds: 4);
+      }
+    }
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -190,25 +261,7 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
                 ButtonSecondVersion(
                   text: "Confirmar",
                   function: () async {
-                    debugPrint(
-                        "Datao del usuario del contacto que se ha transferio");
-                    debugPrint(
-                        "Data2 del usuario del contacto ${contactProviderWacth.contactUser?.phone}");
-                    debugPrint(
-                        "Datao3 del usuario del contacto ${contactProviderWacth.contactUser?.firstname}");
-                   
-                    saldoProviderRead.subRecharge(widget.valueTransfered);
-                    contactProviderRead.resetContact();
-                    contactProviderWacth.updateUserSaldo(contactUserTransfered!, widget.valueTransfered);
-                    notificationService.showNotification(
-                        "Transferencia Exitosa",
-                        "Haz transferido de manera exitosa");
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => TransferReceipt(
-                                valueTransfered: widget.valueTransfered,
-                                userByTransfered: contactUserTransfered)));
+                    await authenticateTransfer();
                   },
                   horizontalPadding: 70,
                   buttonWidth: 300,
