@@ -4,14 +4,14 @@ import 'package:paganini/helpers/show_animated_snackbar.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
-class AddSignOutDialog extends StatefulWidget {
-  const AddSignOutDialog({super.key});
+class SignOutDialog extends StatefulWidget {
+  const SignOutDialog({super.key});
 
   @override
-  State<AddSignOutDialog> createState() => _AddSignOutDialogState();
+  State<SignOutDialog> createState() => _SignOutDialogState();
 }
 
-class _AddSignOutDialogState extends State<AddSignOutDialog> {
+class _SignOutDialogState extends State<SignOutDialog> {
 
   @override
   void initState() {

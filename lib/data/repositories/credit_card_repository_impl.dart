@@ -68,4 +68,14 @@ class CreditCardRepositoryImpl implements CreditCardRepository {
       throw Exception('Error al agregar la tarjeta: $e');
     }
   }
+  
+  @override
+  Future<void> updateName(String userId, int idCreditCard, String newName) async {
+    try {
+      await remoteDataSource.updateName(userId, idCreditCard, newName);
+    } catch (e) {
+      throw Exception('Error al agregar la tarjeta: $e');
+    }      
+    throw UnimplementedError();
+  }
 }

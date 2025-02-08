@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/helpers/show_animated_snackbar.dart';
+import 'package:paganini/presentation/pages/login/loading_screen.dart';
 import 'package:paganini/presentation/pages/navigation_page.dart';
+import 'package:paganini/presentation/providers/biometric_auth_provider.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/payment_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
@@ -23,6 +25,8 @@ class ConfirmPaymentPage extends StatelessWidget {
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
     final creditCards = creditCardProviderWatch.creditCards;
     final paymentProvider = context.watch<PaymentProvider>();
+    final bioProvider =
+        Provider.of<BiometricAuthProvider>(context, listen: false);
     final montoSaldo = paymentProvider.montoSaldo;
     final selectedCardAmounts = paymentProvider.selectedCardAmounts;
     final isSaldoSelected = paymentProvider.isSaldoSelected;
@@ -33,6 +37,184 @@ class ConfirmPaymentPage extends StatelessWidget {
     final totalAmount = montoSaldo +
         selectedCardAmounts.values.fold(0.0, (sum, amount) => sum + amount);
     final userPaymentEntity = paymentProvider.userPaymentData;
+
+    Future<void> confirmPayment() async {
+      debugPrint("El total es $montoSaldo");
+      debugPrint(
+          "El saldo es: $saldo, lo que el usuario escogio  es: $montoSaldo y es  verdadero o falso $isSaldoSelected");
+      debugPrint(
+          "Los montos de las tarjetas son: $selectedCardAmounts");
+      debugPrint(
+          "Todas las tarjetas: ${creditCards.length} $creditCards");
+
+      for (int i = 0; i < creditCards.length; i++) {
+        debugPrint(
+            "Tarjeta $i: ${creditCards[i].balance} , y el id es: ${creditCards[i].id}");
+      }
+
+      /*OK open youtube please
+      1.verificamos que la suma total de sus opcion de pago sea igual al total que paga el usuario
+      2.si elijio pagar con saldo, verificamos que el monto del saldo sea igual o menor al monto saldo que tiene en la cuenta y le restamos el monto que elijio del saldo al saldo de la cuenta                     
+      3.si elijio las tarjetas, verificamos que el motno de cada tarjeta sea igual o menor al monto de cada tarjeta y se la restamos 
+      4.dejar los atributos del provider limpio para realizar otro paog
+    */
+      if (isSaldoSelected == true && saldo <= 0.0) {
+        ShowAnimatedSnackBar.show(
+            context,
+            "No tiene saldo en la cuenta",
+            Icons.warning,
+            AppColors.yellowColors);
+        return;
+      }
+      if (isOnlySaldoSelected == true &&
+          selectedCardAmounts.isEmpty) {
+        debugPrint("Entra al onluSelected");
+        if (saldo < totalPlayerAmount) {
+          Navigator.pop(context);
+
+          ShowAnimatedSnackBar.show(
+              context,
+              "No tienes saldo suficiente",
+              Icons.error,
+              AppColors.redColors);
+          return;
+        } else {
+          debugPrint("Solo saldo seleccionado");
+          debugPrint(
+              "Solo seleciono el saldo como true ose onlysaldoselected");
+          debugPrint(
+              "EL saldo es $saldo y el total a pagar es $totalAmount");
+          debugPrint(
+              "EL tatal a pagat es   $paymentProvider.totalAmountPayUser");
+          saldoProviderWatch
+              .subRecharge(totalPlayerAmount);
+          paymentProvider.updateUserPaymentSaldo(
+              userPaymentEntity!, totalPlayerAmount);
+
+          paymentProvider.clearTotalAmountPayUser();
+          paymentProvider
+              .setTotalAmountPayUser(totalAmount);
+          paymentProvider.clearSelection();
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      const NavigationPage()),
+              (Route<dynamic> route) => false);
+
+          ShowAnimatedSnackBar.show(
+              context,
+              "El pago se realizo con exito",
+              Icons.check,
+              AppColors.greenColors);
+          return;
+        }
+      }
+
+      //1
+      if (totalAmount !=
+          paymentProvider.totalAmountPayUser) {
+        ShowAnimatedSnackBar.show(
+            context,
+            "El total de tus opciones de pago no cumple con el total que paga al usuario",
+            Icons.error,
+            AppColors.redColors);
+        return;
+      }
+      //2
+      if (montoSaldo > saldo) {
+        ShowAnimatedSnackBar.show(
+            context,
+            "El monto de Saldo es mayor al que tiene en la cuenta",
+            Icons.info,
+            AppColors.blueColors);
+        return;
+      } else {
+        saldoProviderWatch.subRecharge(montoSaldo);
+      }
+
+      //3 por cada tarjeta
+      for (int cardIndex in selectedCardAmounts.keys) {
+        debugPrint("Tarjeta $cardIndex");
+        // Verifica si el monto seleccionado es nulo
+        if (selectedCardAmounts[cardIndex] == null) {
+          continue;
+        }
+
+        // Obtén el monto seleccionado
+        double selectedAmount =
+            selectedCardAmounts[cardIndex]!;
+        debugPrint(
+            "El monto de la tarjeta $cardIndex es: $selectedAmount");
+        // Verifica si el monto seleccionado es mayor que el saldo de la tarjeta
+        if (selectedAmount >
+            creditCards[cardIndex].balance) {
+          ShowAnimatedSnackBar.show(
+              context,
+              "El monto de la tarjeta ${creditCards[cardIndex].cardHolderFullName} es mayor al que tiene en la tarjeta",
+              Icons.info,
+              AppColors.blueColors);
+          return;
+        }
+
+        // Calcula el nuevo saldo
+        final newBalance =
+            creditCards[cardIndex].balance -
+                selectedAmount;
+        creditCardProviderWatch.updateBalance(
+            userId!, cardIndex, newBalance);
+        debugPrint(
+            "El nuevo saldo de la tarjeta $cardIndex es: $newBalance");
+      }
+      //4
+
+      paymentProvider.clearTotalAmountPayUser();
+      saldoProviderWatch.subRecharge(totalAmount);
+      paymentProvider.updateUserPaymentSaldo(
+          userPaymentEntity!, totalPlayerAmount);
+      paymentProvider.setTotalAmountPayUser(totalAmount);
+      paymentProvider.clearSelection();
+      //este mensaje es para indicar que se ha realizado un pago correcto
+
+      ShowAnimatedSnackBar.show(
+          context,
+          "El pago se ha realizado con exito",
+          Icons.check,
+          Colors.green);
+      Navigator.pop(context);
+      Navigator.pushNamed(context, Routes.NAVIGATIONPAGE);
+                          
+    }
+
+    Future<void> authenticateTransfer() async {
+      try {
+        await bioProvider.authenticateTransferWithBiometrics();
+
+        showDialog(
+          context: context,
+          barrierDismissible:
+              false, // Evita cerrar el diálogo manualmente
+          builder: (context) {
+            return const Center(child: LoadingScreen());
+          },
+        );
+        await Future.delayed(const Duration(seconds: 2));
+
+        // Cierra el diálogo después de la animación
+        Navigator.pop(context);
+
+        // Confirma la transferencia
+        debugPrint("Calling confirmTransfer()...");
+        confirmPayment();
+      } catch (e) {
+        // Asegúrate de cerrar el diálogo en caso de error
+        Navigator.pushNamed(context, Routes.CONFTRANSFER);
+
+        // Muestra el mensaje de error
+        debugPrint(e.toString());
+        ShowAnimatedSnackBar.show(context, "Debes registrar tus datos biométricos.",Icons.error, AppColors.redColors,seconds: 4);
+      }
+    }
 
     return PopScope(
       canPop: false,
@@ -196,151 +378,8 @@ class ConfirmPaymentPage extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
                           onPressed: () {
-                            debugPrint("El total es $montoSaldo");
-                            debugPrint(
-                                "El saldo es: $saldo, lo que el usuario escogio  es: $montoSaldo y es  verdadero o falso $isSaldoSelected");
-                            debugPrint(
-                                "Los montos de las tarjetas son: $selectedCardAmounts");
-                            debugPrint(
-                                "Todas las tarjetas: ${creditCards.length} $creditCards");
-
-                            for (int i = 0; i < creditCards.length; i++) {
-                              debugPrint(
-                                  "Tarjeta $i: ${creditCards[i].balance} , y el id es: ${creditCards[i].id}");
-                            }
-
-                            /*OK open youtube please
-                            1.verificamos que la suma total de sus opcion de pago sea igual al total que paga el usuario
-                            2.si elijio pagar con saldo, verificamos que el monto del saldo sea igual o menor al monto saldo que tiene en la cuenta y le restamos el monto que elijio del saldo al saldo de la cuenta                     
-                            3.si elijio las tarjetas, verificamos que el motno de cada tarjeta sea igual o menor al monto de cada tarjeta y se la restamos 
-                            4.dejar los atributos del provider limpio para realizar otro paog
-                          */
-                            if (isSaldoSelected == true && saldo <= 0.0) {
-                              ShowAnimatedSnackBar.show(
-                                  context,
-                                  "No tiene saldo en la cuenta",
-                                  Icons.warning,
-                                  AppColors.yellowColors);
-                              return;
-                            }
-                            if (isOnlySaldoSelected == true &&
-                                selectedCardAmounts.isEmpty) {
-                              debugPrint("Entra al onluSelected");
-                              if (saldo < totalPlayerAmount) {
-                                Navigator.pop(context);
-
-                                ShowAnimatedSnackBar.show(
-                                    context,
-                                    "No tienes saldo suficiente",
-                                    Icons.error,
-                                    AppColors.redColors);
-                                return;
-                              } else {
-                                debugPrint("Solo saldo seleccionado");
-                                debugPrint(
-                                    "Solo seleciono el saldo como true ose onlysaldoselected");
-                                debugPrint(
-                                    "EL saldo es $saldo y el total a pagar es $totalAmount");
-                                debugPrint(
-                                    "EL tatal a pagat es   $paymentProvider.totalAmountPayUser");
-                                saldoProviderWatch
-                                    .subRecharge(totalPlayerAmount);
-                                paymentProvider.updateUserPaymentSaldo(
-                                    userPaymentEntity!, totalPlayerAmount);
-
-                                paymentProvider.clearTotalAmountPayUser();
-                                paymentProvider
-                                    .setTotalAmountPayUser(totalAmount);
-                                paymentProvider.clearSelection();
-                                Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const NavigationPage()),
-                                    (Route<dynamic> route) => false);
-
-                                ShowAnimatedSnackBar.show(
-                                    context,
-                                    "El pago se realizo con exito",
-                                    Icons.check,
-                                    AppColors.greenColors);
-                                return;
-                              }
-                            }
-
-                            //1
-                            if (totalAmount !=
-                                paymentProvider.totalAmountPayUser) {
-                              ShowAnimatedSnackBar.show(
-                                  context,
-                                  "El total de tus opciones de pago no cumple con el total que paga al usuario",
-                                  Icons.error,
-                                  AppColors.redColors);
-                              return;
-                            }
-                            //2
-                            if (montoSaldo > saldo) {
-                              ShowAnimatedSnackBar.show(
-                                  context,
-                                  "El monto de Saldo es mayor al que tiene en la cuenta",
-                                  Icons.info,
-                                  AppColors.blueColors);
-                              return;
-                            } else {
-                              saldoProviderWatch.subRecharge(montoSaldo);
-                            }
-
-                            //3 por cada tarjeta
-                            for (int cardIndex in selectedCardAmounts.keys) {
-                              debugPrint("Tarjeta $cardIndex");
-                              // Verifica si el monto seleccionado es nulo
-                              if (selectedCardAmounts[cardIndex] == null) {
-                                continue;
-                              }
-
-                              // Obtén el monto seleccionado
-                              double selectedAmount =
-                                  selectedCardAmounts[cardIndex]!;
-                              debugPrint(
-                                  "El monto de la tarjeta $cardIndex es: $selectedAmount");
-                              // Verifica si el monto seleccionado es mayor que el saldo de la tarjeta
-                              if (selectedAmount >
-                                  creditCards[cardIndex].balance) {
-                                ShowAnimatedSnackBar.show(
-                                    context,
-                                    "El monto de la tarjeta ${creditCards[cardIndex].cardHolderFullName} es mayor al que tiene en la tarjeta",
-                                    Icons.info,
-                                    AppColors.blueColors);
-                                return;
-                              }
-
-                              // Calcula el nuevo saldo
-                              final newBalance =
-                                  creditCards[cardIndex].balance -
-                                      selectedAmount;
-                              creditCardProviderWatch.updateBalance(
-                                  userId!, cardIndex, newBalance);
-                              debugPrint(
-                                  "El nuevo saldo de la tarjeta $cardIndex es: $newBalance");
-                            }
-                            //4
-
-                            paymentProvider.clearTotalAmountPayUser();
-                            saldoProviderWatch.subRecharge(totalAmount);
-                            paymentProvider.updateUserPaymentSaldo(
-                                userPaymentEntity!, totalPlayerAmount);
-                            paymentProvider.setTotalAmountPayUser(totalAmount);
-                            paymentProvider.clearSelection();
-                            //este mensaje es para indicar que se ha realizado un pago correcto
-
-                            ShowAnimatedSnackBar.show(
-                                context,
-                                "El pago se ha realizado con exito",
-                                Icons.check,
-                                Colors.green);
-                            Navigator.pop(context);
-                            Navigator.pushNamed(context, Routes.NAVIGATIONPAGE);
-                          },
+                              authenticateTransfer();
+                            },
                           child: const Center(
                             child: Text(
                               "Confirmar Pago",

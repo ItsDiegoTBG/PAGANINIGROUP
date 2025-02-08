@@ -29,4 +29,5 @@ abstract class Routes {
   static const FORGETPASSWORD = "/forget_password_page";
   static const HISTORYPAGE = "/history_page";
   static const EDITPROFILEPAGE = "/edit_profile_page";
+  static const PRIVACYPAGE = "/privacy_page";
 }

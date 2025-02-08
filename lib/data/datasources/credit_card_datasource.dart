@@ -8,6 +8,7 @@ abstract class CreditCardRemoteDataSource {
   Future<List<CreditCardModel>> fetchCreditCards(String userid);
   Future<void> deleteCreditCardById(String userId,int index);
   Future<void> updateBalance(String userId,int idCreditCard, double newBalance);
+  Future<void> updateName(String userId,int idCreditCard, String newName);
 }
 
 class CreditCardRemoteDataSourceImpl implements CreditCardRemoteDataSource {
@@ -111,5 +112,29 @@ class CreditCardRemoteDataSourceImpl implements CreditCardRemoteDataSource {
     debugPrint("Error al actualizar el balance: $e");
   }
 }
+
+  @override
+  Future<void> updateName(String userId, int idCreditCard, String newName) {
+    // TODO: implement updateName
+    try {
+    /*  debugPrint("El cardIndex del metodo del update es: ${_creditCards[idCreditCard].id}");
+      if (idCreditCard == -1) {
+      debugPrint("Tarjeta no encontrada en la lista local.");
+      return; // Si no se encuentra, salimos del método
+    }
+    _creditCards[idCreditCard].cardHolderFullName = newName;
+    final cardId = _creditCards[idCreditCard].id;
+    DatabaseReference cardRef = db.child('users/$userId/cards/$cardId');
+    await cardRef.update({'cardHolderFullName': newName}); // Actualizar solo el nombre en Firebase
+
+    debugPrint("Nombre de la tarjeta actualizado exitosamente.");
+    debugPrint("El nuevo nombre de la tarjeta $idCreditCard es: $newNombre");
+    debugPrint("El cardId de la tarjeta $idCreditCard es: $cardId");
+    */
+    } catch (e) {
+      debugPrint("Error al actualizar el nombre: $e");
+    }
+    throw UnimplementedError();
+  }
 
 }

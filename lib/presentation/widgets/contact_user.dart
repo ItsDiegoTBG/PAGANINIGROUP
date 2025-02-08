@@ -70,8 +70,33 @@ class ContactUserWidget extends StatelessWidget {
                       ),
                     ),
                   ),
+                if (!isRegistered)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 5),
+                    child: TextButton(
+                      onPressed: () {},
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white, // Text color
+                        backgroundColor: AppColors.primaryColor, // Default background color
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: const BorderSide(color: Colors.white, width: 1.5), // Border
+                        ),
+                      ),
+                      child: const Text(
+                        "Invitar",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w400,
+                          overflow: TextOverflow.visible,
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
+            
             Text(
               "📱$phoneUser",
               style: TextStyle(
@@ -84,6 +109,7 @@ class ContactUserWidget extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                   overflow: TextOverflow.visible),
             ),
+            
           ],
         ),
       ),

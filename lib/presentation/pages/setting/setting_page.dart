@@ -9,7 +9,7 @@ import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/widgets/container_settings.dart';
 import 'package:provider/provider.dart';
-import 'package:paganini/presentation/widgets/add_sign_out_dialog.dart';
+import 'package:paganini/presentation/widgets/sign_out_dialog.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -32,7 +32,7 @@ class _SettingPageState extends State<SettingPage> {
     Future<void> confirmSignOut() async {
       final signOut = await showDialog(
         context: context,
-        builder: (_) =>  const AddSignOutDialog(),
+        builder: (_) =>  const SignOutDialog(),
         );
       if (signOut != null) {
         notificationProvider.showNotification(
@@ -142,9 +142,13 @@ class _SettingPageState extends State<SettingPage> {
               iconData: Icons.info_outline,
             ),
             const SizedBox(height: 10),
-            const ContainerSettings(
+            ContainerSettings(
               text: "Privacidad",
               iconData: Icons.privacy_tip_outlined,
+              onPressed: () {
+                Navigator.pushNamed(
+                  context, Routes.PRIVACYPAGE);
+              }
             ),
             const SizedBox(height: 10),
             const ContainerSettings(

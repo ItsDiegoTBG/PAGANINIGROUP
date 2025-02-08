@@ -16,6 +16,10 @@ class CreditCardsUseCase {
     return  await repository.deleteCreditCard(userId, index);
   }
 
+  Future<void> updateName(String userId,int idCreditCard, String newName) async {
+    await repository.updateName(userId,idCreditCard, newName);
+  }
+
   Future<void> updateBalance(String userId,int idCreditCard, double newBalance) async {
     await repository.updateBalance(userId,idCreditCard, newBalance);
   }

@@ -23,3 +23,4 @@ export 'recharge/return_amount_page.dart';
 export 'forget_password_page.dart';
 export 'history/history_movement.dart';
 export 'profile/edit_profile_page.dart';
+export 'setting/privacy_page.dart';
