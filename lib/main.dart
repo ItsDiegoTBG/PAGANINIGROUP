@@ -29,6 +29,7 @@ import 'package:paganini/presentation/providers/credit_card_provider.dart';
 import 'package:paganini/presentation/providers/introduction_provider.dart';
 import 'package:paganini/presentation/providers/payment_provider.dart';
 import 'package:paganini/presentation/providers/saldo_provider.dart';
+import 'package:paganini/presentation/providers/settings_provider.dart';
 import 'package:paganini/presentation/providers/theme_provider.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:paganini/presentation/pages/forget_password_page.dart';
@@ -95,6 +96,7 @@ void main() async {
         ChangeNotifierProvider(lazy: false, create: (_) => ThemeProvider()),
         ChangeNotifierProvider(
             lazy: false, create: (_) => IntroductionProvider()),
+        ChangeNotifierProvider(create: (_) => SettingsProvider()),
       ],
       child: const MainApp(),
     ),

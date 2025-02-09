@@ -57,7 +57,7 @@ class ContactUserWidget extends StatelessWidget {
                   ),
                 ),
                 
-                if (isRegistered)
+                if (isRegistered) ...[
                   const Padding(
                     padding: EdgeInsets.only(right: 10),
                     child: Text(
@@ -70,7 +70,7 @@ class ContactUserWidget extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (!isRegistered)
+                ] else ...[
                   Padding(
                     padding: const EdgeInsets.only(right: 5),
                     child: TextButton(
@@ -94,6 +94,7 @@ class ContactUserWidget extends StatelessWidget {
                       ),
                     ),
                   ),
+                ]                 
               ],
             ),
             

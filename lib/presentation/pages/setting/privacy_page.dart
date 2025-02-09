@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
+import 'package:paganini/presentation/providers/settings_provider.dart';
+import 'package:provider/provider.dart';
 
 class PrivacyPage extends StatelessWidget {
   const PrivacyPage({super.key});
@@ -37,10 +40,8 @@ class PrivacyPage extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  // Change password action
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Cambiar contraseña presionado")),
-                  );
+                  // TODO: implementar cambio de contraseña fuera de la página: Olvidar Contraseña.
+                  Navigator.pushNamed(context, Routes.FORGETPASSWORD);
                 },
                 child: const Text("Cambiar Contraseña", style: TextStyle(color: Colors.white)),
               ),
@@ -52,27 +53,19 @@ class PrivacyPage extends StatelessWidget {
   }
 }
 
-class _SwitchTile extends StatefulWidget {
+class _SwitchTile extends StatelessWidget {
   final String title;
 
   const _SwitchTile({required this.title});
-
-  @override
-  State<_SwitchTile> createState() => _SwitchTileState();
-}
-
-class _SwitchTileState extends State<_SwitchTile> {
-  bool isEnabled = false;
-
+  
   @override
   Widget build(BuildContext context) {
+    final settings = Provider.of<SettingsProvider>(context);
     return SwitchListTile(
-      title: Text(widget.title),
-      value: isEnabled,
+      title: Text(title),
+      value: settings.getSwitchState(title),
       onChanged: (value) {
-        setState(() {
-          isEnabled = value;
-        });
+        settings.setSwitchState(title, value);
       },
       activeColor: AppColors.primaryColor,
     );

@@ -3,7 +3,7 @@ import 'package:paganini/core/utils/colors.dart';
 
 class CreditCardModel {
   final int id;
-  final String cardHolderFullName;
+  String cardHolderFullName;
   final String cardNumber;
   final String cardType;
   final String validThru;

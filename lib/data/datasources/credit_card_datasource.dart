@@ -114,10 +114,9 @@ class CreditCardRemoteDataSourceImpl implements CreditCardRemoteDataSource {
 }
 
   @override
-  Future<void> updateName(String userId, int idCreditCard, String newName) {
-    // TODO: implement updateName
+  Future<void> updateName(String userId, int idCreditCard, String newName) async {
     try {
-    /*  debugPrint("El cardIndex del metodo del update es: ${_creditCards[idCreditCard].id}");
+    debugPrint("El cardIndex del metodo del update es: ${_creditCards[idCreditCard].id}");
       if (idCreditCard == -1) {
       debugPrint("Tarjeta no encontrada en la lista local.");
       return; // Si no se encuentra, salimos del método
@@ -128,9 +127,8 @@ class CreditCardRemoteDataSourceImpl implements CreditCardRemoteDataSource {
     await cardRef.update({'cardHolderFullName': newName}); // Actualizar solo el nombre en Firebase
 
     debugPrint("Nombre de la tarjeta actualizado exitosamente.");
-    debugPrint("El nuevo nombre de la tarjeta $idCreditCard es: $newNombre");
+    debugPrint("El nuevo nombre de la tarjeta $idCreditCard es: $newName");
     debugPrint("El cardId de la tarjeta $idCreditCard es: $cardId");
-    */
     } catch (e) {
       debugPrint("Error al actualizar el nombre: $e");
     }

@@ -1,16 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/domain/usecases/contact_use_case.dart';
 import 'package:paganini/helpers/show_animated_snackbar.dart';
 import 'package:paganini/presentation/providers/contact_provider.dart';
+import 'package:paganini/presentation/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/contact_model.dart';
 import 'package:paganini/presentation/providers/credit_card_provider.dart';
 
 
 class RenameCardDialog extends StatefulWidget {
-  const RenameCardDialog({super.key});
+  final int index;
+  const RenameCardDialog(this.index, {super.key});
 
   @override
   State<RenameCardDialog> createState() => _RenameCardDialogState();
@@ -18,6 +21,8 @@ class RenameCardDialog extends StatefulWidget {
 
 class _RenameCardDialogState extends State<RenameCardDialog> {
   final TextEditingController nameController = TextEditingController();
+  
+  
 
   @override
   void initState() {
@@ -30,6 +35,7 @@ class _RenameCardDialogState extends State<RenameCardDialog> {
   @override
   Widget build(BuildContext context) {
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
+    final userId = context.read<UserProvider>().currentUser?.id;
     final creditCards = creditCardProviderWatch.creditCards;
     return AlertDialog(
       title: const Text("Cambiar nombre de tarjeta"),
@@ -53,7 +59,17 @@ class _RenameCardDialogState extends State<RenameCardDialog> {
           ),
           onPressed: () async {
             final name = nameController.text.trim();
-            // Validar que el usuario no exista en contactos
+            if (name.isNotEmpty) {
+              Navigator.pop(context);
+            }
+            for (int i = 0; i < creditCards.length; i++) {
+              if (creditCards[i] == creditCards[widget.index]){
+                debugPrint("Se ha ingresado al if");
+                final cardIndex = i;
+                creditCardProviderWatch.updateName(userId!, cardIndex, name);
+              }
+              debugPrint("No se ha ingresado al if");
+            }
           },
           child: const Text(
             "Guardar",

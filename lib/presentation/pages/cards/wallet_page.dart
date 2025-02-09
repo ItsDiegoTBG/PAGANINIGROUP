@@ -51,10 +51,10 @@ class _WalletPageState extends State<WalletPage> {
     final creditCardProviderWatch = context.watch<CreditCardProvider>();
     final notificationProvider = Provider.of<NotificationService>(context);
 
-    Future<void> editCardName() async {
+    Future<void> editCardName(int index) async {
       final rename = await showDialog(
         context: context,
-        builder: (_) =>  const RenameCardDialog(),
+        builder: (_) =>  RenameCardDialog(index),
         );
       if (rename != null) {
         notificationProvider.showNotification(
@@ -62,6 +62,7 @@ class _WalletPageState extends State<WalletPage> {
             "Se ha cambiado el nombre de la tarjeta de manera exitosa");
         // Add Name Change
       }
+      setState(() {});  
     }
 
     // Obtenemos la lista de tarjetas actualizada directamente del provider
@@ -194,7 +195,8 @@ class _WalletPageState extends State<WalletPage> {
                                     opacity: 1,
                                     child: GestureDetector(
                                       onTap: () async {
-                                        await editCardName();
+                                        await editCardName(index);
+                                        
                                       },
                                       child: CreditCardWidget(
                                         supportNfc: true,

@@ -32,15 +32,16 @@ class CreditCardProvider extends ChangeNotifier {
     return deleted;
   }
 
-  /*Future<void> updateName(
-      String userId, int idCreditCard, String name) asunc {
+  Future<void> updateName(
+      String userId, int idCreditCard, String newName) async {
     try {
-    
-    notifyListeners();
+      await creditCardsUseCase.updateName(userId, idCreditCard, newName);
+      fetchCreditCards(userId);
+      notifyListeners();
     } catch (e) {
       throw Exception('Error al actualizar el nombre de la tarjeta: $e');
     }
-    }*/
+  }
 
   Future<void> updateBalance(
       String userId, int idCreditCard, double newBalance) async {
