@@ -60,9 +60,8 @@ class _WalletPageState extends State<WalletPage> {
         notificationProvider.showNotification(
             "Cambio de nombre de tarjeta",
             "Se ha cambiado el nombre de la tarjeta de manera exitosa");
-        // Add Name Change
       }
-      setState(() {});  
+      setState(() {});
     }
 
     // Obtenemos la lista de tarjetas actualizada directamente del provider

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/domain/usecases/contact_use_case.dart';
 import 'package:paganini/helpers/show_animated_snackbar.dart';
@@ -60,16 +61,18 @@ class _RenameCardDialogState extends State<RenameCardDialog> {
           onPressed: () async {
             final name = nameController.text.trim();
             if (name.isNotEmpty) {
-              Navigator.pop(context);
-            }
-            for (int i = 0; i < creditCards.length; i++) {
+              for (int i = 0; i < creditCards.length; i++) {
               if (creditCards[i] == creditCards[widget.index]){
-                debugPrint("Se ha ingresado al if");
                 final cardIndex = i;
-                creditCardProviderWatch.updateName(userId!, cardIndex, name);
+                //creditCardProviderWatch.updateName(userId!, cardIndex, name);
+                Provider.of<CreditCardProvider>(context, listen: false).updateName(userId!, cardIndex, name);
               }
-              debugPrint("No se ha ingresado al if");
             }
+            Navigator.pop(context);
+            setState(() {
+            });
+            }
+            
           },
           child: const Text(
             "Guardar",
