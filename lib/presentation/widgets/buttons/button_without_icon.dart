@@ -17,7 +17,7 @@ class ButtonWithoutIcon extends StatelessWidget {
     return TextButton(
       style: TextButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(15),
         ),
         backgroundColor: AppColors.primaryColor,
       ),

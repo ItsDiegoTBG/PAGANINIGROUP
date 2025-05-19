@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+//import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/domain/entity/user_entity.dart';
@@ -215,7 +215,7 @@ Future<void> saveReceipt(
         .replaceAll('.', '-')
         .replaceAll(':', '-');
     final name = "ComprobanteTransferencia_$time";
-    final result = await ImageGallerySaver.saveImage(imageBytes, name: name);
+   /* final result = await ImageGallerySaver.saveImage(imageBytes, name: name);
 
     // Mostrar mensaje de éxito o error
     if (result['filePath'] != null) {
@@ -224,6 +224,6 @@ Future<void> saveReceipt(
     } else {
       ShowAnimatedSnackBar.show(context, "Error al guardar el comprobante",
           Icons.error, AppColors.redColors);
-    }
+    }*/
   }
 }

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+//import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:paganini/helpers/show_animated_snackbar.dart';
 import 'package:paganini/helpers/show_qr.dart';
 import 'package:paganini/presentation/providers/user_provider.dart';
@@ -128,14 +128,15 @@ Future<String> saveImage(Uint8List bytes, context) async {
       .replaceAll('.', '-')
       .replaceAll(':', '-');
   final name = "PaganiniQr_$time";
-  final result = await ImageGallerySaver.saveImage(bytes, name: name);
+  /*final result = await ImageGallerySaver.saveImage(bytes, name: name);
 
   if (result['filePath'] != null) {
     ShowAnimatedSnackBar.show(context, "El QR se guardo correctamente",
         Icons.check, AppColors.greenColors);
-  } else {}
+  } else {}*/
 
-  return result['filePath'];
+  //return result['filePath'];
+  return "";
 }
 
 Future shareImage(Uint8List bytes) async {

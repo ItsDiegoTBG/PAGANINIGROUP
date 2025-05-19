@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:paganini/core/utils/colors.dart';
 
@@ -8,6 +9,7 @@ class TextFormFieldWidget extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final TextInputType textInputType;
   final bool? enabled;
+  final List<TextInputFormatter>? inputFormattersForm;
   const TextFormFieldWidget({
     super.key,
     required this.controller,
@@ -15,6 +17,7 @@ class TextFormFieldWidget extends StatelessWidget {
     this.validator,
     required this.textInputType,
     this.enabled = true,
+    this.inputFormattersForm
   });
 
   @override
@@ -22,6 +25,7 @@ class TextFormFieldWidget extends StatelessWidget {
     return TextFormField(
       enabled: enabled,
       controller: controller,
+      inputFormatters: inputFormattersForm ?? [],
       decoration: InputDecoration(
          
         focusedBorder: OutlineInputBorder(

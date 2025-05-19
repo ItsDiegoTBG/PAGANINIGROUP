@@ -102,18 +102,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 0, left: 30, bottom: 1),
-              child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    "Bienvenido, $primerNombre!",
-                    style: const TextStyle(
-                        fontStyle: FontStyle.normal,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold),
-                  )),
-            ),
+            const SizedBox(height: 10),
             Container(
               height: 105,
               width: 360,

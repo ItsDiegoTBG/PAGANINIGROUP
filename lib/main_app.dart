@@ -34,7 +34,7 @@ class MainApp extends StatelessWidget {
          // Routes.RECEIPTRANSFER: (context) => TransferReceipt(),
           Routes.TRANSFERPAGE: (context) => const TransferPage(),
           Routes.INTRODUCTIONPAGE: (context) => const OnBoardingPage(),
-          Routes.APPTUTORIALSCREEN : (context) => const AppTutorialScreen(),
+          Routes.APPTUTORIALSCREEN : (context) => const Onboarding2Screen(),
           Routes.NAVIGATIONPAGE: (context) => const NavigationPage(),
           Routes.RETURNAMOUNTPAGE: (context) => const ReturnAmountPage(),
           Routes.FORGETPASSWORD : (context) => const   ForgetPasswordPage(),

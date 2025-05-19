@@ -45,9 +45,9 @@ dependencies:
   screenshot: ^3.0.0
   path: ^1.9.0
   smooth_page_indicator: ^1.2.0+3
-  gallery_saver: ^2.3.2
+  gallery_saver_plus: ^3.2.4
   permission_handler: ^11.3.1
-  image_gallery_saver: ^2.0.3
+  #image_gallery_saver: ^2.0.3
   share_plus: ^10.0.2
   flutter_native_splash: ^2.4.1
   flutter_launcher_icons: ^0.14.1

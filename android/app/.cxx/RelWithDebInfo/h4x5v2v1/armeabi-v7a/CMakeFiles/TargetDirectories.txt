@@ -1,0 +1,2 @@
+D:/PROYECTO CLONADOS/PAGANINIGROUP/android/app/.cxx/RelWithDebInfo/h4x5v2v1/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/PROYECTO CLONADOS/PAGANINIGROUP/android/app/.cxx/RelWithDebInfo/h4x5v2v1/armeabi-v7a/CMakeFiles/rebuild_cache.dir

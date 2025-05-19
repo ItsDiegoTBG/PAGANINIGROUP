@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:paganini/core/routes/app_routes.dart';
 import 'package:paganini/core/utils/colors.dart';
 import 'package:paganini/presentation/widgets/buttons/button_without_icon.dart';
@@ -239,7 +240,11 @@ class _RegisterPageState extends State<RegisterPage> {
           const SizedBox(height: 10),
           const Text("Cedula", style: TextStyle(fontSize: 16)),
           TextFormFieldWidget(
-              textInputType: TextInputType.text,
+              textInputType: TextInputType.number,
+              inputFormattersForm: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(10),
+              ],
               controller: cedController,
               hintText: 'Ingresa su cedula',
               validator: (value) {
@@ -269,6 +274,10 @@ class _RegisterPageState extends State<RegisterPage> {
           const SizedBox(height: 10),
           const Text("Telefono", style: TextStyle(fontSize: 16)),
           TextFormFieldWidget(
+            inputFormattersForm: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(10),
+            ],
             textInputType: TextInputType.number,
             controller: phoneController,
             hintText: 'Ingrese un numero de telefono',

@@ -1,9 +1,6 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:paganini/core/routes/app_routes.dart';
-import 'package:paganini/core/utils/colors.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-
 class SlideInfo {
   final String title;
   final String caption;
@@ -36,39 +33,29 @@ final slides = <SlideInfo>[
       imageUrl: 'assets/image/tutorial/1.png'),
 ];
 
-class AppTutorialScreen extends StatelessWidget {
-  static const String name = "app_tutorial_screen";
-  const AppTutorialScreen({super.key});
+class Onboarding2Screen extends StatefulWidget {
+  static const String name = "onboarding_screen";
+  
+  const Onboarding2Screen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.white,
-      body: _AppTutorialView(),
-    );
-  }
+  State<Onboarding2Screen> createState() => _OnboardingScreenState();
 }
 
-class _AppTutorialView extends StatefulWidget {
-  const _AppTutorialView();
-
-  @override
-  State<_AppTutorialView> createState() => _AppTutorialViewState();
-}
-
-class _AppTutorialViewState extends State<_AppTutorialView> {
-  late final PageController _pageController = PageController();
-
-  bool endReached = false;
+class _OnboardingScreenState extends State<Onboarding2Screen> {
+  final PageController _pageController = PageController();
+  bool isLastPage = false;
+  int currentPage = 0;
 
   @override
   void initState() {
     super.initState();
     _pageController.addListener(() {
-      final page = _pageController.page ?? 0;
-      if (!endReached && page >= (slides.length - 1.5)) {
+      final page = _pageController.page?.round() ?? 0;
+      if (page != currentPage) {
         setState(() {
-          endReached = true;
+          currentPage = page;
+          isLastPage = currentPage == slides.length - 1;
         });
       }
     });
@@ -80,121 +67,205 @@ class _AppTutorialViewState extends State<_AppTutorialView> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return Stack(
-      children: [
-        PageView(
-          controller: _pageController,
-          physics: const BouncingScrollPhysics(),
-          children: slides
-              .map((e) => _SlideView(
-                  title: e.title, caption: e.caption, imageUrl: e.imageUrl))
-              .toList(),
-        ),
-        Positioned(
-          right: 10,
-          top: 30,
-          child: TextButton(
-              onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  Routes.INITIAL,
-                  (Route<dynamic> route) => false,
-                );
-              },
-              child: const Text(
-                "Salir",
-                style: TextStyle(color: AppColors.primaryColor,fontSize: 20),
-              )),
-        ),
-        endReached
-            ? Positioned(
-                bottom: 30,
-                right: 30,
-                child: FadeInRight(
-                  from: 15,
-                  delay: const Duration(milliseconds: 500),
-                  child: FilledButton(
-                      style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.primaryColor),
-                      onPressed: () {
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          Routes.INITIAL,
-                          (Route<dynamic> route) => false,
-                        );
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10,horizontal: 12),
-                        child: Text("Vamos !!"),
-                      )),
-                ))
-            : const SizedBox(),
-        Positioned(
-          bottom: 120,
-          left: 0,
-          right: 0,
-          child: Center(
-            child: SmoothPageIndicator(
-              controller: _pageController,
-              count: slides.length,
-              effect: ExpandingDotsEffect(
-                activeDotColor: colors.primary,
-                dotColor: Colors.grey,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+  void _goToNextPage() {
+    if (isLastPage) {
+      // Navigate to home or main screen
+      Navigator.pushReplacementNamed(context, Routes.INITIAL);
+    } else {
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
-}
-
-class _SlideView extends StatelessWidget {
-  final String title;
-  final String caption;
-  final String imageUrl;
-  const _SlideView({
-    required this.title,
-    required this.caption,
-    required this.imageUrl,
-  });
 
   @override
   Widget build(BuildContext context) {
-    const titleStyle = TextStyle(fontSize: 26, fontWeight: FontWeight.bold);
-    const  captionStyle = TextStyle(fontSize: 14);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30),
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(imageUrl),
-            const SizedBox(
-              height: 20,
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: Text(
-                title,
-                style: titleStyle,
+    return Scaffold(
+      backgroundColor: Colors.white, // Light purple background
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            children: [
+              // Skip button row
+              Align(
+                alignment: Alignment.topRight,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, Routes.INITIAL);
+                  },
+                  child: const Text(
+                    'Saltar',
+                    style: TextStyle(
+                      color: Color(0xFF6A14F0), // Deep purple
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(
-              textAlign: TextAlign.justify,
-              caption,
-              style: captionStyle,
-            ),
-          ],
+              
+              // Page content
+              Expanded(
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: slides.length,
+                  itemBuilder: (context, index) {
+                    return OnboardingPage(slideInfo: slides[index]);
+                  },
+                ),
+              ),
+              
+              // Page indicator
+              SmoothPageIndicator(
+                controller: _pageController,
+                count: slides.length,
+                effect: const ExpandingDotsEffect(
+                  activeDotColor: Color(0xFF6A14F0), // Deep purple
+                  dotColor: Color(0xFFD9D0F5), // Light purple
+                  dotHeight: 6,
+                  dotWidth: 6,
+                  spacing: 4,
+                  expansionFactor: 3,
+                ),
+              ),
+              
+              const SizedBox(height: 30),
+              
+              // Next button
+              ElevatedButton(
+                onPressed: _goToNextPage,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF6A14F0), // Deep purple
+                  minimumSize: const Size(double.infinity, 56),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  elevation: 0,
+                ),
+                child: Text(
+                  isLastPage ? 'Iniciar' : 'Siguiente',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
+class OnboardingPage extends StatelessWidget {
+  final SlideInfo slideInfo;
+
+  const OnboardingPage({
+    Key? key,
+    required this.slideInfo,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Image with purple bubble background
+        Container(
+          height: 300,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Background bubbles
+              Positioned(
+                top: 20,
+                left: 20,
+                child: Container(
+                  height: 60,
+                  width: 60,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF6A14F0),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 50,
+                right: 60,
+                child: Container(
+                  height: 20,
+                  width: 20,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFD9D0F5),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 40,
+                right: 30,
+                child: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF9F78F6),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+              // Main image
+              Image.asset(
+                slideInfo.imageUrl,
+                fit: BoxFit.contain,
+                height: 240,
+              ),
+            ],
+          ),
+        ),
+        
+        const SizedBox(height: 40),
+        
+        // Title
+        Text(
+          slideInfo.title,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        
+        const SizedBox(height: 8),
+        
+        // Subtitle
+        Text(
+          slideInfo.caption,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.black54,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        
+        const SizedBox(height: 40),
+      ],
+    );
+  }
+}
+
+// Para usarlo, agrega esta pantalla a tus rutas:
+// routes: {
+//   '/': (context) => const OnboardingScreen(),
+//   '/home': (context) => const HomeScreen(), // Tu pantalla principal
+// }

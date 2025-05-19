@@ -17,7 +17,6 @@ import 'package:paganini/presentation/widgets/text_form_field_widget.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 
-
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -36,7 +35,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
     final biometricProvider = context.read<BiometricAuthProvider>();
     showDialog(
       context: context,
-      barrierDismissible:false, // Evita que el usuario cierre el diálogo manualmente
+      barrierDismissible: false, // Evita que el usuario cierre el diálogo manualmente
       builder: (context) {
         return const Center(child: LoadingScreen());
       },
@@ -49,7 +48,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
         password: passwordController.text.trim(),
       );
 
-      await biometricProvider.saveCredentials(emailController.text.trim(), passwordController.text.trim(),);
+      await biometricProvider.saveCredentials(emailController.text.trim(), passwordController.text.trim());
 
       await Future.delayed(const Duration(seconds: 2));
 
@@ -92,7 +91,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
     }
   }
 
-// Método para mostrar un SnackBar en la parte superior
+  // Método para mostrar un SnackBar en la parte superior
   void _showSnackBar(String message, Color color, {bool topPosition = false}) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       duration: const Duration(seconds: 2),
@@ -111,7 +110,7 @@ class _LoginRegisterScreenState extends State<LoginPage> {
         context: context,
         builder: (context) {
           return const AlertDialog(
-            title: Text("Email Incorrecto"),
+            title: Text("Correo Electrónico Incorrecto"),
           );
         });
   }
@@ -121,210 +120,270 @@ class _LoginRegisterScreenState extends State<LoginPage> {
         context: context,
         builder: (context) {
           return const AlertDialog(
-            title: Text("Password Incorrecto"),
+            title: Text("Contraseña Incorrecta"),
           );
         });
   }
 
   @override
   Widget build(BuildContext context) {
-    //double myHeight = MediaQuery.of(context).size.height;
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     final notificationService =
         Provider.of<NotificationService>(context, listen: false);
+    
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      // backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding:
-              const EdgeInsets.only(right: 16, left: 16, bottom: 16, top: 0),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 50,
+      backgroundColor:AppColors.primaryColor,
+      body: Stack(
+        children: [
+          // Fondo con patrón de círculos
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: MediaQuery.of(context).size.height * 0.3,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: AppColors.primaryColor,
+                
               ),
-              Text(
-                'Bienvenido',
-                style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color:
-                        themeProvider.isDarkMode ? Colors.white : Colors.black),
-              ),
-              SizedBox(
-                  width: 300,
-                  height: 100,
-                  child: themeProvider.isDarkMode
-                      ? Image.asset(
-                          "assets/image/paganini_logo_horizontal_morado.png")
-                      : Image.asset(
-                          "assets/image/paganini_logo_horizontal_negro.png")),
-              const SizedBox(
-                height: 40,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("Email",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w400)),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  TextFormFieldWidget(
-                      textInputType: TextInputType.emailAddress,
-                      controller: emailController,
-                      hintText: "Ingresa tu correo",
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor ingresa un email';
-                        } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
-                            .hasMatch(value)) {
-                          return 'Ingresa un email válido';
-                        }
-                        return null;
-                      }),
-                  const SizedBox(height: 20),
-                  const Text("Contraseña",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w400)),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  TextFormField(
-                    onFieldSubmitted: (value) {
-                      signUserIn(notificationService);
-                    },
-                    obscureText: !_isPasswordVisible,
-                    controller: passwordController,
-                    decoration: InputDecoration(
-                      suffixIcon: IconButton(
-                        icon: _isPasswordVisible
-                            ? const Icon(Icons.visibility)
-                            : const Icon(Icons.visibility_off),
-                        onPressed: () {
-                          setState(() {
-                            _isPasswordVisible = !_isPasswordVisible;
-                          });
-                        },
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(20), // Borde circular
-                        borderSide: const BorderSide(
-                          color: AppColors.primaryColor,
-                          width: 2,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(20), // Borde circular
-                        borderSide: const BorderSide(
-                          color: Colors.grey,
-                          width: 1.5,
-                        ),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: const BorderSide(
-                          color: Colors.red,
-                          width: 1.5,
-                        ),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: const BorderSide(
-                          color: Colors.red,
-                          width: 2,
-                        ),
-                      ),
-                      hintText: 'Ingresa tu contraseña',
-                      hintStyle: const TextStyle(
-                        fontWeight: FontWeight.w300,
-                        fontSize: 18, // Tamaño de texto del hint
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        vertical: 16, // Espaciado vertical
-                        horizontal: 20, // Espaciado horizontal
-                      ),
-                    ),
-                    style: const TextStyle(
-                      fontSize: 18, // Tamaño del texto ingresado
-                      height: 1.5, // Espaciado entre líneas
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ButtonWithoutIcon(
-                          text: "Iniciar Sesion",
-                          onPressed: () async {
-                            debugPrint("INICIANDO SESION");
-                            signUserIn(notificationService);
-                          },
-                        ),
-                      ),
+            ),
+          ),
+          
+          // Logo en el centro superior
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.12,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Container(
+                width: 100,
+                height: 100,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Image.asset(
+                    "assets/image/paganini_icono_morado.png",
                     
-                    ],
                   ),
-                  const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () { Navigator.pushNamed(context, Routes.FORGETPASSWORD);},
-                      child: const Text("Olvidaste la Clave?",
+                ),
+              ),
+            ),
+          ),
+          
+          // Tarjeta principal
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.25,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+              ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Center(
+                        child: Text(
+                          'Bienvenido',
                           style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      
+                      // Email field
+                      const Text(
+                        "Correo Electrónico",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        style: const TextStyle(fontSize: 16),
+                        decoration: InputDecoration(
+                          hintText: "youremail@mail.com",
+                          hintStyle: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 16,
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      
+                      // Password field
+                      const Text(
+                        "Contraseña",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: passwordController,
+                        obscureText: !_isPasswordVisible,
+                        onSubmitted: (value) => signUserIn(notificationService),
+                        style: const TextStyle(fontSize: 16),
+                        decoration: InputDecoration(
+                          hintText: "• • • • • • •",
+                          hintStyle: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 16,
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isPasswordVisible 
+                                ? Icons.visibility 
+                                : Icons.visibility_off,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      
+                      // Login button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: () => signUserIn(notificationService),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: const Text(
+                            "Iniciar Sesión",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 16),
+                      
+                      // Olvidaste la clave
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, Routes.FORGETPASSWORD);
+                          },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(0, 30),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          child: const Text(
+                            "Olvidaste la Clave?",
+                            style: TextStyle(
                               color: Colors.grey,
                               decoration: TextDecoration.underline,
                               decorationColor: Colors.grey,
-                              fontSize: 16,
-                              fontStyle: FontStyle.italic)),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Nuevo en paganini?",
-                        style: TextStyle(
-                          color: themeProvider.isDarkMode
-                              ? Colors.white
-                              : Colors.black,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
+                              fontSize: 14,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
                         ),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, Routes.REGISTER);
-                        },
-                        child: const Text("Registrate Aqui",
-                            style: TextStyle(
-                                color: AppColors.primaryColor,
-                                decoration: TextDecoration.underline,
-                                decorationColor: AppColors.secondaryColor,
-                                fontSize: 16,
-                                fontStyle: FontStyle.italic)),
-                      )
+                      
+                      const SizedBox(height: 20),
+                      
+                      // Sign up link
+                      Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "¿No tienes cuenta? ",
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 14,
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, Routes.REGISTER);
+                              },
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: const Size(0, 30),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: const Text(
+                                "Registrate",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
-                  )
-                ],
+                  ),
+                ),
               ),
-              const SizedBox(height: 20),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
-      
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.pushNamed(context, Routes.INITIAL);
         },
-        child: const Icon(Icons.arrow_back),
-      )
+        backgroundColor: AppColors.primaryColor,
+        child: const Icon(Icons.arrow_back, color: Colors.white),
+      ),
     );
   }
 }
